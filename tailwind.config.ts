@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Poppins", "system-ui", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
         display: ["Playfair Display", "Georgia", "serif"],
       },
       colors: {
@@ -63,6 +63,8 @@ export default {
           gold: "hsl(var(--ayurveda-gold))",
           "gold-light": "hsl(var(--ayurveda-gold-light))",
           terracotta: "hsl(var(--ayurveda-terracotta))",
+          coral: "hsl(var(--ayurveda-coral))",
+          sage: "hsl(var(--ayurveda-sage))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
