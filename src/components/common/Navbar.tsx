@@ -110,14 +110,14 @@ const Navbar = () => {
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                <Leaf className="w-6 h-6 text-primary-foreground" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-teal-600 flex items-center justify-center shadow-md">
+                <Leaf className="w-6 h-6 text-white" />
               </div>
-              <div className="hidden sm:block">
-                <h1 className="font-display text-lg font-bold text-foreground leading-tight">
+              <div>
+                <h1 className="font-display text-base sm:text-lg font-bold text-foreground leading-tight">
                   Atharva
                 </h1>
-                <p className="text-xs text-muted-foreground -mt-1">Health Solutions</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground -mt-0.5">Health Solutions</p>
               </div>
             </Link>
 
