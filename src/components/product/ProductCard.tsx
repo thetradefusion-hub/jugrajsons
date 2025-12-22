@@ -46,13 +46,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
       className="group"
     >
       <Link to={`/product/${product.slug}`}>
-        <div className="card-product overflow-hidden">
+        <div className="bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-border/50">
           {/* Image Container */}
-          <div className="relative aspect-square overflow-hidden bg-muted">
+          <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted to-muted/50">
             <img
               src={product.images[0]}
               alt={product.name}
@@ -60,15 +60,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
             />
             
             {/* Badges */}
-            <div className="absolute top-3 left-3 flex flex-col gap-2">
+            <div className="absolute top-2 left-2 flex flex-col gap-1.5">
               {product.isBestseller && (
-                <Badge className="badge-bestseller">Bestseller</Badge>
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-[10px] px-2 py-0.5 shadow-sm">
+                  ⭐ Bestseller
+                </Badge>
               )}
               {product.isNew && (
-                <Badge className="badge-new">New</Badge>
+                <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0 text-[10px] px-2 py-0.5 shadow-sm">
+                  ✨ New
+                </Badge>
               )}
               {product.discount > 0 && (
-                <Badge className="badge-discount">{product.discount}% OFF</Badge>
+                <Badge className="bg-gradient-to-r from-rose-500 to-red-500 text-white border-0 text-[10px] px-2 py-0.5 shadow-sm">
+                  {product.discount}% OFF
+                </Badge>
               )}
             </div>
 
@@ -76,44 +82,43 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
             <button
               onClick={handleWishlistToggle}
               className={cn(
-                'absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all',
+                'absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm',
                 inWishlist
-                  ? 'bg-destructive text-destructive-foreground'
-                  : 'bg-card/80 text-foreground hover:bg-card'
+                  ? 'bg-rose-500 text-white'
+                  : 'bg-white/90 backdrop-blur-sm text-foreground hover:bg-white'
               )}
             >
-              <Heart className={cn('w-5 h-5', inWishlist && 'fill-current')} />
+              <Heart className={cn('w-4 h-4', inWishlist && 'fill-current')} />
             </button>
 
-            {/* Quick Add Overlay */}
-            <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-foreground/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+            {/* Quick Add Button */}
+            <div className="absolute bottom-2 right-2">
               {quantity === 0 ? (
                 <Button
                   onClick={handleAddToCart}
-                  className="w-full bg-card text-foreground hover:bg-primary hover:text-primary-foreground"
-                  size="sm"
+                  size="icon"
+                  className="w-9 h-9 rounded-full bg-primary text-white shadow-lg hover:bg-primary/90"
                 >
-                  <ShoppingCart className="w-4 h-4 mr-2" />
-                  Add to Cart
+                  <Plus className="w-5 h-5" />
                 </Button>
               ) : (
-                <div className="flex items-center justify-center gap-3 bg-card rounded-lg p-1">
+                <div className="flex items-center gap-1 bg-white rounded-full p-1 shadow-lg">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8"
+                    className="h-7 w-7 rounded-full hover:bg-muted"
                     onClick={(e) => handleQuantityChange(e, -1)}
                   >
-                    <Minus className="w-4 h-4" />
+                    <Minus className="w-3.5 h-3.5" />
                   </Button>
-                  <span className="font-semibold min-w-[2ch] text-center">{quantity}</span>
+                  <span className="font-bold text-sm min-w-[1.5ch] text-center">{quantity}</span>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8"
+                    className="h-7 w-7 rounded-full hover:bg-muted"
                     onClick={(e) => handleQuantityChange(e, 1)}
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-3.5 h-3.5" />
                   </Button>
                 </div>
               )}
@@ -121,44 +126,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
           </div>
 
           {/* Content */}
-          <div className="p-4">
-            {/* Product Type */}
-            <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">
-              {product.productType}
-            </p>
-            
-            {/* Product Name */}
-            <h3 className="font-medium text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors">
-              {product.name}
-            </h3>
-
+          <div className="p-3">
             {/* Rating */}
-            <div className="flex items-center gap-1 mb-2">
-              <div className="flex items-center gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className={cn(
-                      'w-3.5 h-3.5',
-                      i < Math.floor(product.rating)
-                        ? 'fill-ayurveda-gold text-ayurveda-gold'
-                        : 'text-muted-foreground/30'
-                    )}
-                  />
-                ))}
+            <div className="flex items-center gap-1 mb-1">
+              <div className="flex items-center gap-0.5 bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded">
+                <Star className="w-3 h-3 fill-current" />
+                <span className="text-xs font-semibold">{product.rating}</span>
               </div>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-[10px] text-muted-foreground">
                 ({product.reviewCount.toLocaleString()})
               </span>
             </div>
+            
+            {/* Product Name */}
+            <h3 className="font-medium text-sm text-foreground line-clamp-2 mb-1.5 group-hover:text-primary transition-colors leading-snug">
+              {product.name}
+            </h3>
 
             {/* Price */}
             <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-foreground">
+              <span className="text-base font-bold text-foreground">
                 ₹{product.price.toLocaleString()}
               </span>
               {product.originalPrice > product.price && (
-                <span className="text-sm text-muted-foreground line-through">
+                <span className="text-xs text-muted-foreground line-through">
                   ₹{product.originalPrice.toLocaleString()}
                 </span>
               )}
