@@ -29,45 +29,46 @@ const Home = () => {
       <SEO />
       <main className="overflow-x-hidden">
         {/* Hero Section - App Style */}
-        <section className="relative bg-gradient-to-br from-primary via-emerald-600 to-teal-700 text-white overflow-hidden">
+        <section className="relative bg-gradient-to-br from-emerald-800 via-teal-700 to-emerald-900 text-white overflow-hidden min-h-[280px] md:min-h-[400px]">
           {/* Decorative elements */}
           <div className="absolute inset-0">
-            <div className="absolute top-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-10 -right-20 w-80 h-80 bg-amber-400/20 rounded-full blur-3xl" />
+            <div className="absolute top-10 -left-10 w-40 h-40 bg-amber-400/20 rounded-full blur-2xl" />
+            <div className="absolute bottom-5 -right-10 w-60 h-60 bg-teal-400/15 rounded-full blur-3xl" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl" />
           </div>
           
-          <div className="container-custom relative pt-8 pb-12 md:py-20">
+          <div className="container-custom relative pt-6 pb-16 md:py-16">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-center md:text-left md:max-w-2xl"
+              transition={{ duration: 0.4 }}
+              className="text-center"
             >
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.1 }}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-sm font-medium mb-6"
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/15 backdrop-blur-sm rounded-full text-xs font-medium mb-4"
               >
-                <Sparkles className="w-4 h-4 text-amber-300" />
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                 <span>Ancient Wisdom, Modern Wellness</span>
               </motion.div>
               
-              <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
-                Discover the Power of <span className="text-amber-300">Authentic Ayurveda</span>
+              <h1 className="font-display text-2xl sm:text-3xl md:text-5xl font-bold leading-tight mb-3">
+                Discover <span className="text-amber-300">Authentic Ayurveda</span>
               </h1>
               
-              <p className="text-base md:text-lg text-white/85 mb-8 max-w-xl mx-auto md:mx-0">
-                Transform your health naturally with scientifically formulated Ayurvedic products.
+              <p className="text-sm md:text-base text-white/80 mb-6 max-w-md mx-auto">
+                Transform your health naturally with scientifically formulated products.
               </p>
               
-              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90 font-semibold rounded-full shadow-lg shadow-black/20">
+              <div className="flex flex-wrap gap-2 justify-center">
+                <Button asChild size="sm" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-full shadow-lg h-10 px-5">
                   <Link to="/products">
-                    Shop Now <ArrowRight className="w-5 h-5 ml-2" />
+                    Shop Now <ArrowRight className="w-4 h-4 ml-1.5" />
                   </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-full">
+                <Button asChild size="sm" variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-full h-10 px-5">
                   <Link to="/expert">Consult Expert</Link>
                 </Button>
               </div>
@@ -76,8 +77,8 @@ const Home = () => {
           
           {/* Wave decoration */}
           <div className="absolute bottom-0 left-0 right-0">
-            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-              <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V120Z" fill="hsl(var(--background))"/>
+            <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+              <path d="M0 80L60 73C120 66 240 53 360 46C480 40 600 40 720 43C840 46 960 53 1080 56C1200 60 1320 60 1380 60L1440 60V80H1380C1320 80 1200 80 1080 80C960 80 840 80 720 80C600 80 480 80 360 80C240 80 120 80 60 80H0V80Z" fill="hsl(var(--background))"/>
             </svg>
           </div>
         </section>

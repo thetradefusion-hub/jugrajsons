@@ -81,6 +81,24 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex flex-col"
     >
+      {/* Solid Ayurvedic themed background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-900 via-teal-800 to-emerald-950">
+        {/* Decorative patterns */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-10 w-32 h-32 border-2 border-amber-400/30 rounded-full" />
+          <div className="absolute top-20 right-8 w-20 h-20 border border-amber-400/20 rounded-full" />
+          <div className="absolute bottom-32 left-6 w-16 h-16 border border-amber-400/20 rounded-full" />
+          <div className="absolute bottom-20 right-12 w-24 h-24 border-2 border-amber-400/30 rounded-full" />
+          <div className="absolute top-1/3 left-1/4 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-teal-400/10 rounded-full blur-3xl" />
+        </div>
+        {/* Leaf patterns */}
+        <div className="absolute top-16 right-16 text-6xl opacity-10">🌿</div>
+        <div className="absolute bottom-24 left-8 text-5xl opacity-10">🍃</div>
+        <div className="absolute top-1/2 right-4 text-4xl opacity-10">🌱</div>
+        <div className="absolute bottom-1/3 left-1/3 text-3xl opacity-10">🌿</div>
+      </div>
+      
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
           key={currentSlide}
@@ -90,11 +108,10 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
           animate="center"
           exit="exit"
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className={`absolute inset-0 bg-gradient-to-br ${slide.gradient} flex flex-col`}
-          style={{ backgroundImage: slide.bgPattern }}
+          className="absolute inset-0 flex flex-col"
         >
           {/* Skip button */}
-          <div className="flex justify-end p-4 pt-6">
+          <div className="flex justify-end p-4 pt-6 relative z-10">
             <Button
               variant="ghost"
               className="text-white/80 hover:text-white hover:bg-white/10"
@@ -105,12 +122,12 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
           </div>
 
           {/* Content */}
-          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center text-white">
+          <div className="flex-1 flex flex-col items-center justify-center px-8 text-center text-white relative z-10">
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: "spring", delay: 0.2 }}
-              className="w-32 h-32 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-8 shadow-2xl"
+              className={`w-32 h-32 rounded-full bg-gradient-to-br ${slide.gradient} flex items-center justify-center mb-8 shadow-2xl shadow-black/30`}
             >
               <Icon className="w-16 h-16 text-white" />
             </motion.div>
@@ -119,7 +136,7 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-3xl md:text-4xl font-bold font-display mb-4"
+              className="text-3xl md:text-4xl font-bold font-display mb-4 text-white"
             >
               {slide.title}
             </motion.h1>
@@ -128,14 +145,14 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-lg text-white/90 max-w-sm"
+              className="text-lg text-white/85 max-w-sm"
             >
               {slide.description}
             </motion.p>
           </div>
 
           {/* Bottom section */}
-          <div className="p-8 pb-12">
+          <div className="p-8 pb-12 relative z-10">
             {/* Dots */}
             <div className="flex justify-center gap-2 mb-8">
               {slides.map((_, index) => (
@@ -144,7 +161,7 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
                   onClick={() => goToSlide(index)}
                   className={`h-2 rounded-full transition-all duration-300 ${
                     index === currentSlide
-                      ? "w-8 bg-white"
+                      ? "w-8 bg-amber-400"
                       : "w-2 bg-white/40 hover:bg-white/60"
                   }`}
                 />
@@ -154,7 +171,7 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
             {/* Action button */}
             <Button
               onClick={nextSlide}
-              className="w-full h-14 bg-white text-gray-900 hover:bg-white/90 text-lg font-semibold rounded-2xl shadow-lg"
+              className="w-full h-14 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-lg font-semibold rounded-2xl shadow-lg shadow-amber-500/30"
             >
               {currentSlide === slides.length - 1 ? (
                 <>
