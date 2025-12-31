@@ -18,7 +18,15 @@ export default defineConfig(({ mode }) => ({
     },
   },
   optimizeDeps: {
-    include: ["date-fns", "@radix-ui/react-progress"],
+    include: [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "date-fns",
+      "@radix-ui/react-progress",
+      "@radix-ui/react-context",
+      "@radix-ui/react-compose-refs",
+    ],
     force: true, // Force re-optimization
   },
   build: {
@@ -31,9 +39,9 @@ export default defineConfig(({ mode }) => ({
         drop_console: mode === "production", // Remove console.logs in production
       },
     },
-    // Ensure terser is available
     commonjsOptions: {
-      include: [/terser/],
+      include: [/node_modules/],
+      transformMixedEsModules: true,
     },
     rollupOptions: {
       output: {
