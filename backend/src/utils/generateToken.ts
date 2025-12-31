@@ -6,8 +6,9 @@ export const generateToken = (id: string): string => {
     throw new Error('JWT_SECRET is not defined');
   }
   
+  const jwtExpire = process.env.JWT_EXPIRE || '7d';
   const options: SignOptions = {
-    expiresIn: (process.env.JWT_EXPIRE || '7d') as string
+    expiresIn: jwtExpire
   };
   
   return jwt.sign({ id }, secret, options);
