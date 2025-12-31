@@ -8,7 +8,7 @@ export const generateToken = (id: string): string => {
   
   const jwtExpire = process.env.JWT_EXPIRE || '7d';
   const options: SignOptions = {
-    expiresIn: jwtExpire
+    expiresIn: jwtExpire as string | number
   };
   
   return jwt.sign({ id }, secret, options);
