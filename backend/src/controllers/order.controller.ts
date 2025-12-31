@@ -134,10 +134,11 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 
     // Create notification for admin
     try {
+      const userName = (populatedOrder.user as any)?.name || 'Customer';
       await Notification.create({
         type: 'order',
         title: 'New Order Received',
-        message: `Order #${order._id.toString().slice(-6).toUpperCase()} has been placed by ${populatedOrder.user.name || 'Customer'}`,
+        message: `Order #${order._id.toString().slice(-6).toUpperCase()} has been placed by ${userName}`,
         link: `/admin/orders`,
         read: false,
       });
