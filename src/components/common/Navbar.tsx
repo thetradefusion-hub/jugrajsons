@@ -10,7 +10,8 @@ import {
   X, 
   ChevronDown,
   Phone,
-  Leaf
+  Leaf,
+  Truck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -78,50 +79,51 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Top Bar */}
-      <div className="bg-primary text-primary-foreground py-2 text-sm hidden md:block">
+      {/* Top Bar - Clean Premium Style */}
+      <div className="bg-emerald-600 dark:bg-emerald-700 text-white py-2.5 text-sm hidden md:block border-b border-emerald-700 dark:border-emerald-800">
         <div className="container-custom flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
+          <div className="flex items-center gap-6">
+            <span className="flex items-center gap-2 font-medium">
               <Leaf className="w-4 h-4" />
               100% Authentic Ayurvedic Products
             </span>
           </div>
-          <div className="flex items-center gap-4">
-            <a href="tel:+919876543210" className="flex items-center gap-1 hover:opacity-80 transition-opacity">
+          <div className="flex items-center gap-6">
+            <a href="tel:+919876543210" className="flex items-center gap-2 hover:text-emerald-100 transition-colors font-medium">
               <Phone className="w-4 h-4" />
               +91 98765 43210
             </a>
-            <span>Free Shipping Above ₹499</span>
+            <span className="flex items-center gap-2">
+              <Truck className="w-4 h-4" />
+              Free Shipping Above ₹499
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Main Navbar */}
+      {/* Main Navbar - Premium Clean Style */}
       <header 
         className={cn(
-          'sticky top-0 z-50 transition-all duration-300',
-          isScrolled 
-            ? 'bg-card/95 backdrop-blur-md shadow-md' 
-            : 'bg-card'
+          'sticky top-0 z-50 transition-all duration-300 border-b border-border bg-background/95 backdrop-blur-sm',
+          isScrolled && 'shadow-sm'
         )}
       >
         <div className="container-custom">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-teal-600 flex items-center justify-center shadow-md">
-                <Leaf className="w-6 h-6 text-white" />
+            {/* Logo - Clean Premium */}
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center">
+                <Leaf className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="font-display text-base sm:text-lg font-bold text-foreground leading-tight">
+                <h1 className="font-display text-lg md:text-xl font-bold text-foreground leading-tight">
                   Atharva
                 </h1>
-                <p className="text-[10px] sm:text-xs text-muted-foreground -mt-0.5">Health Solutions</p>
+                <p className="text-xs text-muted-foreground">Health Solutions</p>
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation - Clean */}
             <nav className="hidden lg:flex items-center gap-1" ref={dropdownRef}>
               {navLinks.map((link) => (
                 <div key={link.key || link.label} className="relative">
@@ -137,7 +139,7 @@ const Navbar = () => {
                     >
                       {link.label}
                       <ChevronDown className={cn(
-                        'w-4 h-4 transition-transform',
+                        'w-4 h-4 transition-transform duration-200',
                         activeDropdown === link.key && 'rotate-180'
                       )} />
                     </button>
@@ -150,7 +152,7 @@ const Navbar = () => {
                     </Link>
                   )}
 
-                  {/* Dropdown Menu */}
+                  {/* Dropdown Menu - Clean */}
                   <AnimatePresence>
                     {link.items && activeDropdown === link.key && (
                       <motion.div
@@ -158,7 +160,7 @@ const Navbar = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute top-full left-0 mt-2 w-64 bg-popover rounded-xl shadow-xl border border-border overflow-hidden z-50"
+                        className="absolute top-full left-0 mt-2 w-64 bg-popover rounded-lg shadow-lg border border-border overflow-hidden z-50"
                       >
                         <div className="p-2">
                           {link.items.map((item: { name: string; slug: string; icon?: string }) => (
@@ -166,10 +168,10 @@ const Navbar = () => {
                               key={item.slug}
                               to={`/products?${link.key === 'concern' ? 'concern' : 'category'}=${item.slug}`}
                               onClick={() => setActiveDropdown(null)}
-                              className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
+                              className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-muted transition-colors text-sm font-medium"
                             >
                               {item.icon && <span className="text-lg">{item.icon}</span>}
-                              <span className="text-sm font-medium">{item.name}</span>
+                              <span>{item.name}</span>
                             </Link>
                           ))}
                         </div>
@@ -180,36 +182,38 @@ const Navbar = () => {
               ))}
             </nav>
 
-            {/* Search Bar - Desktop */}
-            <form onSubmit={handleSearch} className="hidden md:flex relative max-w-xs lg:max-w-sm w-full">
-              <Input
-                type="search"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 h-10 w-full bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            {/* Search Bar - Desktop Clean */}
+            <form onSubmit={handleSearch} className="hidden md:flex relative max-w-xs lg:max-w-md w-full">
+              <div className="relative w-full">
+                <Input
+                  type="search"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 h-10 w-full bg-background border-border focus-visible:ring-1 focus-visible:ring-emerald-600 rounded-lg"
+                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              </div>
             </form>
 
-            {/* Right Actions */}
-            <div className="flex items-center gap-1 sm:gap-2">
+            {/* Right Actions - Clean */}
+            <div className="flex items-center gap-1">
               {/* Mobile Search Toggle */}
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden"
+                className="md:hidden h-10 w-10"
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
               >
                 <Search className="w-5 h-5" />
               </Button>
 
               {/* Wishlist */}
-              <Button variant="ghost" size="icon" asChild className="relative">
+              <Button variant="ghost" size="icon" asChild className="relative h-10 w-10">
                 <Link to="/wishlist">
                   <Heart className="w-5 h-5" />
                   {wishlistItems.length > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs bg-accent text-accent-foreground">
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs bg-emerald-600 text-white">
                       {wishlistItems.length}
                     </Badge>
                   )}
@@ -217,11 +221,11 @@ const Navbar = () => {
               </Button>
 
               {/* Cart */}
-              <Button variant="ghost" size="icon" asChild className="relative">
+              <Button variant="ghost" size="icon" asChild className="relative h-10 w-10">
                 <Link to="/cart">
                   <ShoppingCart className="w-5 h-5" />
                   {itemCount > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs bg-emerald-600 text-white">
                       {itemCount}
                     </Badge>
                   )}
@@ -229,7 +233,7 @@ const Navbar = () => {
               </Button>
 
               {/* Account */}
-              <Button variant="ghost" size="icon" asChild>
+              <Button variant="ghost" size="icon" asChild className="h-10 w-10">
                 <Link to={isAuthenticated ? '/profile' : '/login'}>
                   <User className="w-5 h-5" />
                 </Link>
@@ -239,7 +243,7 @@ const Navbar = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden"
+                className="lg:hidden h-10 w-10"
                 onClick={() => setIsMobileMenuOpen(true)}
               >
                 <Menu className="w-5 h-5" />
@@ -254,9 +258,9 @@ const Navbar = () => {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                className="md:hidden overflow-hidden"
+                className="md:hidden overflow-hidden border-t border-border"
               >
-                <form onSubmit={handleSearch} className="pb-4">
+                <form onSubmit={handleSearch} className="p-4">
                   <div className="relative">
                     <Input
                       type="search"
@@ -275,7 +279,7 @@ const Navbar = () => {
         </div>
       </header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Clean */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -283,43 +287,44 @@ const Navbar = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-50 lg:hidden"
+              className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 lg:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-[300px] bg-card z-50 lg:hidden shadow-2xl"
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="fixed top-0 right-0 bottom-0 w-80 bg-background z-50 lg:hidden shadow-xl border-l border-border"
             >
-              <div className="flex items-center justify-between p-4 border-b border-border">
-                <span className="font-display font-semibold">Menu</span>
+              <div className="flex items-center justify-between p-6 border-b border-border">
+                <span className="font-display font-bold text-lg">Menu</span>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsMobileMenuOpen(false)}
+                  className="h-10 w-10"
                 >
                   <X className="w-5 h-5" />
                 </Button>
               </div>
               
-              <div className="p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-80px)]">
+              <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(100vh-80px)]">
                 {navLinks.map((link) => (
                   <div key={link.key || link.label}>
                     {link.items ? (
-                      <div className="space-y-2">
-                        <span className="text-sm font-semibold text-foreground">{link.label}</span>
+                      <div className="space-y-3">
+                        <span className="text-sm font-semibold text-foreground block">{link.label}</span>
                         <div className="grid grid-cols-2 gap-2">
                           {link.items.map((item: { name: string; slug: string; icon?: string }) => (
                             <Link
                               key={item.slug}
                               to={`/products?${link.key === 'concern' ? 'concern' : 'category'}=${item.slug}`}
                               onClick={() => setIsMobileMenuOpen(false)}
-                              className="flex items-center gap-2 p-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                              className="flex flex-col items-center gap-2 p-3 text-sm text-foreground hover:bg-muted rounded-lg transition-colors border border-border"
                             >
-                              {item.icon && <span>{item.icon}</span>}
-                              <span>{item.name}</span>
+                              {item.icon && <span className="text-2xl">{item.icon}</span>}
+                              <span className="font-medium text-center">{item.name}</span>
                             </Link>
                           ))}
                         </div>
@@ -328,7 +333,7 @@ const Navbar = () => {
                       <Link
                         to={link.href!}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="block py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+                        className="block py-3 text-base font-medium text-foreground hover:text-emerald-600 transition-colors"
                       >
                         {link.label}
                       </Link>

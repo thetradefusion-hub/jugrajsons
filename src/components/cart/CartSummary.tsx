@@ -1,29 +1,79 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Tag, Truck, Shield, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCart } from '@/context/CartContext';
+import api from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
 const CartSummary: React.FC = () => {
-  const { total, itemCount } = useCart();
+  const { total, itemCount, items } = useCart();
+  const { toast } = useToast();
   const [couponCode, setCouponCode] = useState('');
-  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discount: number;
+  } | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
+  const [isApplying, setIsApplying] = useState(false);
 
   const shippingThreshold = 499;
   const shippingCost = total >= shippingThreshold ? 0 : 49;
-  const discount = appliedCoupon ? Math.round(total * 0.1) : 0;
+  const discount = appliedCoupon?.discount || 0;
   const finalTotal = total + shippingCost - discount;
 
-  const handleApplyCoupon = () => {
-    if (couponCode.toUpperCase() === 'ATHARVA10') {
-      setAppliedCoupon(couponCode.toUpperCase());
-      setCouponError(null);
-    } else {
-      setCouponError('Invalid coupon code');
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError('Please enter a coupon code');
+      return;
+    }
+
+    setIsApplying(true);
+    setCouponError(null);
+
+    try {
+      // Prepare cart items for validation
+      const cartItems = items.map(item => ({
+        productId: (item.product as any)._id || item.product.id,
+        category: item.product.category,
+      }));
+
+      const response = await api.post('/coupons/validate', {
+        code: couponCode,
+        cartTotal: total,
+        items: cartItems,
+      });
+
+      if (response.data.valid) {
+        setAppliedCoupon({
+          code: response.data.coupon.code,
+          discount: response.data.discount,
+        });
+        // Save to localStorage
+        localStorage.setItem('applied-coupon', JSON.stringify({
+          code: response.data.coupon.code,
+          discount: response.data.discount,
+        }));
+        toast({
+          title: 'Coupon Applied!',
+          description: response.data.coupon.description,
+        });
+        setCouponCode('');
+      }
+    } catch (error: any) {
+      setCouponError(
+        error.response?.data?.message || 'Invalid or expired coupon code'
+      );
+      toast({
+        title: 'Coupon Invalid',
+        description: error.response?.data?.message || 'Please check the coupon code',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsApplying(false);
     }
   };
 
@@ -31,7 +81,20 @@ const CartSummary: React.FC = () => {
     setAppliedCoupon(null);
     setCouponCode('');
     setCouponError(null);
+    localStorage.removeItem('applied-coupon');
   };
+
+  // Load applied coupon from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('applied-coupon');
+    if (saved) {
+      try {
+        setAppliedCoupon(JSON.parse(saved));
+      } catch (e) {
+        // Ignore
+      }
+    }
+  }, []);
 
   return (
     <div className="bg-card rounded-xl border border-border p-6 sticky top-24">
@@ -49,7 +112,8 @@ const CartSummary: React.FC = () => {
           <div className="flex items-center justify-between bg-primary/10 text-primary rounded-lg px-3 py-2">
             <div className="flex items-center gap-2">
               <Tag className="w-4 h-4" />
-              <span className="text-sm font-medium">{appliedCoupon}</span>
+              <span className="text-sm font-medium">{appliedCoupon.code}</span>
+              <span className="text-xs">-₹{appliedCoupon.discount.toLocaleString()}</span>
             </div>
             <button
               onClick={handleRemoveCoupon}
@@ -65,18 +129,21 @@ const CartSummary: React.FC = () => {
                 placeholder="Enter coupon code"
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
-                className="flex-1"
+                onKeyPress={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                className="flex-1 uppercase"
+                disabled={isApplying}
               />
-              <Button variant="outline" onClick={handleApplyCoupon}>
-                Apply
+              <Button 
+                variant="outline" 
+                onClick={handleApplyCoupon}
+                disabled={isApplying}
+              >
+                {isApplying ? 'Applying...' : 'Apply'}
               </Button>
             </div>
             {couponError && (
               <p className="text-sm text-destructive">{couponError}</p>
             )}
-            <p className="text-xs text-muted-foreground">
-              Try: ATHARVA10 for 10% off
-            </p>
           </div>
         )}
       </div>

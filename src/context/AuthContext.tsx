@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import api from '@/lib/api';
 
 export interface User {
   id: string;
+  _id?: string;
   email: string;
   name: string;
   phone?: string;
   avatar?: string;
+  role?: 'user' | 'admin';
 }
 
 export interface Address {
@@ -57,26 +60,64 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [addresses, setAddresses] = useState<Address[]>([]);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('atharva-user');
-    const savedAddresses = localStorage.getItem('atharva-addresses');
-    
-    if (savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (error) {
-        console.error('Error loading user from localStorage:', error);
+    const loadUser = async () => {
+      const token = localStorage.getItem('token');
+      const savedUser = localStorage.getItem('atharva-user');
+      const savedAddresses = localStorage.getItem('atharva-addresses');
+      
+      if (token) {
+        try {
+          // Verify token and get user from backend
+          const response = await api.get('/auth/me');
+          const userData = response.data;
+          const loadedUser = {
+            id: userData._id || userData.id,
+            _id: userData._id || userData.id,
+            email: userData.email,
+            name: userData.name,
+            phone: userData.phone,
+            avatar: userData.avatar,
+            role: userData.role || 'user'
+          };
+          setUser(loadedUser);
+          // Update localStorage with fresh user data
+          localStorage.setItem('atharva-user', JSON.stringify(loadedUser));
+        } catch (error: any) {
+          // Only clear storage if it's a 401 (unauthorized), not network errors
+          if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('atharva-user');
+          } else if (savedUser) {
+            // If network error but we have saved user, use it temporarily
+            try {
+              const parsedUser = JSON.parse(savedUser);
+              setUser(parsedUser);
+            } catch (parseError) {
+              console.error('Error parsing saved user:', parseError);
+            }
+          }
+        }
+      } else if (savedUser) {
+        // No token but saved user exists - load it (might be from previous session)
+        try {
+          setUser(JSON.parse(savedUser));
+        } catch (error) {
+          console.error('Error loading user from localStorage:', error);
+        }
       }
-    }
-    
-    if (savedAddresses) {
-      try {
-        setAddresses(JSON.parse(savedAddresses));
-      } catch (error) {
-        console.error('Error loading addresses from localStorage:', error);
+      
+      if (savedAddresses) {
+        try {
+          setAddresses(JSON.parse(savedAddresses));
+        } catch (error) {
+          console.error('Error loading addresses from localStorage:', error);
+        }
       }
-    }
+      
+      setIsLoading(false);
+    };
     
-    setIsLoading(false);
+    loadUser();
   }, []);
 
   useEffect(() => {
@@ -92,47 +133,61 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [addresses]);
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const foundUser = mockUsers.find(u => u.email === email && u.password === password);
-    
-    if (foundUser) {
-      setUser(foundUser.user);
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      const { token, _id, name, email: userEmail, role } = response.data;
+      
+      localStorage.setItem('token', token);
+      
+      const user: User = {
+        id: _id,
+        _id,
+        email: userEmail,
+        name,
+        role: role || 'user'
+      };
+      
+      setUser(user);
+      localStorage.setItem('atharva-user', JSON.stringify(user));
       return { success: true };
+    } catch (error: any) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Login failed. Please check your credentials.' 
+      };
     }
-    
-    // For demo, allow any email/password
-    const newUser: User = {
-      id: Date.now().toString(),
-      email,
-      name: email.split('@')[0],
-    };
-    setUser(newUser);
-    return { success: true };
   };
 
   const register = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const existingUser = mockUsers.find(u => u.email === email);
-    if (existingUser) {
-      return { success: false, error: 'Email already registered' };
+    try {
+      const response = await api.post('/auth/register', { name, email, password });
+      const { token, _id, name: userName, email: userEmail, role } = response.data;
+      
+      localStorage.setItem('token', token);
+      
+      const user: User = {
+        id: _id,
+        _id,
+        email: userEmail,
+        name: userName,
+        role: role || 'user'
+      };
+      
+      setUser(user);
+      localStorage.setItem('atharva-user', JSON.stringify(user));
+      return { success: true };
+    } catch (error: any) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Registration failed. Please try again.' 
+      };
     }
-    
-    const newUser: User = {
-      id: Date.now().toString(),
-      email,
-      name,
-    };
-    
-    setUser(newUser);
-    return { success: true };
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('atharva-user');
   };
 
   const updateProfile = (updates: Partial<User>) => {

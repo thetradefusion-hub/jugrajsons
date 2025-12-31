@@ -19,6 +19,15 @@ import { concerns, productTypes } from '@/data/products';
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
+  const handleLinkClick = () => {
+    // Scroll to top when clicking any footer link
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    });
+  };
+
   const footerLinks = {
     shop: [
       { label: 'All Products', href: '/products' },
@@ -41,8 +50,8 @@ const Footer = () => {
     company: [
       { label: 'About Us', href: '/about' },
       { label: 'Our Story', href: '/our-story' },
-      { label: 'Blog', href: '/blog' },
-      { label: 'Careers', href: '/careers' },
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Terms and Conditions', href: '/terms' },
       { label: 'Press', href: '/press' },
     ],
   };
@@ -162,7 +171,8 @@ const Footer = () => {
               {footerLinks.shop.map((link) => (
                 <li key={link.label}>
                   <Link 
-                    to={link.href} 
+                    to={link.href}
+                    onClick={handleLinkClick}
                     className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
                   >
                     {link.label}
@@ -179,7 +189,8 @@ const Footer = () => {
               {footerLinks.health.map((link) => (
                 <li key={link.label}>
                   <Link 
-                    to={link.href} 
+                    to={link.href}
+                    onClick={handleLinkClick}
                     className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
                   >
                     {link.label}
@@ -196,7 +207,8 @@ const Footer = () => {
               {footerLinks.support.map((link) => (
                 <li key={link.label}>
                   <Link 
-                    to={link.href} 
+                    to={link.href}
+                    onClick={handleLinkClick}
                     className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
                   >
                     {link.label}
@@ -213,7 +225,8 @@ const Footer = () => {
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
                   <Link 
-                    to={link.href} 
+                    to={link.href}
+                    onClick={handleLinkClick}
                     className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors"
                   >
                     {link.label}
@@ -229,15 +242,34 @@ const Footer = () => {
       <div className="border-t border-primary-foreground/10">
         <div className="container-custom py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/60">
-            <p>© {currentYear} Atharva Health Solutions. All rights reserved.</p>
+            <div className="flex flex-col items-center md:items-start gap-2">
+              <p>© {currentYear} Atharva Health Solutions. All rights reserved.</p>
+              <p className="text-xs">
+                Website Developed by{' '}
+                <a 
+                  href="https://rknagpureweb.vercel.app" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary-foreground transition-colors font-medium underline"
+                >
+                  Rakesh Nagpure
+                </a>{' '}
+                <a 
+                  href="tel:+917581982414" 
+                  className="hover:text-primary-foreground transition-colors"
+                >
+                  7581982414
+                </a>
+              </p>
+            </div>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/privacy-policy" className="hover:text-primary-foreground transition-colors">
+              <Link to="/privacy" onClick={handleLinkClick} className="hover:text-primary-foreground transition-colors">
                 Privacy Policy
               </Link>
-              <Link to="/terms" className="hover:text-primary-foreground transition-colors">
+              <Link to="/terms" onClick={handleLinkClick} className="hover:text-primary-foreground transition-colors">
                 Terms of Service
               </Link>
-              <Link to="/refund-policy" className="hover:text-primary-foreground transition-colors">
+              <Link to="/refund-policy" onClick={handleLinkClick} className="hover:text-primary-foreground transition-colors">
                 Refund Policy
               </Link>
             </div>

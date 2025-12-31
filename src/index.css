@@ -268,4 +268,112 @@ html {
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
   }
+
+  /* Admin Typography System */
+  .admin-heading-1 {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .admin-heading-2 {
+    @apply text-2xl md:text-3xl font-bold tracking-tight text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .admin-heading-3 {
+    @apply text-xl md:text-2xl font-semibold tracking-tight text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .admin-heading-4 {
+    @apply text-lg md:text-xl font-semibold text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .admin-body-large {
+    @apply text-base md:text-lg text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .admin-body {
+    @apply text-sm md:text-base text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .admin-body-small {
+    @apply text-xs md:text-sm text-muted-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .admin-label {
+    @apply text-xs md:text-sm font-semibold text-foreground uppercase tracking-wider;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .admin-description {
+    @apply text-sm md:text-base text-muted-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .admin-stat-value {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold text-foreground tracking-tight;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .admin-stat-label {
+    @apply text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wider;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .admin-card-title {
+    @apply text-base md:text-lg font-semibold text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .admin-card-description {
+    @apply text-xs md:text-sm text-muted-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* Consistent Spacing */
+  .admin-section-spacing {
+    @apply space-y-6 md:space-y-8;
+  }
+
+  .admin-card-spacing {
+    @apply space-y-4 md:space-y-6;
+  }
+
+  .admin-grid-spacing {
+    @apply gap-4 md:gap-6;
+  }
 }
