@@ -26,24 +26,56 @@ connectDB();
 
 const app = express();
 
-// Middleware
+// Middleware - CORS Configuration
 const allowedOrigins = process.env.FRONTEND_URL 
   ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
   : ['http://localhost:8080'];
+
+// Add common Vercel patterns
+if (process.env.NODE_ENV === 'production') {
+  // Allow Vercel preview and production URLs
+  allowedOrigins.push('https://*.vercel.app');
+}
 
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    // Check exact match
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
     }
+    
+    // Check wildcard patterns (for Vercel)
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      if (allowedOrigin.includes('*')) {
+        const pattern = allowedOrigin.replace('*', '.*');
+        const regex = new RegExp(`^${pattern}$`);
+        return regex.test(origin);
+      }
+      return false;
+    });
+    
+    if (isAllowed) {
+      return callback(null, true);
+    }
+    
+    // Development mode - allow all
+    if (process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+    
+    // Log for debugging
+    console.log('CORS blocked origin:', origin);
+    console.log('Allowed origins:', allowedOrigins);
+    
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
