@@ -31,6 +31,10 @@ export default defineConfig(({ mode }) => ({
         drop_console: mode === "production", // Remove console.logs in production
       },
     },
+    // Ensure terser is available
+    commonjsOptions: {
+      include: [/terser/],
+    },
     rollupOptions: {
       output: {
         manualChunks: {
