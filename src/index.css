@@ -48,54 +48,66 @@ html {
 
 @layer base {
   :root {
-    /* Fresh Modern Color Palette */
-    --background: 45 50% 98%;
-    --foreground: 220 25% 15%;
+    /* Enhanced Modern Color Palette */
+    --background: 0 0% 100%;
+    --foreground: 220 25% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 15%;
+    --card-foreground: 220 25% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 15%;
+    --popover-foreground: 220 25% 10%;
 
-    /* Vibrant Emerald - Primary */
-    --primary: 158 64% 40%;
+    /* Vibrant Emerald - Primary (Enhanced) */
+    --primary: 158 64% 42%;
     --primary-foreground: 0 0% 100%;
 
-    /* Soft Neutral - Secondary */
-    --secondary: 45 30% 94%;
-    --secondary-foreground: 220 20% 30%;
+    /* Soft Neutral - Secondary (Enhanced) */
+    --secondary: 45 20% 96%;
+    --secondary-foreground: 220 20% 25%;
 
-    /* Muted tones */
-    --muted: 45 20% 92%;
-    --muted-foreground: 220 10% 50%;
+    /* Muted tones (Enhanced) */
+    --muted: 45 15% 95%;
+    --muted-foreground: 220 10% 45%;
 
-    /* Warm Amber accent */
+    /* Warm Amber accent (Enhanced) */
     --accent: 35 95% 55%;
-    --accent-foreground: 25 50% 15%;
+    --accent-foreground: 25 50% 12%;
 
-    --destructive: 0 85% 60%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 45 15% 88%;
-    --input: 45 15% 88%;
-    --ring: 158 64% 40%;
+    --border: 220 15% 90%;
+    --input: 220 15% 92%;
+    --ring: 158 64% 42%;
 
     --radius: 0.75rem;
 
-    /* Custom Ayurvedic tokens - Updated for vibrancy */
-    --ayurveda-green: 158 64% 40%;
-    --ayurveda-green-light: 158 55% 55%;
-    --ayurveda-green-dark: 158 70% 28%;
-    --ayurveda-cream: 45 50% 98%;
-    --ayurveda-cream-dark: 45 30% 92%;
-    --ayurveda-brown: 25 45% 25%;
-    --ayurveda-brown-light: 25 35% 40%;
+    /* Enhanced Ayurvedic Color Tokens */
+    --ayurveda-green: 158 64% 42%;
+    --ayurveda-green-light: 158 55% 56%;
+    --ayurveda-green-dark: 158 70% 30%;
+    --ayurveda-cream: 0 0% 100%;
+    --ayurveda-cream-dark: 45 15% 95%;
+    --ayurveda-brown: 25 45% 20%;
+    --ayurveda-brown-light: 25 35% 35%;
     --ayurveda-gold: 35 95% 55%;
     --ayurveda-gold-light: 40 90% 65%;
     --ayurveda-terracotta: 15 65% 50%;
     --ayurveda-coral: 12 85% 62%;
     --ayurveda-sage: 145 25% 72%;
+    
+    /* Enhanced Gray Scale */
+    --gray-50: 0 0% 98%;
+    --gray-100: 220 15% 96%;
+    --gray-200: 220 15% 90%;
+    --gray-300: 220 15% 85%;
+    --gray-400: 220 10% 70%;
+    --gray-500: 220 10% 55%;
+    --gray-600: 220 10% 40%;
+    --gray-700: 220 15% 25%;
+    --gray-800: 220 20% 15%;
+    --gray-900: 220 25% 10%;
     
     /* Gradients - More vibrant */
     --gradient-hero: linear-gradient(135deg, hsl(158 64% 40%) 0%, hsl(158 70% 28%) 100%);
@@ -170,26 +182,101 @@ html {
 
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "kern" 1, "liga" 1;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.01em;
   }
 
+  /* Enhanced Typography System */
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl lg:text-3xl;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  h5 {
+    @apply text-lg md:text-xl lg:text-2xl;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  h6 {
+    @apply text-base md:text-lg lg:text-xl;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  p {
+    line-height: 1.7;
+    letter-spacing: 0;
   }
 }
 
 @layer components {
-  /* Container */
+  /* Container (Enhanced) */
   .container-custom {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    width: 100%;
   }
 
-  /* Section spacing */
+  /* Enhanced Section spacing */
   .section-padding {
     @apply py-12 md:py-16 lg:py-20;
+  }
+
+  .section-padding-sm {
+    @apply py-8 md:py-12 lg:py-16;
+  }
+
+  .section-padding-lg {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  /* Consistent spacing utilities */
+  .space-section {
+    @apply space-y-8 md:space-y-12 lg:space-y-16;
+  }
+
+  .space-content {
+    @apply space-y-4 md:space-y-6;
+  }
+
+  .space-tight {
+    @apply space-y-2 md:space-y-3;
   }
 
   /* Card styles */
@@ -240,13 +327,50 @@ html {
 }
 
 @layer utilities {
-  /* Text gradient */
+  /* Enhanced Text gradients */
   .text-gradient-gold {
     @apply bg-gradient-to-r from-ayurveda-gold via-ayurveda-gold-light to-ayurveda-gold bg-clip-text text-transparent;
+    font-weight: 700;
   }
 
   .text-gradient-green {
     @apply bg-gradient-to-r from-ayurveda-green to-ayurveda-green-light bg-clip-text text-transparent;
+    font-weight: 700;
+  }
+
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-primary via-ayurveda-green-light to-primary bg-clip-text text-transparent;
+    font-weight: 600;
+  }
+
+  /* Enhanced Typography Utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Better letter spacing */
+  .tracking-tighter {
+    letter-spacing: -0.05em;
+  }
+
+  .tracking-tight {
+    letter-spacing: -0.025em;
+  }
+
+  .tracking-normal {
+    letter-spacing: 0;
+  }
+
+  .tracking-wide {
+    letter-spacing: 0.025em;
+  }
+
+  .tracking-wider {
+    letter-spacing: 0.05em;
   }
 
   /* Background patterns */

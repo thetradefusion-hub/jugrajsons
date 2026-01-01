@@ -732,7 +732,7 @@ const ProductDetails = () => {
             {!product.inStock || product.stockCount === 0 ? (
               <Button 
                 size="lg" 
-                className="flex-1 h-12 rounded-xl bg-muted text-muted-foreground font-semibold text-base cursor-not-allowed"
+                className="flex-1 h-14 rounded-xl bg-muted text-muted-foreground font-semibold text-base cursor-not-allowed"
                 disabled
               >
                 <AlertCircle className="w-5 h-5 mr-2" /> Out of Stock
@@ -740,39 +740,44 @@ const ProductDetails = () => {
             ) : quantity === 0 ? (
               <Button 
                 size="lg" 
-                className="flex-1 h-12 rounded-xl bg-gradient-to-r from-primary to-teal-600 hover:from-primary/90 hover:to-teal-600/90 font-semibold text-base shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
+                className="flex-1 h-14 rounded-xl bg-gradient-to-r from-emerald-600 via-primary to-teal-600 hover:from-emerald-700 hover:via-primary/90 hover:to-teal-700 font-extrabold text-lg shadow-2xl hover:shadow-emerald-500/50 transition-all hover:scale-[1.02] relative overflow-hidden group"
                 onClick={() => {
                   addItem(product);
                   toast({
-                    title: 'Added to Cart!',
+                    title: '✅ Added to Cart!',
                     description: `${product.name} added successfully`,
                   });
                 }}
               >
-                <ShoppingCart className="w-5 h-5 mr-2" /> Add to Cart - ₹{adjustedPrice.toLocaleString()}
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                  <span>Add to Cart</span>
+                  <span className="font-black">₹{adjustedPrice.toLocaleString()}</span>
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               </Button>
             ) : (
-              <div className="flex-1 flex items-center justify-between bg-gradient-to-r from-primary to-teal-600 rounded-xl h-12 px-2 shadow-lg">
+              <div className="flex-1 flex items-center justify-between bg-gradient-to-r from-emerald-600 via-primary to-teal-600 rounded-xl h-14 px-3 shadow-2xl border-2 border-emerald-500/30">
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-9 w-9 text-primary-foreground hover:bg-white/20 rounded-lg"
+                  className="h-10 w-10 text-white hover:bg-white/25 rounded-lg transition-all hover:scale-110"
                   onClick={() => updateQuantity(product.id, quantity - 1)}
                 >
-                  <Minus className="w-4 h-4" />
+                  <Minus className="w-5 h-5" />
                 </Button>
-                <div className="flex flex-col items-center">
-                  <span className="font-bold text-lg text-primary-foreground">{quantity}</span>
-                  <span className="text-[10px] text-primary-foreground/80">in cart</span>
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="font-extrabold text-xl text-white">{quantity}</span>
+                  <span className="text-[10px] text-white/90 font-semibold">in cart</span>
                 </div>
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-9 w-9 text-primary-foreground hover:bg-white/20 rounded-lg"
+                  className="h-10 w-10 text-white hover:bg-white/25 rounded-lg transition-all hover:scale-110"
                   onClick={() => updateQuantity(product.id, quantity + 1)}
                   disabled={product.stockCount > 0 && quantity >= product.stockCount}
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-5 h-5" />
                 </Button>
               </div>
             )}

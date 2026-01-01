@@ -94,6 +94,8 @@ Railway automatically service detect करेगा, लेकिन verify क
 
 ### 4.2 Variables एक-एक करके Add करें
 
+**⚠️ IMPORTANT:** सभी variables add करना जरूरी है, खासकर `MONGODB_URI`!
+
 #### Variable 1: NODE_ENV
 - **Name:** `NODE_ENV`
 - **Value:** `production`

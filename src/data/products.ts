@@ -47,10 +47,10 @@ export const concerns: Concern[] = [
   { id: "2", name: "Digestion", slug: "digestion", icon: "🌿", description: "Improve digestive health" },
   { id: "3", name: "Weight Management", slug: "weight-management", icon: "⚖️", description: "Healthy weight solutions" },
   { id: "4", name: "Skin & Hair", slug: "skin-hair", icon: "✨", description: "Natural beauty care" },
-  { id: "5", name: "Women's Health", slug: "womens-health", icon: "🌸", description: "Complete women wellness" },
-  { id: "6", name: "Men's Health", slug: "mens-health", icon: "💪", description: "Vitality for men" },
+  { id: "5", name: "Women Health", slug: "women-health", icon: "🌸", description: "Complete women wellness" },
+  { id: "6", name: "Men Health", slug: "men-health", icon: "💪", description: "Vitality for men" },
   { id: "7", name: "Joint & Bone", slug: "joint-bone", icon: "🦴", description: "Mobility & strength" },
-  { id: "8", name: "Stress & Sleep", slug: "stress-sleep", icon: "😴", description: "Calm mind, better sleep" },
+  { id: "8", name: "Sleep & Stress", slug: "sleep-stress", icon: "😴", description: "Calm mind, better sleep" },
   { id: "9", name: "Heart Health", slug: "heart-health", icon: "❤️", description: "Cardiovascular wellness" },
   { id: "10", name: "Diabetes Care", slug: "diabetes-care", icon: "🩸", description: "Blood sugar support" },
 ];

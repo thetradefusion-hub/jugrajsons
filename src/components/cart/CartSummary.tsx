@@ -196,11 +196,15 @@ const CartSummary: React.FC = () => {
         </p>
       </div>
 
-      {/* Checkout Button */}
-      <Button asChild className="w-full" size="lg">
-        <Link to="/checkout">
-          Proceed to Checkout
-          <ChevronRight className="w-4 h-4 ml-2" />
+      {/* Enhanced Checkout Button */}
+      <Button 
+        asChild 
+        className="w-full h-14 bg-gradient-to-r from-emerald-600 via-primary to-teal-600 hover:from-emerald-700 hover:via-primary/90 hover:to-teal-700 font-extrabold text-lg shadow-2xl hover:shadow-emerald-500/50 transition-all hover:scale-[1.02] relative overflow-hidden group" 
+        size="lg"
+      >
+        <Link to="/checkout" className="flex items-center justify-center gap-2">
+          <span>Proceed to Checkout</span>
+          <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </Link>
       </Button>
 

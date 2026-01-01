@@ -6,7 +6,7 @@ const navItems = [
   { icon: Home, label: "Home", path: "/" },
   { icon: Package, label: "Products", path: "/products" },
   { icon: Truck, label: "Track", path: "/track-order" },
-  { icon: Stethoscope, label: "Expert", path: "/expert" },
+  { icon: Stethoscope, label: "Consult", path: "/expert" },
   { icon: User, label: "Profile", path: "/profile" },
 ];
 
@@ -27,59 +27,41 @@ const BottomNav = () => {
     });
   };
 
-  return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t-2 border-primary/20 shadow-[0_-8px_32px_rgba(0,0,0,0.15)] md:hidden safe-area-bottom backdrop-blur-xl bg-background/98">
-      <div className="flex items-center justify-around h-20 px-2 pb-2">
-        {navItems.map((item) => {
-          const active = isActive(item.path);
-          return (
-            <RouterNavLink
-              key={item.path}
-              to={item.path}
-              onClick={handleLinkClick}
-              className={cn(
-                "flex flex-col items-center justify-center flex-1 py-2 px-2 rounded-2xl transition-all duration-300 relative",
-                active 
-                  ? "text-primary" 
-                  : "text-muted-foreground hover:text-primary"
-              )}
-            >
-              {/* Active indicator background */}
-              {active && (
-                <div className="absolute inset-0 bg-primary/10 rounded-2xl -z-10 scale-110" />
-              )}
-              
-              <div className={cn(
-                "p-2.5 rounded-2xl transition-all duration-300 mb-1",
-                active 
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-110" 
-                  : "hover:bg-muted/50"
-              )}>
-                <item.icon className={cn(
-                  "w-6 h-6 transition-all",
-                  active && "stroke-[2.5px]"
-                )} />
-              </div>
-              
-              <span className={cn(
-                "text-[11px] font-semibold transition-all leading-tight",
-                active 
-                  ? "text-primary font-bold" 
-                  : "text-muted-foreground"
-              )}>
-                {item.label}
-              </span>
-              
-              {/* Active dot indicator */}
-              {active && (
-                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary" />
-              )}
-            </RouterNavLink>
-          );
-        })}
-      </div>
-    </nav>
-  );
+      return (
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-emerald-600 to-emerald-500 border-t border-emerald-700/30 md:hidden safe-area-bottom shadow-[0_-2px_8px_rgba(0,0,0,0.15)]">
+          <div className="flex items-center justify-around h-16 px-2">
+            {navItems.map((item) => {
+              const active = isActive(item.path);
+              return (
+                <RouterNavLink
+                  key={item.path}
+                  to={item.path}
+                  onClick={handleLinkClick}
+                  className={cn(
+                    "flex flex-col items-center justify-center flex-1 py-2 px-1 transition-colors duration-200",
+                    active 
+                      ? "text-white" 
+                      : "text-white/80"
+                  )}
+                >
+                  <item.icon className={cn(
+                    "w-5 h-5 mb-1 transition-colors",
+                    active && "text-white scale-110"
+                  )} />
+                  <span className={cn(
+                    "text-xs font-medium transition-colors",
+                    active 
+                      ? "text-white font-semibold" 
+                      : "text-white/80"
+                  )}>
+                    {item.label}
+                  </span>
+                </RouterNavLink>
+              );
+            })}
+          </div>
+        </nav>
+      );
 };
 
 export default BottomNav;
