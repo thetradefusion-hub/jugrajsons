@@ -60,34 +60,28 @@ const Home = () => {
   const bestsellers = products.filter(p => p.isBestseller).slice(0, 4);
   const featuredProducts = products.slice(0, 6);
 
-  // Hero slides matching reference
+  // Hero slides with background images
   const heroSlides = [
     {
       id: 1,
       badge: 'Up to 40% Off',
       title: 'Ancient Wisdom, Modern Wellness',
-      subtitle: 'Discover the power of authentic Ayurveda',
-      description: 'Premium herbal formulations crafted with care for your complete health',
-      trustBadges: ['100% Natural', 'Lab Tested', 'Expert Formulas'],
       gradient: 'from-emerald-600 via-green-600 to-teal-600',
+      bgImage: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=1200&q=80',
     },
     {
       id: 2,
       badge: 'New Arrivals',
       title: 'Pure Ayurvedic Skincare',
-      subtitle: 'Radiance from nature',
-      description: 'Kumkumadi, Nalpamaradi & traditional beauty secrets',
-      trustBadges: ['100% Natural', 'Lab Tested', 'Expert Formulas'],
       gradient: 'from-amber-600 via-orange-600 to-rose-600',
+      bgImage: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1200&q=80',
     },
     {
       id: 3,
       badge: 'Expert Consultation',
       title: 'Personalized Health Solutions',
-      subtitle: 'Get expert advice',
-      description: 'Connect with certified Ayurvedic experts for your wellness journey',
-      trustBadges: ['100% Natural', 'Lab Tested', 'Expert Formulas'],
       gradient: 'from-purple-600 via-indigo-600 to-blue-600',
+      bgImage: 'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=1200&q=80',
     },
   ];
 
@@ -252,59 +246,47 @@ const Home = () => {
             <CarouselContent className="-ml-0">
               {heroSlides.map((slide) => (
                 <CarouselItem key={slide.id} className="pl-0">
-                  <div className={`relative bg-gradient-to-br ${slide.gradient} min-h-[380px] md:min-h-[550px] flex items-center py-10 md:py-16`}>
-                    <div className="container-custom w-full">
+                  <div className={`relative bg-gradient-to-br ${slide.gradient} min-h-[280px] md:min-h-[500px] flex items-center py-8 md:py-16 overflow-hidden`}>
+                    {/* Background Image */}
+                    <div 
+                      className="absolute inset-0 opacity-30 bg-cover bg-center bg-no-repeat"
+                      style={{ backgroundImage: `url(${slide.bgImage})` }}
+                    >
+                      <div className={`absolute inset-0 bg-gradient-to-br ${slide.gradient} opacity-80`} />
+                    </div>
+                    
+                    <div className="container-custom w-full relative z-10">
                       <div className="max-w-3xl mx-auto text-center">
                         {/* Badge */}
-                        <Badge className="mb-3 bg-white/20 backdrop-blur-sm text-white border-white/30 px-3 py-1 text-xs md:text-sm font-semibold">
+                        <Badge className="mb-3 bg-white/25 backdrop-blur-md text-white border-white/40 px-3 py-1 text-xs md:text-sm font-bold shadow-lg">
                           {slide.badge}
                         </Badge>
                         
                         {/* Title */}
-                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 md:mb-4">
+                        <h1 className="text-2xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 md:mb-8 drop-shadow-lg">
                           {slide.title}
                         </h1>
                         
-                        {/* Subtitle */}
-                        <p className="text-lg md:text-2xl text-white/90 mb-2">
-                          {slide.subtitle}
-                        </p>
-                        
-                        {/* Description */}
-                        <p className="text-sm md:text-lg text-white/80 mb-6 md:mb-8">
-                          {slide.description}
-                        </p>
-                        
-                        {/* Trust Badges */}
-                        <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 mb-6 md:mb-8">
-                          {slide.trustBadges.map((badge, idx) => (
-                            <div key={idx} className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                              <CheckCircle2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
-                              <span className="text-xs md:text-sm text-white font-medium">{badge}</span>
-                            </div>
-                          ))}
-                        </div>
-                        
-                        {/* Enhanced CTA Buttons */}
+                        {/* Enhanced CTA Buttons with Combination Colors */}
                         <div className="flex flex-wrap gap-3 md:gap-4 justify-center">
                           <Button 
                             asChild 
                             size="lg" 
-                            className="bg-white text-emerald-700 hover:bg-emerald-50 rounded-full px-6 md:px-10 py-5 md:py-7 text-base md:text-lg font-bold shadow-2xl hover:shadow-white/50 hover:scale-105 transition-all duration-300 group"
+                            className="bg-gradient-to-r from-white via-emerald-50 to-white text-emerald-700 hover:from-emerald-50 hover:via-white hover:to-emerald-50 rounded-full px-6 md:px-10 py-4 md:py-6 text-sm md:text-lg font-extrabold shadow-2xl hover:shadow-white/50 hover:scale-105 transition-all duration-300 group border-2 border-white/50"
                           >
                             <Link to="/products" className="flex items-center gap-2 md:gap-3">
                               <span>Shop Now</span>
-                              <ArrowRight className="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-1 transition-transform" />
+                              <ArrowRight className="w-4 h-4 md:w-6 md:h-6 group-hover:translate-x-1 transition-transform" />
                             </Link>
                           </Button>
                           <Button 
                             asChild 
                             size="lg" 
-                            className="bg-white/25 backdrop-blur-md border-2 border-white text-white hover:bg-white/40 hover:border-white/80 rounded-full px-6 md:px-10 py-5 md:py-7 text-base md:text-lg font-bold shadow-2xl hover:shadow-white/30 hover:scale-105 transition-all duration-300"
+                            className="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 hover:from-amber-500 hover:via-orange-500 hover:to-rose-500 text-white rounded-full px-6 md:px-10 py-4 md:py-6 text-sm md:text-lg font-extrabold shadow-2xl hover:shadow-amber-500/50 hover:scale-105 transition-all duration-300 border-2 border-white/30"
                           >
                             <Link to="/products" className="flex items-center gap-2 md:gap-3 text-white">
                               Explore Products
-                              <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
+                              <ArrowRight className="w-4 h-4 md:w-6 md:h-6" />
                             </Link>
                           </Button>
                         </div>
@@ -334,10 +316,10 @@ const Home = () => {
           </Carousel>
         </section>
 
-        {/* Enhanced Trust Features Section */}
-        <section className="py-6 md:py-8 bg-white border-b border-gray-100">
+        {/* Enhanced Trust Features Section - Compact */}
+        <section className="py-4 md:py-6 bg-white border-b border-gray-100">
           <div className="container-custom">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
               {trustFeatures.map((feature, index) => (
                 <motion.div
                   key={feature.title}
@@ -345,29 +327,32 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
-                  className="flex flex-col items-center text-center p-3 md:p-4 rounded-xl bg-gradient-to-br from-emerald-50/50 to-teal-50/50 hover:from-emerald-50 hover:to-teal-50 transition-all duration-300 border border-emerald-100/50 hover:border-emerald-200 hover:shadow-md"
+                  className="flex flex-col items-center text-center p-2 md:p-4 rounded-lg bg-gradient-to-br from-emerald-50/50 to-teal-50/50 hover:from-emerald-50 hover:to-teal-50 transition-all duration-300 border border-emerald-100/50 hover:border-emerald-200"
                 >
-                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mb-2 md:mb-3 shadow-lg">
-                    <feature.icon className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mb-1.5 md:mb-3 shadow-md">
+                    <feature.icon className="w-4 h-4 md:w-6 md:h-6 text-white" />
                   </div>
-                  <h3 className="font-bold text-xs md:text-sm text-gray-900 mb-1">{feature.title}</h3>
-                  <p className="text-[10px] md:text-xs text-gray-600 leading-tight">{feature.description}</p>
+                  <h3 className="font-bold text-[10px] md:text-sm text-gray-900 mb-0.5 leading-tight">{feature.title}</h3>
+                  <p className="text-[9px] md:text-xs text-gray-600 leading-tight">{feature.description}</p>
                 </motion.div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Trending Section - Matching Reference */}
-        <section className="py-8 bg-white border-b">
+        {/* Enhanced Trending Section */}
+        <section className="py-6 md:py-8 bg-gradient-to-r from-emerald-50/50 via-teal-50/30 to-green-50/50 border-b border-gray-100">
           <div className="container-custom">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="font-semibold text-gray-900">Trending:</span>
+            <div className="flex flex-wrap items-center gap-3 md:gap-4">
+              <span className="font-bold text-gray-900 text-sm md:text-base flex items-center gap-2">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                Trending:
+              </span>
               {trendingTags.map((tag) => (
                 <Link
                   key={tag.name}
                   to={tag.url}
-                  className="text-sm text-emerald-600 hover:text-emerald-700 hover:underline"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm md:text-base font-semibold text-emerald-700 bg-white hover:bg-emerald-50 border border-emerald-200 hover:border-emerald-400 rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 hover:text-emerald-800"
                 >
                   {tag.name}
                 </Link>
