@@ -133,17 +133,21 @@ const Footer = () => {
             
             {/* Contact Info */}
             <div className="space-y-3 text-sm">
-              <a href="tel:+919876543210" className="flex items-center gap-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+              <a href="tel:+919669361290" className="flex items-center gap-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors">
                 <Phone className="w-4 h-4" />
-                +91 98765 43210
+                09669361290
               </a>
               <a href="mailto:support@atharvahealthsolutions.com" className="flex items-center gap-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors">
                 <Mail className="w-4 h-4" />
                 support@atharvahealthsolutions.com
               </a>
+              <a href="http://atharvahealthsolutions.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+                <span className="w-4 h-4 text-center">🌐</span>
+                atharvahealthsolutions.com
+              </a>
               <div className="flex items-start gap-2 text-primary-foreground/70">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <span>123 Ayurveda Lane, Wellness City, India - 400001</span>
+                <span>Atharva Health Solution, Dunda Seoni, Seoni, Madhya Pradesh – 480661, India</span>
               </div>
             </div>
 

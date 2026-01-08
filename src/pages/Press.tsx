@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { 
   Newspaper, Mail, Phone, Download, FileText, Calendar,
-  Image, Video, Users, Award, TrendingUp, Globe
+  Image, Video, Users, Award, TrendingUp, Globe, MapPin
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -70,8 +70,20 @@ const Press = () => {
     {
       icon: Phone,
       title: 'Media Contact',
-      content: '+91 98765 43210',
-      link: 'tel:+919876543210',
+      content: '09669361290',
+      link: 'tel:+919669361290',
+    },
+    {
+      icon: MapPin,
+      title: 'Address',
+      content: 'Atharva Health Solution, Dunda Seoni, Seoni, Madhya Pradesh – 480661, India',
+      link: 'https://maps.google.com',
+    },
+    {
+      icon: Globe,
+      title: 'Website',
+      content: 'http://atharvahealthsolutions.com',
+      link: 'http://atharvahealthsolutions.com',
     },
   ];
 

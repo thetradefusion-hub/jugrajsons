@@ -10,10 +10,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdminLayout from '@/components/admin/AdminLayout';
 import api from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
+import { concerns } from '@/data/products';
 
 const productSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
@@ -233,8 +235,22 @@ const AdminEditProduct = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="category">Category *</Label>
-                      <Input id="category" {...register('category')} />
+                      <Label htmlFor="category">Health Concern (Category) *</Label>
+                      <Select
+                        value={watch('category') || ''}
+                        onValueChange={(value) => setValue('category', value, { shouldValidate: true })}
+                      >
+                        <SelectTrigger id="category">
+                          <SelectValue placeholder="Select Health Concern" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {concerns.map((concern) => (
+                            <SelectItem key={concern.id} value={concern.slug}>
+                              {concern.icon} {concern.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       {errors.category && <p className="text-sm text-destructive">{errors.category.message}</p>}
                     </div>
 
@@ -317,8 +333,9 @@ const AdminEditProduct = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="concern">Health Concerns (comma separated)</Label>
+                    <Label htmlFor="concern">Additional Health Concerns (comma separated, optional)</Label>
                     <Input id="concern" {...register('concern')} />
+                    <p className="text-xs text-muted-foreground">Add additional concerns if product addresses multiple health issues</p>
                   </div>
 
                   <div className="space-y-2">

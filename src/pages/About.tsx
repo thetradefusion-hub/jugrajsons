@@ -370,8 +370,8 @@ const About = () => {
                 <CardContent className="p-6">
                   <Phone className="w-8 h-8 text-primary mx-auto mb-3" />
                   <h3 className="font-semibold mb-2">Phone</h3>
-                  <a href="tel:+919876543210" className="text-primary hover:underline">
-                    +91 98765 43210
+                  <a href="tel:+919669361290" className="text-primary hover:underline">
+                    09669361290
                   </a>
                 </CardContent>
               </Card>
@@ -389,8 +389,8 @@ const About = () => {
                   <MapPin className="w-8 h-8 text-primary mx-auto mb-3" />
                   <h3 className="font-semibold mb-2">Address</h3>
                   <p className="text-sm text-muted-foreground">
-                    123 Ayurveda Lane<br />
-                    Wellness City, India - 400001
+                    Atharva Health Solution, Dunda Seoni<br />
+                    Seoni, Madhya Pradesh – 480661, India
                   </p>
                 </CardContent>
               </Card>

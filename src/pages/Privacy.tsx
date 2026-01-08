@@ -543,12 +543,18 @@ const Privacy = () => {
                     </p>
                     <p>
                       <strong className="text-foreground">Phone:</strong>{' '}
-                      <a href="tel:+919876543210" className="text-primary hover:underline">
-                        +91 98765 43210
+                      <a href="tel:+919669361290" className="text-primary hover:underline">
+                        09669361290
                       </a>
                     </p>
                     <p>
-                      <strong className="text-foreground">Address:</strong> 123 Ayurveda Lane, Wellness City, India - 400001
+                      <strong className="text-foreground">Website:</strong>{' '}
+                      <a href="http://atharvahealthsolutions.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        http://atharvahealthsolutions.com
+                      </a>
+                    </p>
+                    <p>
+                      <strong className="text-foreground">Address:</strong> Atharva Health Solution, Dunda Seoni, Seoni, Madhya Pradesh – 480661, India
                     </p>
                   </div>
                 </CardContent>

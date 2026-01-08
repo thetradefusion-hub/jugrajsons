@@ -68,8 +68,8 @@ const Contact = () => {
     {
       icon: Phone,
       title: 'Phone',
-      content: '+91 98765 43210',
-      link: 'tel:+919876543210',
+      content: '09669361290',
+      link: 'tel:+919669361290',
       description: 'Mon-Sat, 9 AM - 7 PM',
     },
     {
@@ -82,9 +82,9 @@ const Contact = () => {
     {
       icon: MapPin,
       title: 'Address',
-      content: '123 Ayurveda Lane, Wellness City',
+      content: 'Atharva Health Solution, Dunda Seoni',
       link: 'https://maps.google.com',
-      description: 'India - 400001',
+      description: 'Seoni, Madhya Pradesh – 480661, India',
     },
     {
       icon: Clock,
@@ -344,8 +344,8 @@ const Contact = () => {
                 <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                   <div className="text-center">
                     <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground mb-2">123 Ayurveda Lane, Wellness City</p>
-                    <p className="text-sm text-muted-foreground">India - 400001</p>
+                    <p className="text-muted-foreground mb-2">Atharva Health Solution, Dunda Seoni</p>
+                    <p className="text-sm text-muted-foreground">Seoni, Madhya Pradesh – 480661, India</p>
                     <Button
                       variant="outline"
                       className="mt-4"
