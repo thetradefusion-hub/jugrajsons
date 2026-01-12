@@ -14,8 +14,8 @@ const Shipping = () => {
       name: 'Standard Shipping',
       icon: Truck,
       duration: '5-7 business days',
-      price: 'Free on orders above ₹999',
-      priceBelow: '₹50 for orders below ₹999',
+      price: 'Free on orders above Rs. 999',
+      priceBelow: 'Rs. 50 for orders below Rs. 999',
       description: 'Regular delivery to your doorstep',
       color: 'text-blue-600',
       bgColor: 'bg-blue-50 dark:bg-blue-950/20',
@@ -24,7 +24,7 @@ const Shipping = () => {
       name: 'Express Shipping',
       icon: Zap,
       duration: '2-3 business days',
-      price: '₹150',
+      price: 'Rs. 150',
       priceBelow: null,
       description: 'Faster delivery for urgent orders',
       color: 'text-orange-600',
@@ -34,7 +34,7 @@ const Shipping = () => {
       name: 'Same Day Delivery',
       icon: Package,
       duration: 'Same day (select cities)',
-      price: '₹200',
+      price: 'Rs. 200',
       priceBelow: null,
       description: 'Available in major metro cities',
       color: 'text-emerald-600',
@@ -115,7 +115,7 @@ const Shipping = () => {
       type: 'success',
       icon: CheckCircle2,
       title: 'Cash on Delivery',
-      content: 'COD is available for orders up to ₹5000. Payment is collected at the time of delivery.',
+      content: 'COD is available for orders up to Rs. 5000. Payment is collected at the time of delivery.',
     },
     {
       type: 'info',
@@ -132,7 +132,7 @@ const Shipping = () => {
     },
     {
       question: 'What are the shipping charges?',
-      answer: 'Shipping is free on orders above ₹999. For orders below ₹999, standard shipping charges are ₹50. Express shipping costs ₹150, and same-day delivery costs ₹200.',
+      answer: 'Shipping is free on orders above Rs. 999. For orders below Rs. 999, standard shipping charges are Rs. 50. Express shipping costs Rs. 150, and same-day delivery costs Rs. 200.',
     },
     {
       question: 'Can I track my order?',
@@ -156,7 +156,7 @@ const Shipping = () => {
     <>
       <SEO 
         title="Shipping Information - Delivery & Shipping Policy | Atharva Health Solutions"
-        description="Learn about our shipping methods, delivery times, charges, and tracking. Free shipping on orders above ₹999. Fast and secure delivery across India."
+        description="Learn about our shipping methods, delivery times, charges, and tracking. Free shipping on orders above Rs. 999. Fast and secure delivery across India."
       />
       <main className="pb-24">
         {/* Hero Section */}
@@ -175,7 +175,7 @@ const Shipping = () => {
                 Shipping Information
               </h1>
               <p className="text-lg text-muted-foreground">
-                Fast, secure, and reliable delivery to your doorstep. Free shipping on orders above ₹999!
+                Fast, secure, and reliable delivery to your doorstep. Free shipping on orders above Rs. 999!
               </p>
             </motion.div>
           </div>

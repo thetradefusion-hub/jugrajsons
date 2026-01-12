@@ -44,11 +44,11 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         {/* Price */}
         <div className="flex items-center gap-2 mt-2">
           <span className="font-semibold text-foreground">
-            ₹{product.price.toLocaleString()}
+            Rs. {product.price.toLocaleString()}
           </span>
           {product.originalPrice > product.price && (
             <span className="text-sm text-muted-foreground line-through">
-              ₹{product.originalPrice.toLocaleString()}
+              Rs. {product.originalPrice.toLocaleString()}
             </span>
           )}
         </div>
@@ -91,7 +91,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       <div className="text-right hidden sm:block">
         <p className="text-sm text-muted-foreground">Subtotal</p>
         <p className="font-semibold text-lg">
-          ₹{(product.price * quantity).toLocaleString()}
+          Rs. {(product.price * quantity).toLocaleString()}
         </p>
       </div>
     </motion.div>

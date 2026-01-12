@@ -245,7 +245,7 @@ const MyAppointments = () => {
                               </div>
                               <div className="flex items-center gap-2 text-sm">
                                 <span className="font-medium text-emerald-600">
-                                  Fee: ₹{appointment.fee || 'Free'}
+                                  Fee: {appointment.fee ? `Rs. ${appointment.fee}` : 'Free'}
                                 </span>
                                 <Badge variant={appointment.paymentStatus === 'paid' ? 'default' : 'secondary'}>
                                   {appointment.paymentStatus}

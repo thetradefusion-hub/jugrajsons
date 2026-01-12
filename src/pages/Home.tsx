@@ -108,7 +108,7 @@ const Home = () => {
     { 
       icon: Truck, 
       title: 'Free Delivery', 
-      description: 'Above ₹499',
+      description: 'Above Rs. 499',
       image: '/placeholder.svg'
     },
   ];
@@ -146,7 +146,7 @@ const Home = () => {
     {
       icon: Truck,
       title: 'Fast Delivery',
-      description: 'Free shipping above ₹499, 3-5 days delivery',
+      description: 'Free shipping above Rs. 499, 3-5 days delivery',
       image: '/placeholder.svg'
     },
   ];
@@ -427,7 +427,12 @@ const Home = () => {
                         <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors">
                           {concern.name}
                         </h3>
-                        <p className="text-sm text-gray-600">{products.filter(p => p.concern?.includes(concern.slug)).length} Products</p>
+                        <p className="text-sm text-gray-600">
+                          {products.filter(p => 
+                            (p.concern && Array.isArray(p.concern) && p.concern.includes(concern.slug)) || 
+                            p.category === concern.slug
+                          ).length} Products
+                        </p>
                       </CardContent>
                     </Card>
                   </Link>

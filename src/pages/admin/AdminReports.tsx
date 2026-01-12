@@ -119,7 +119,7 @@ const AdminReports = () => {
         new Date(order.createdAt).toLocaleDateString(),
         order.user?.name || 'Guest',
         order.items.length,
-        `₹${order.total}`,
+        `Rs. ${order.total}`,
         order.status,
         order.paymentStatus || 'pending'
       ].join(','))
@@ -221,7 +221,7 @@ const AdminReports = () => {
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="admin-stat-value">₹{reportData.totalRevenue.toLocaleString()}</div>
+                      <div className="admin-stat-value">Rs. {reportData.totalRevenue.toLocaleString()}</div>
                       <div className="admin-stat-label mt-2">Total Revenue</div>
                     </div>
                     <DollarSign className="h-9 w-9 text-emerald-500" />
@@ -243,7 +243,7 @@ const AdminReports = () => {
                 <CardContent className="p-5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="admin-stat-value">₹{Math.round(reportData.averageOrderValue).toLocaleString()}</div>
+                      <div className="admin-stat-value">Rs. {Math.round(reportData.averageOrderValue).toLocaleString()}</div>
                       <div className="admin-stat-label mt-2">Avg Order Value</div>
                     </div>
                     <TrendingUp className="h-9 w-9 text-purple-500" />
@@ -303,7 +303,7 @@ const AdminReports = () => {
                             </TableCell>
                             <TableCell>{order.user?.name || 'Guest'}</TableCell>
                             <TableCell>{order.items.length}</TableCell>
-                            <TableCell className="font-semibold">₹{order.total.toLocaleString()}</TableCell>
+                            <TableCell className="font-semibold">Rs. {order.total.toLocaleString()}</TableCell>
                             <TableCell>
                               <Badge variant="outline">{order.status}</Badge>
                             </TableCell>

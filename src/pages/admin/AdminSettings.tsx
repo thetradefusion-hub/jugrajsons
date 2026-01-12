@@ -332,7 +332,7 @@ const AdminSettings = () => {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="INR">INR (₹)</SelectItem>
+                          <SelectItem value="INR">INR (Rs.)</SelectItem>
                           <SelectItem value="USD">USD ($)</SelectItem>
                           <SelectItem value="EUR">EUR (€)</SelectItem>
                           <SelectItem value="GBP">GBP (£)</SelectItem>
@@ -607,7 +607,7 @@ const AdminSettings = () => {
                         min={0}
                         className="w-32"
                       />
-                      <span className="text-sm text-muted-foreground">₹</span>
+                      <span className="text-sm text-muted-foreground">Rs.</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
                       Orders above this amount qualify for free shipping
@@ -624,7 +624,7 @@ const AdminSettings = () => {
                         min={0}
                         className="w-32"
                       />
-                      <span className="text-sm text-muted-foreground">₹</span>
+                      <span className="text-sm text-muted-foreground">Rs.</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
                       Standard shipping charge for orders
@@ -652,7 +652,7 @@ const AdminSettings = () => {
                           min={0}
                           className="w-32"
                         />
-                        <span className="text-sm text-muted-foreground">₹</span>
+                        <span className="text-sm text-muted-foreground">Rs.</span>
                       </div>
                     </div>
                   )}

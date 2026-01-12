@@ -321,10 +321,10 @@ const MyOrders = () => {
                                       {item.product.name || 'Product'}
                                     </h4>
                                     <p className="text-xs md:text-sm text-muted-foreground">
-                                      Qty: {item.quantity} × ₹{item.price.toLocaleString()}
+                                      Qty: {item.quantity} × Rs. {item.price.toLocaleString()}
                                     </p>
                                     <p className="font-semibold text-sm md:text-base mt-1">
-                                      ₹{(item.price * item.quantity).toLocaleString()}
+                                      Rs. {(item.price * item.quantity).toLocaleString()}
                                     </p>
                                   </div>
                                 </div>
@@ -338,10 +338,10 @@ const MyOrders = () => {
                                       Product (Removed)
                                     </h4>
                                     <p className="text-xs md:text-sm text-muted-foreground">
-                                      Qty: {item.quantity} × ₹{item.price.toLocaleString()}
+                                      Qty: {item.quantity} × Rs. {item.price.toLocaleString()}
                                     </p>
                                     <p className="font-semibold text-sm md:text-base mt-1">
-                                      ₹{(item.price * item.quantity).toLocaleString()}
+                                      Rs. {(item.price * item.quantity).toLocaleString()}
                                     </p>
                                   </div>
                                 </div>
@@ -362,7 +362,7 @@ const MyOrders = () => {
                             </div>
                             <div>
                               <p className="text-xs text-muted-foreground">Order Total</p>
-                              <p className="font-semibold">₹{order.total.toLocaleString()}</p>
+                              <p className="font-semibold">Rs. {order.total.toLocaleString()}</p>
                             </div>
                             <div className="col-span-2 md:col-span-1">
                               <p className="text-xs text-muted-foreground">Payment</p>
@@ -456,10 +456,10 @@ const MyOrders = () => {
                             <div className="flex-1">
                               <h4 className="font-medium">{item.product.name || 'Product'}</h4>
                               <p className="text-sm text-muted-foreground">
-                                Quantity: {item.quantity} × ₹{item.price.toLocaleString()}
+                                Quantity: {item.quantity} × Rs. {item.price.toLocaleString()}
                               </p>
                               <p className="font-semibold mt-1">
-                                ₹{(item.price * item.quantity).toLocaleString()}
+                                Rs. {(item.price * item.quantity).toLocaleString()}
                               </p>
                             </div>
                           </div>
@@ -471,10 +471,10 @@ const MyOrders = () => {
                             <div className="flex-1">
                               <h4 className="font-medium">Product (Removed)</h4>
                               <p className="text-sm text-muted-foreground">
-                                Quantity: {item.quantity} × ₹{item.price.toLocaleString()}
+                                Quantity: {item.quantity} × Rs. {item.price.toLocaleString()}
                               </p>
                               <p className="font-semibold mt-1">
-                                ₹{(item.price * item.quantity).toLocaleString()}
+                                Rs. {(item.price * item.quantity).toLocaleString()}
                               </p>
                             </div>
                           </div>
@@ -535,7 +535,7 @@ const MyOrders = () => {
                         {selectedOrder.discount && selectedOrder.discount > 0 && (
                           <div className="flex justify-between text-primary">
                             <span>Discount:</span>
-                            <span>-₹{selectedOrder.discount.toLocaleString()}</span>
+                            <span>-Rs. {selectedOrder.discount.toLocaleString()}</span>
                           </div>
                         )}
                         {selectedOrder.couponCode && (
@@ -546,7 +546,7 @@ const MyOrders = () => {
                         )}
                         <div className="flex justify-between pt-2 border-t font-semibold text-base">
                           <span>Total:</span>
-                          <span>₹{selectedOrder.total.toLocaleString()}</span>
+                          <span>Rs. {selectedOrder.total.toLocaleString()}</span>
                         </div>
                       </CardContent>
                     </Card>

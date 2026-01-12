@@ -99,7 +99,7 @@ const AdminDashboard = () => {
   const firstRowStats = [
     {
       title: 'Total Revenue',
-      value: `₹${(stats?.totalRevenue || 0).toLocaleString()}`,
+      value: `Rs. ${(stats?.totalRevenue || 0).toLocaleString()}`,
       icon: DollarSign,
       borderColor: 'border-emerald-500',
       bgColor: 'bg-emerald-50 dark:bg-emerald-950/20',
@@ -393,7 +393,7 @@ const AdminDashboard = () => {
                       </div>
                       <div className="text-right ml-4">
                         <p className="admin-heading-4 text-foreground">
-                          ₹{order.total?.toLocaleString() || '0'}
+                          Rs. {order.total?.toLocaleString() || '0'}
                         </p>
                         <ArrowRight className="h-4 w-4 text-muted-foreground mt-2 group-hover:translate-x-1 transition-transform" />
                       </div>
@@ -510,7 +510,7 @@ const AdminDashboard = () => {
                     stroke="#10b981"
                     strokeWidth={3}
                     fill="url(#colorRevenue)"
-                    name="Revenue (₹)"
+                    name="Revenue (Rs.)"
                     animationDuration={1500}
                   />
                   <Area

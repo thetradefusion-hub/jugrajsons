@@ -295,7 +295,7 @@ const AdminExperts = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="consultationFee">Consultation Fee (₹) *</Label>
+                    <Label htmlFor="consultationFee">Consultation Fee (Rs.) *</Label>
                     <Input id="consultationFee" type="number" {...register('consultationFee', { valueAsNumber: true })} placeholder="500" />
                     {errors.consultationFee && <p className="text-sm text-destructive">{errors.consultationFee.message}</p>}
                   </div>

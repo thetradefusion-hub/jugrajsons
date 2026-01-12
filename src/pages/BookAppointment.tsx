@@ -223,7 +223,7 @@ const BookAppointment = () => {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Consultation Fee</span>
                       <span className="font-bold text-lg text-emerald-600">
-                        ₹{expert.consultationFee || 'Free'}
+                        {expert.consultationFee ? `Rs. ${expert.consultationFee}` : 'Free'}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
@@ -358,7 +358,7 @@ const BookAppointment = () => {
                             <li>• Personalized Ayurvedic consultation</li>
                             <li>• Natural remedy recommendations</li>
                             <li>• Follow-up support included</li>
-                            <li>• {expert.consultationFee > 0 ? `Fee: ₹${expert.consultationFee}` : 'Free consultation'}</li>
+                            <li>• {expert.consultationFee > 0 ? `Fee: Rs. ${expert.consultationFee}` : 'Free consultation'}</li>
                           </ul>
                         </div>
                       </div>

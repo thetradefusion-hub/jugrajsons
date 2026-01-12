@@ -153,9 +153,13 @@ const Products = () => {
     }
 
     if (selectedConcerns.length > 0) {
-      filtered = filtered.filter(p =>
-        p.concern && Array.isArray(p.concern) && p.concern.some(c => selectedConcerns.includes(c))
-      );
+      filtered = filtered.filter(p => {
+        // Check if concern array contains any selected concern
+        const hasConcern = p.concern && Array.isArray(p.concern) && p.concern.some(c => selectedConcerns.includes(c));
+        // Also check if category matches any selected concern (for backward compatibility)
+        const hasCategoryMatch = p.category && selectedConcerns.includes(p.category);
+        return hasConcern || hasCategoryMatch;
+      });
       console.log('After concerns filter:', filtered.length);
     }
 

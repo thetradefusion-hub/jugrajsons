@@ -109,12 +109,17 @@ const AdminAddProduct = () => {
       }
 
       // Convert string fields to arrays
+      // Include the selected category (health concern) in the concern array
+      const additionalConcerns = data.concern.split(',').map(c => c.trim()).filter(Boolean);
+      const mainConcern = data.category ? [data.category] : [];
+      const allConcerns = [...new Set([...mainConcern, ...additionalConcerns])]; // Remove duplicates
+      
       const productData = {
         ...data,
         ingredients: data.ingredients.split(',').map(i => i.trim()).filter(Boolean),
         benefits: data.benefits.split(',').map(b => b.trim()).filter(Boolean),
         whoShouldUse: data.whoShouldUse.split(',').map(w => w.trim()).filter(Boolean),
-        concern: data.concern.split(',').map(c => c.trim()).filter(Boolean),
+        concern: allConcerns, // Include both main category and additional concerns
         tags: data.tags.split(',').map(t => t.trim()).filter(Boolean),
         images: validImages,
         discount: data.originalPrice > data.price 
@@ -230,7 +235,7 @@ const AdminAddProduct = () => {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="price">Price (₹) *</Label>
+                      <Label htmlFor="price">Price (Rs.) *</Label>
                       <Input 
                         id="price" 
                         type="number" 
@@ -241,7 +246,7 @@ const AdminAddProduct = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="originalPrice">Original Price (₹) *</Label>
+                      <Label htmlFor="originalPrice">Original Price (Rs.) *</Label>
                       <Input 
                         id="originalPrice" 
                         type="number" 

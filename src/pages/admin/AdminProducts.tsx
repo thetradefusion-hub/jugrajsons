@@ -231,7 +231,7 @@ const AdminProducts = () => {
                     <TableRow key={product._id}>
                       <TableCell className="font-medium">{product.name}</TableCell>
                       <TableCell>{product.category}</TableCell>
-                      <TableCell>₹{product.price}</TableCell>
+                      <TableCell>Rs. {product.price}</TableCell>
                       <TableCell>{product.stockCount}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">

@@ -169,15 +169,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
             <div className="flex flex-col gap-2 mt-auto">
               <div className="flex items-baseline gap-2 flex-wrap">
                 <span className="text-2xl md:text-3xl font-extrabold text-gray-900">
-                  ₹{product.price.toLocaleString()}
+                  Rs. {product.price.toLocaleString()}
                 </span>
                 {product.originalPrice > product.price && (
                   <>
                     <span className="text-sm md:text-base text-gray-500 line-through font-medium">
-                      ₹{product.originalPrice.toLocaleString()}
+                      Rs. {product.originalPrice.toLocaleString()}
                     </span>
                     <Badge className="bg-emerald-100 text-emerald-700 border-0 text-xs font-bold px-2 py-1">
-                      Save ₹{savings.toLocaleString()}
+                      Save Rs. {savings.toLocaleString()}
                     </Badge>
                   </>
                 )}

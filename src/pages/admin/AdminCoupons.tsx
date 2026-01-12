@@ -315,7 +315,7 @@ const AdminCoupons = () => {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="discountValue">
-                      Discount Value * ({watch('discountType') === 'percentage' ? '%' : '₹'})
+                      Discount Value * ({watch('discountType') === 'percentage' ? '%' : 'Rs.'})
                     </Label>
                     <Input
                       id="discountValue"
@@ -328,7 +328,7 @@ const AdminCoupons = () => {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="minPurchase">Minimum Purchase (₹) *</Label>
+                    <Label htmlFor="minPurchase">Minimum Purchase (Rs.) *</Label>
                     <Input
                       id="minPurchase"
                       type="number"
@@ -343,7 +343,7 @@ const AdminCoupons = () => {
 
                 {watch('discountType') === 'percentage' && (
                   <div className="space-y-2">
-                    <Label htmlFor="maxDiscount">Max Discount (₹) - Optional</Label>
+                    <Label htmlFor="maxDiscount">Max Discount (Rs.) - Optional</Label>
                     <Input
                       id="maxDiscount"
                       type="number"
@@ -488,14 +488,14 @@ const AdminCoupons = () => {
                       <TableCell>
                         {coupon.discountType === 'percentage'
                           ? `${coupon.discountValue}%`
-                          : `₹${coupon.discountValue}`}
+                          : `Rs. ${coupon.discountValue}`}
                         {coupon.maxDiscount && (
                           <span className="admin-body-small block">
-                            (Max ₹{coupon.maxDiscount})
+                            (Max Rs. {coupon.maxDiscount})
                           </span>
                         )}
                       </TableCell>
-                      <TableCell>₹{coupon.minPurchase}</TableCell>
+                      <TableCell>Rs. {coupon.minPurchase}</TableCell>
                       <TableCell>
                         {new Date(coupon.validUntil).toLocaleDateString()}
                       </TableCell>

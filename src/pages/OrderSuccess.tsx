@@ -67,7 +67,7 @@ const OrderSuccess = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Total Amount:</span>
-                  <span className="font-bold text-lg">₹{order.total.toLocaleString()}</span>
+                  <span className="font-bold text-lg">Rs. {order.total.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Payment Method:</span>

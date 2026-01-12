@@ -95,7 +95,7 @@ const Navbar = () => {
             </a>
             <span className="flex items-center gap-2">
               <Truck className="w-4 h-4" />
-              Free Shipping Above ₹499
+              Free Shipping Above Rs. 499
             </span>
           </div>
         </div>

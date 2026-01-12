@@ -98,7 +98,7 @@ const faqs: FAQ[] = [
     id: '13',
     category: 'shipping',
     question: 'What are your shipping charges?',
-    answer: 'Shipping charges vary based on your location and order value. We offer free shipping on orders above ₹999. Standard shipping charges apply for orders below this amount.',
+    answer: 'Shipping charges vary based on your location and order value. We offer free shipping on orders above Rs. 999. Standard shipping charges apply for orders below this amount.',
   },
   {
     id: '14',

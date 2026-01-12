@@ -99,7 +99,7 @@ const AdminAnalytics = () => {
   const statCards = [
     {
       title: 'Total Revenue',
-      value: `₹${(data?.totalRevenue || 0).toLocaleString()}`,
+      value: `Rs. ${(data?.totalRevenue || 0).toLocaleString()}`,
       icon: DollarSign,
       color: 'from-emerald-500 to-teal-500',
       change: '+15%',

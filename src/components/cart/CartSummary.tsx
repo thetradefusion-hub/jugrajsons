@@ -103,7 +103,7 @@ const CartSummary: React.FC = () => {
       {/* Items Count */}
       <div className="flex justify-between text-sm mb-4">
         <span className="text-muted-foreground">Items ({itemCount})</span>
-        <span>₹{total.toLocaleString()}</span>
+        <span>Rs. {total.toLocaleString()}</span>
       </div>
 
       {/* Coupon */}
@@ -113,7 +113,7 @@ const CartSummary: React.FC = () => {
             <div className="flex items-center gap-2">
               <Tag className="w-4 h-4" />
               <span className="text-sm font-medium">{appliedCoupon.code}</span>
-              <span className="text-xs">-₹{appliedCoupon.discount.toLocaleString()}</span>
+              <span className="text-xs">-Rs. {appliedCoupon.discount.toLocaleString()}</span>
             </div>
             <button
               onClick={handleRemoveCoupon}
@@ -152,7 +152,7 @@ const CartSummary: React.FC = () => {
       {discount > 0 && (
         <div className="flex justify-between text-sm mb-4 text-primary">
           <span>Coupon Discount</span>
-          <span>-₹{discount.toLocaleString()}</span>
+          <span>-Rs. {discount.toLocaleString()}</span>
         </div>
       )}
 
@@ -162,7 +162,7 @@ const CartSummary: React.FC = () => {
         {shippingCost === 0 ? (
           <span className="text-primary font-medium">FREE</span>
         ) : (
-          <span>₹{shippingCost}</span>
+          <span>Rs. {shippingCost}</span>
         )}
       </div>
 
@@ -172,7 +172,7 @@ const CartSummary: React.FC = () => {
           <div className="flex items-center gap-2 text-sm mb-2">
             <Truck className="w-4 h-4 text-primary" />
             <span>
-              Add ₹{(shippingThreshold - total).toLocaleString()} more for free shipping
+              Add Rs. {(shippingThreshold - total).toLocaleString()} more for free shipping
             </span>
           </div>
           <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -189,7 +189,7 @@ const CartSummary: React.FC = () => {
       <div className="border-t border-border pt-4 mb-6">
         <div className="flex justify-between items-center">
           <span className="font-semibold">Total</span>
-          <span className="text-2xl font-bold">₹{finalTotal.toLocaleString()}</span>
+          <span className="text-2xl font-bold">Rs. {finalTotal.toLocaleString()}</span>
         </div>
         <p className="text-xs text-muted-foreground mt-1">
           (Inclusive of all taxes)

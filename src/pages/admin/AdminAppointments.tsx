@@ -333,7 +333,7 @@ const AdminAppointments = () => {
                           </TableCell>
                           <TableCell>
                             <div className="text-sm">
-                              <div className="font-medium">₹{appointment.fee || 0}</div>
+                              <div className="font-medium">Rs. {appointment.fee || 0}</div>
                               <Badge variant={appointment.paymentStatus === 'paid' ? 'default' : 'secondary'} className="text-xs">
                                 {appointment.paymentStatus}
                               </Badge>
@@ -457,7 +457,7 @@ const AdminAppointments = () => {
                       </div>
                     <div>
                       <Label className="text-xs text-muted-foreground">Fee</Label>
-                      <p className="font-medium">₹{selectedAppointment.fee || 0}</p>
+                      <p className="font-medium">Rs. {selectedAppointment.fee || 0}</p>
                     </div>
                     <div>
                       <Label className="text-xs text-muted-foreground">Payment Status</Label>
@@ -507,7 +507,7 @@ const AdminAppointments = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label>Consultation Fee (₹)</Label>
+                        <Label>Consultation Fee (Rs. )</Label>
                         <div className="relative">
                           <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                           <Input
@@ -556,7 +556,7 @@ const AdminAppointments = () => {
                         <div className="text-sm text-blue-800">
                           <p className="font-semibold mb-1">Payment Information:</p>
                           <ul className="list-disc list-inside space-y-1 text-xs">
-                            <li>Fee: ₹{fee || 0}</li>
+                            <li>Fee: Rs. {fee || 0}</li>
                             <li>Status: {paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1)}</li>
                             {paymentStatus === 'paid' && fee > 0 && (
                               <li className="text-green-600 font-medium">✓ Payment received</li>

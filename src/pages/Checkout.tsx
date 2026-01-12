@@ -436,7 +436,7 @@ const Checkout = () => {
                     {items.map((item) => (
                       <div key={item.product.id} className="flex justify-between text-sm">
                         <span>{item.product.name} × {item.quantity}</span>
-                        <span>₹{(item.product.price * item.quantity).toLocaleString()}</span>
+                        <span>Rs. {(item.product.price * item.quantity).toLocaleString()}</span>
                       </div>
                     ))}
                   </div>
@@ -450,7 +450,7 @@ const Checkout = () => {
                           <span className="text-sm font-medium">{appliedCoupon.code}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm">-₹{appliedCoupon.discount.toLocaleString()}</span>
+                          <span className="text-sm">-Rs. {appliedCoupon.discount.toLocaleString()}</span>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -490,26 +490,26 @@ const Checkout = () => {
                   <div className="border-t pt-4 space-y-2">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span>₹{total.toLocaleString()}</span>
+                      <span>Rs. {total.toLocaleString()}</span>
                     </div>
                     {discount > 0 && (
                       <div className="flex justify-between text-primary">
                         <span>Discount</span>
-                        <span>-₹{discount.toLocaleString()}</span>
+                        <span>-Rs. {discount.toLocaleString()}</span>
                       </div>
                     )}
                     <div className="flex justify-between">
                       <span>Shipping</span>
-                      <span>{shippingCost === 0 ? 'FREE' : `₹${shippingCost}`}</span>
+                      <span>{shippingCost === 0 ? 'FREE' : `Rs. ${shippingCost}`}</span>
                     </div>
                     <div className="border-t pt-2 flex justify-between font-bold text-lg">
                       <span>Total</span>
-                      <span>₹{finalTotal.toLocaleString()}</span>
+                      <span>Rs. {finalTotal.toLocaleString()}</span>
                     </div>
                   </div>
 
                   <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-                    {isLoading ? 'Placing Order...' : `Place Order - ₹${finalTotal.toLocaleString()}`}
+                    {isLoading ? 'Placing Order...' : `Place Order - Rs. ${finalTotal.toLocaleString()}`}
                   </Button>
                 </CardContent>
               </Card>

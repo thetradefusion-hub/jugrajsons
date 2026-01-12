@@ -8,16 +8,34 @@ export const getProducts = async (req: Request, res: Response) => {
 
     if (category) query.category = category;
     
-    // Handle concern filter - concern is an array in the model
+    // Handle concern filter - check both concern array and category field
+    // This ensures products work even if health concern is only in category field
     if (concern) {
-      query.concern = { $in: [concern] }; // Match if concern array contains the value
+      query.$or = [
+        { concern: { $in: [concern] } }, // Match if concern array contains the value
+        { category: concern } // Also match if category equals the concern slug
+      ];
     }
     
     if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
-      ];
+      // If concern filter already set $or, we need to use $and to combine both conditions
+      if (query.$or) {
+        query.$and = [
+          { $or: query.$or },
+          {
+            $or: [
+              { name: { $regex: search, $options: 'i' } },
+              { description: { $regex: search, $options: 'i' } }
+            ]
+          }
+        ];
+        delete query.$or; // Remove $or since we're using $and now
+      } else {
+        query.$or = [
+          { name: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } }
+        ];
+      }
     }
 
     const products = await Product.find(query)

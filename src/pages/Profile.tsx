@@ -282,7 +282,7 @@ const Profile = () => {
                     <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-2">
                       <TrendingUp className="w-6 h-6 text-amber-600" />
                     </div>
-                    <p className="text-xl font-bold text-amber-600">₹{stats.totalSpent.toLocaleString()}</p>
+                    <p className="text-xl font-bold text-amber-600">Rs. {stats.totalSpent.toLocaleString()}</p>
                     <p className="text-xs text-muted-foreground font-medium">Total Spent</p>
                   </CardContent>
                 </Card>

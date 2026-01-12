@@ -630,7 +630,7 @@ const TrackOrder = () => {
                                   {item.product?.name || 'Product not found'}
                                 </h4>
                                 <p className="text-sm text-muted-foreground">
-                                  Quantity: {item.quantity} × ₹{item.price.toFixed(2)}
+                                  Quantity: {item.quantity} × Rs. {item.price.toFixed(2)}
                                 </p>
                                 {item.product?.slug && (
                                   <Link
@@ -643,7 +643,7 @@ const TrackOrder = () => {
                               </div>
                               <div className="text-right">
                                 <p className="font-semibold">
-                                  ₹{(item.quantity * item.price).toFixed(2)}
+                                  Rs. {(item.quantity * item.price).toFixed(2)}
                                 </p>
                               </div>
                             </div>
@@ -751,12 +751,12 @@ const TrackOrder = () => {
                       <CardContent className="space-y-3">
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Subtotal</span>
-                          <span>₹{(order.total + (order.discount || 0)).toFixed(2)}</span>
+                          <span>Rs. {(order.total + (order.discount || 0)).toFixed(2)}</span>
                         </div>
                         {order.discount && order.discount > 0 && (
                           <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">Discount</span>
-                            <span className="text-emerald-600">-₹{order.discount.toFixed(2)}</span>
+                            <span className="text-emerald-600">-Rs. {order.discount.toFixed(2)}</span>
                           </div>
                         )}
                         {order.couponCode && (
@@ -767,7 +767,7 @@ const TrackOrder = () => {
                         )}
                         <div className="border-t pt-3 flex justify-between font-semibold">
                           <span>Total</span>
-                          <span>₹{order.total.toFixed(2)}</span>
+                          <span>Rs. {order.total.toFixed(2)}</span>
                         </div>
                         <div className="pt-3 border-t space-y-2">
                           <div className="flex items-center gap-2 text-sm">

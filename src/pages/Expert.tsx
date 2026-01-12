@@ -316,7 +316,7 @@ const Expert = () => {
                           {expert.consultationFee > 0 && (
                             <div className="mt-2">
                               <Badge variant="outline" className="text-emerald-600 border-emerald-300">
-                                ₹{expert.consultationFee} per consultation
+                                Rs. {expert.consultationFee} per consultation
                               </Badge>
                             </div>
                           )}

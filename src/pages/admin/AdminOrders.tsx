@@ -297,7 +297,7 @@ const AdminOrders = () => {
           </Card>
           <Card className="border-2 border-purple-500 shadow-lg">
             <CardContent className="p-5">
-              <div className="admin-stat-value text-purple-600">₹{stats.revenue.toLocaleString()}</div>
+              <div className="admin-stat-value text-purple-600">Rs. {stats.revenue.toLocaleString()}</div>
               <div className="admin-stat-label mt-2">Revenue</div>
             </CardContent>
           </Card>
@@ -400,10 +400,10 @@ const AdminOrders = () => {
                         </td>
                         <td className="p-3 text-sm">{order.items.length} item(s)</td>
                         <td className="p-3">
-                          <div className="font-semibold">₹{order.total.toLocaleString()}</div>
+                          <div className="font-semibold">Rs. {order.total.toLocaleString()}</div>
                           {order.discount && order.discount > 0 && (
                             <div className="admin-body-small">
-                              Discount: ₹{order.discount}
+                              Discount: Rs. {order.discount}
                             </div>
                           )}
                         </td>
@@ -488,7 +488,7 @@ const AdminOrders = () => {
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Total</span>
-                        <span className="font-semibold">₹{order.total.toLocaleString()}</span>
+                        <span className="font-semibold">Rs. {order.total.toLocaleString()}</span>
                       </div>
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm items-center">
@@ -644,12 +644,12 @@ const AdminOrders = () => {
                           </div>
                           <div className="flex justify-between pt-2 border-t">
                             <span className="text-muted-foreground">Total:</span>
-                            <span className="font-semibold text-lg">₹{selectedOrder.total.toLocaleString()}</span>
+                            <span className="font-semibold text-lg">Rs. {selectedOrder.total.toLocaleString()}</span>
                           </div>
                           {selectedOrder.discount && selectedOrder.discount > 0 && (
                             <div className="flex justify-between text-primary">
                               <span>Discount:</span>
-                              <span>-₹{selectedOrder.discount.toLocaleString()}</span>
+                              <span>-Rs. {selectedOrder.discount.toLocaleString()}</span>
                             </div>
                           )}
                           {selectedOrder.couponCode && (
@@ -707,10 +707,10 @@ const AdminOrders = () => {
                               <div className="flex-1">
                                 <h4 className="font-medium">{item.product.name}</h4>
                                 <p className="admin-body-small">
-                                  Quantity: {item.quantity} × ₹{item.price.toLocaleString()}
+                                  Quantity: {item.quantity} × Rs. {item.price.toLocaleString()}
                                 </p>
                                 <p className="font-semibold mt-1">
-                                  ₹{(item.price * item.quantity).toLocaleString()}
+                                  Rs. {(item.price * item.quantity).toLocaleString()}
                                 </p>
                               </div>
                             </div>

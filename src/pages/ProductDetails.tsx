@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  Star, Heart, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plus, Check, Package, Leaf,
+  Star, Heart, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plus, Check, Leaf,
   Share2, AlertCircle, TrendingUp, Award, Clock, Users, MessageSquare, HelpCircle,
   CheckCircle2, Info, Sparkles, Zap
 } from 'lucide-react';
@@ -23,14 +23,6 @@ import { useRecentlyViewed } from '@/context/RecentlyViewedContext';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
-
-// Package size options
-const packageSizes = [
-  { id: 'small', label: '30 Tablets', multiplier: 0.5, popular: false },
-  { id: 'medium', label: '60 Tablets', multiplier: 1, popular: true },
-  { id: 'large', label: '120 Tablets', multiplier: 1.8, popular: false },
-  { id: 'family', label: '180 Tablets', multiplier: 2.5, popular: false },
-];
 
 interface Product {
   _id: string;
@@ -79,7 +71,6 @@ const ProductDetails = () => {
   const { addItem: addToRecentlyViewed, items: recentlyViewed } = useRecentlyViewed();
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
-  const [selectedSize, setSelectedSize] = useState('medium');
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -91,10 +82,6 @@ const ProductDetails = () => {
 
   const quantity = product ? getItemQuantity(product.id || product._id) : 0;
   const inWishlist = product ? isInWishlist(product.id || product._id) : false;
-
-  const selectedPackage = packageSizes.find(s => s.id === selectedSize)!;
-  const adjustedPrice = product ? Math.round(product.price * selectedPackage.multiplier) : 0;
-  const adjustedOriginalPrice = product ? Math.round(product.originalPrice * selectedPackage.multiplier) : 0;
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -403,47 +390,14 @@ const ProductDetails = () => {
                 <span className="font-mono font-medium">{product.sku}</span>
               </div>
 
-              {/* Package Size Selector */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Package className="w-4 h-4 text-primary" />
-                  <span className="font-medium text-sm">Select Package Size</span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {packageSizes.map((size) => (
-                    <button
-                      key={size.id}
-                      onClick={() => setSelectedSize(size.id)}
-                      className={cn(
-                        "relative p-3 rounded-xl border-2 transition-all text-left",
-                        selectedSize === size.id
-                          ? "border-primary bg-primary/5 shadow-md"
-                          : "border-border hover:border-primary/50"
-                      )}
-                    >
-                      {size.popular && (
-                        <span className="absolute -top-2 right-2 text-[10px] bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-0.5 rounded-full font-medium">
-                          Popular
-                        </span>
-                      )}
-                      <span className="font-semibold text-sm block">{size.label}</span>
-                      <span className="text-xs text-muted-foreground">
-                        ₹{Math.round(product.price * size.multiplier).toLocaleString()}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Price */}
               <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-2xl">
                 <div className="flex-1">
-                  <p className="text-xs text-muted-foreground mb-1">Price for {selectedPackage.label}</p>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-foreground">₹{adjustedPrice.toLocaleString()}</span>
-                    {adjustedOriginalPrice > adjustedPrice && (
+                    <span className="text-2xl font-bold text-foreground">Rs. {product.price.toLocaleString()}</span>
+                    {product.originalPrice > product.price && (
                       <>
-                        <span className="text-sm text-muted-foreground line-through">₹{adjustedOriginalPrice.toLocaleString()}</span>
+                        <span className="text-sm text-muted-foreground line-through">Rs. {product.originalPrice.toLocaleString()}</span>
                         <Badge className="bg-red-500/10 text-red-600 dark:text-red-400 border-0 text-xs">
                           {product.discount}% OFF
                         </Badge>
@@ -752,7 +706,7 @@ const ProductDetails = () => {
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform" />
                   <span>Add to Cart</span>
-                  <span className="font-black">₹{adjustedPrice.toLocaleString()}</span>
+                  <span className="font-black">Rs. {product.price.toLocaleString()}</span>
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               </Button>
