@@ -340,6 +340,39 @@ const Home = () => {
           </div>
         </section>
 
+        {/* About Atharva - Compact Section */}
+        <section className="py-6 md:py-8 bg-gradient-to-r from-emerald-50 via-teal-50 to-green-50 border-b border-gray-100">
+          <div className="container-custom">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="max-w-4xl mx-auto"
+            >
+              <Card className="border-0 shadow-md bg-white/80 backdrop-blur-sm">
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                    <div className="flex-shrink-0">
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg">
+                        <Leaf className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                      </div>
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                      <h3 className="font-bold text-base md:text-lg text-gray-900 mb-1 md:mb-2">
+                        About Atharva Health Solution
+                      </h3>
+                      <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+                        Atharva Health Solution is a <span className="font-semibold text-emerald-700">distributor and promoter</span> of <span className="font-semibold text-teal-700">Vaidyadeep Ayurveda</span>. We are dedicated to bringing authentic Ayurvedic products and natural health solutions to customers across India.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </section>
+
         {/* Enhanced Trending Section */}
         <section className="py-6 md:py-8 bg-gradient-to-r from-emerald-50/50 via-teal-50/30 to-green-50/50 border-b border-gray-100">
           <div className="container-custom">

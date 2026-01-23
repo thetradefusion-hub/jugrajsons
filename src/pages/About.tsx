@@ -116,8 +116,8 @@ const About = () => {
                 About Atharva Health Solutions
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Bringing the ancient wisdom of Ayurveda to modern wellness. For over 50 years, we've been 
-                dedicated to providing authentic, natural health solutions that transform lives.
+                Atharva Health Solution is a distributor and promoter of Vaidyadeep Ayurveda. We are dedicated 
+                to bringing authentic Ayurvedic products and natural health solutions to customers across India.
               </p>
             </motion.div>
           </div>

@@ -73,7 +73,7 @@ const Navbar = () => {
       key: 'product',
       items: productTypes.map(p => ({ name: p.name, slug: p.slug }))
     },
-    { label: 'Bestsellers', href: '/products?tag=bestseller' },
+    { label: 'All Products', href: '/products' },
     { label: 'New Arrivals', href: '/products?tag=new' },
   ];
 
