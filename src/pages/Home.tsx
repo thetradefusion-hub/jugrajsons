@@ -60,29 +60,11 @@ const Home = () => {
   const bestsellers = products.filter(p => p.isBestseller).slice(0, 4);
   const featuredProducts = products.slice(0, 6);
 
-  // Hero slides with background images
+  // Hero slider images (Balbuddhi, Glow Face Oil, Himaliyan Shilajit)
   const heroSlides = [
-    {
-      id: 1,
-      badge: 'Up to 40% Off',
-      title: 'Ancient Wisdom, Modern Wellness',
-      gradient: 'from-emerald-600 via-green-600 to-teal-600',
-      bgImage: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=1200&q=80',
-    },
-    {
-      id: 2,
-      badge: 'New Arrivals',
-      title: 'Pure Ayurvedic Skincare',
-      gradient: 'from-amber-600 via-orange-600 to-rose-600',
-      bgImage: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1200&q=80',
-    },
-    {
-      id: 3,
-      badge: 'Expert Consultation',
-      title: 'Personalized Health Solutions',
-      gradient: 'from-purple-600 via-indigo-600 to-blue-600',
-      bgImage: 'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=1200&q=80',
-    },
+    { id: 1, image: '/slider1.jpeg', alt: 'Balbuddhi Swarn Prashan Drop - Ayurvedic Formula for Kids' },
+    { id: 2, image: '/slider2.jpeg', alt: 'Glow Face Oil - Kumkumadi by Vaidyadeep Ayurveda' },
+    { id: 3, image: '/slider3.jpeg', alt: 'Himaliyan Shilajit - Stamina & Vitality Booster' },
   ];
 
   // Trust features matching reference
@@ -246,53 +228,15 @@ const Home = () => {
             <CarouselContent className="-ml-0">
               {heroSlides.map((slide) => (
                 <CarouselItem key={slide.id} className="pl-0">
-                  <div className={`relative bg-gradient-to-br ${slide.gradient} min-h-[280px] md:min-h-[500px] flex items-center py-8 md:py-16 overflow-hidden`}>
-                    {/* Background Image */}
-                    <div 
-                      className="absolute inset-0 opacity-30 bg-cover bg-center bg-no-repeat"
-                      style={{ backgroundImage: `url(${slide.bgImage})` }}
-                    >
-                      <div className={`absolute inset-0 bg-gradient-to-br ${slide.gradient} opacity-80`} />
+                  <Link to="/products" className="block w-full">
+                    <div className="relative min-h-[200px] md:min-h-[380px] lg:min-h-[420px] overflow-hidden bg-gray-100">
+                      <img
+                        src={slide.image}
+                        alt={slide.alt}
+                        className="w-full h-full object-cover object-center"
+                      />
                     </div>
-                    
-                    <div className="container-custom w-full relative z-10">
-                      <div className="max-w-3xl mx-auto text-center">
-                        {/* Badge */}
-                        <Badge className="mb-3 bg-white/25 backdrop-blur-md text-white border-white/40 px-3 py-1 text-xs md:text-sm font-bold shadow-lg">
-                          {slide.badge}
-                        </Badge>
-                        
-                        {/* Title */}
-                        <h1 className="text-2xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 md:mb-8 drop-shadow-lg">
-                          {slide.title}
-                        </h1>
-                        
-                        {/* Enhanced CTA Buttons with Combination Colors */}
-                        <div className="flex flex-wrap gap-3 md:gap-4 justify-center">
-                          <Button 
-                            asChild 
-                            size="lg" 
-                            className="bg-gradient-to-r from-white via-emerald-50 to-white text-emerald-700 hover:from-emerald-50 hover:via-white hover:to-emerald-50 rounded-full px-6 md:px-10 py-4 md:py-6 text-sm md:text-lg font-extrabold shadow-2xl hover:shadow-white/50 hover:scale-105 transition-all duration-300 group border-2 border-white/50"
-                          >
-                            <Link to="/products" className="flex items-center gap-2 md:gap-3">
-                              <span>Shop Now</span>
-                              <ArrowRight className="w-4 h-4 md:w-6 md:h-6 group-hover:translate-x-1 transition-transform" />
-                            </Link>
-                          </Button>
-                          <Button 
-                            asChild 
-                            size="lg" 
-                            className="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 hover:from-amber-500 hover:via-orange-500 hover:to-rose-500 text-white rounded-full px-6 md:px-10 py-4 md:py-6 text-sm md:text-lg font-extrabold shadow-2xl hover:shadow-amber-500/50 hover:scale-105 transition-all duration-300 border-2 border-white/30"
-                          >
-                            <Link to="/products" className="flex items-center gap-2 md:gap-3 text-white">
-                              Explore Products
-                              <ArrowRight className="w-4 h-4 md:w-6 md:h-6" />
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  </Link>
                 </CarouselItem>
               ))}
             </CarouselContent>
