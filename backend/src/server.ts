@@ -1,6 +1,11 @@
+import path from 'path';
+import dotenv from 'dotenv';
+
+// Load .env from backend folder (so it works even when running from project root)
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import connectDB from './config/database';
 
 // Routes
@@ -17,9 +22,6 @@ import appointmentRoutes from './routes/appointment.routes';
 import chatRoutes from './routes/chat.routes';
 import paymentRoutes from './routes/payment.routes';
 import shiprocketRoutes from './routes/shiprocket.routes';
-
-// Load env vars
-dotenv.config();
 
 // Connect to database
 connectDB();

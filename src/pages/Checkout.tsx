@@ -60,7 +60,8 @@ const Checkout = () => {
     } : undefined,
   });
 
-  const shippingCost = total >= 499 ? 0 : 49;
+  // For now, disable shipping charges so you can test payments easily
+  const shippingCost = 0;
   const discount = appliedCoupon?.discount || 0;
   const finalTotal = total + shippingCost - discount;
 

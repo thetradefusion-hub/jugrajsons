@@ -70,8 +70,9 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    // Calculate shipping cost if not provided
-    const calculatedShippingCost = shippingCost !== undefined ? shippingCost : (subtotal >= 499 ? 0 : 49);
+    // Calculate shipping cost
+    // Temporarily set to 0 so you can test with low-value orders
+    const calculatedShippingCost = 0;
     
     // Apply discount if coupon used
     const finalTotal = subtotal + calculatedShippingCost - (discount || 0);

@@ -20,8 +20,9 @@ const CartSummary: React.FC = () => {
   const [couponError, setCouponError] = useState<string | null>(null);
   const [isApplying, setIsApplying] = useState(false);
 
-  const shippingThreshold = 499;
-  const shippingCost = total >= shippingThreshold ? 0 : 49;
+  // For now, disable shipping charges so you can test payments easily
+  const shippingThreshold = 0;
+  const shippingCost = 0;
   const discount = appliedCoupon?.discount || 0;
   const finalTotal = total + shippingCost - discount;
 

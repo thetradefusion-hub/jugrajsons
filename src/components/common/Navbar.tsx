@@ -19,7 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
-import { concerns, productTypes } from '@/data/products';
+import { concerns } from '@/data/products';
 import { cn } from '@/lib/utils';
 
 const Navbar = () => {
@@ -67,11 +67,6 @@ const Navbar = () => {
       label: 'Shop by Concern', 
       key: 'concern',
       items: concerns.map(c => ({ name: c.name, slug: c.slug, icon: c.icon }))
-    },
-    { 
-      label: 'Shop by Product', 
-      key: 'product',
-      items: productTypes.map(p => ({ name: p.name, slug: p.slug }))
     },
     { label: 'All Products', href: '/products' },
     { label: 'New Arrivals', href: '/products?tag=new' },
