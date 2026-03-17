@@ -44,6 +44,7 @@ const Products = () => {
   const [sortBy, setSortBy] = useState('popularity');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedConcerns, setSelectedConcerns] = useState<string[]>(
     searchParams.get('concern') ? [searchParams.get('concern')!] : []
   );
@@ -198,6 +199,17 @@ const Products = () => {
     return filtered;
   }, [products, searchQuery, tagFilter, selectedConcerns, selectedCategories, priceRange, selectedRating, sortBy]);
 
+  const itemsPerPage = 12;
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredProducts, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, tagFilter, selectedConcerns, selectedCategories, priceRange, selectedRating, sortBy]);
+
   const handleClearAll = () => {
     setSelectedConcerns([]);
     setSelectedCategories([]);
@@ -233,7 +245,18 @@ const Products = () => {
                 <h1 className="font-display text-2xl md:text-3xl font-bold">
                   {tagFilter === 'bestseller' ? 'Bestsellers' : tagFilter === 'new' ? 'New Arrivals' : 'All Products'}
                 </h1>
-                <p className="text-muted-foreground">{filteredProducts.length} products</p>
+                <p className="text-muted-foreground">
+                  {filteredProducts.length} products
+                  {filteredProducts.length > 0 && (
+                    <>
+                      {' • '}
+                      Showing{' '}
+                      {Math.min((currentPage - 1) * itemsPerPage + 1, filteredProducts.length)}
+                      {'–'}
+                      {Math.min(currentPage * itemsPerPage, filteredProducts.length)}
+                    </>
+                  )}
+                </p>
               </div>
 
               <div className="flex items-center gap-3">
@@ -286,11 +309,48 @@ const Products = () => {
                 <div className="text-muted-foreground">Loading products...</div>
               </div>
             ) : filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                {filteredProducts.map((product, index) => (
-                  <ProductCard key={product.id || product._id} product={product} index={index} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                  {paginatedProducts.map((product, index) => (
+                    <ProductCard key={product.id || product._id} product={product} index={index} />
+                  ))}
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 mt-8">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={currentPage === 1}
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    >
+                      Previous
+                    </Button>
+
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <Button
+                          key={page}
+                          variant={page === currentPage ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setCurrentPage(page)}
+                        >
+                          {page}
+                        </Button>
+                      ))}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={currentPage === totalPages}
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
+              </>
             ) : (
               <EmptyState type="search" />
             )}
