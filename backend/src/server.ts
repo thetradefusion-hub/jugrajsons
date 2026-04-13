@@ -22,6 +22,7 @@ import appointmentRoutes from './routes/appointment.routes';
 import chatRoutes from './routes/chat.routes';
 import paymentRoutes from './routes/payment.routes';
 import shiprocketRoutes from './routes/shiprocket.routes';
+import pincodeRoutes from './routes/pincode.routes';
 
 // Connect to database
 connectDB();
@@ -29,13 +30,22 @@ connectDB();
 const app = express();
 
 // Middleware - CORS Configuration
-const allowedOrigins = process.env.FRONTEND_URL 
-  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-  : ['http://localhost:8080'];
+// localhost and 127.0.0.1 are different origins — both must be allowed if you open the app either way
+const localDevOrigins = [
+  'http://localhost:8080',
+  'http://127.0.0.1:8080',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+];
+const envOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map((url) => url.trim()).filter(Boolean)
+  : [];
 
-// Add common Vercel patterns
+// Always merge local + FRONTEND_URL so production NODE_ENV with only "localhost" in .env
+// does not break when the site is opened at 127.0.0.1 (common Vite / browser behaviour).
+const allowedOrigins: string[] = [...new Set([...localDevOrigins, ...envOrigins])];
+
 if (process.env.NODE_ENV === 'production') {
-  // Allow Vercel preview and production URLs
   allowedOrigins.push('https://*.vercel.app');
 }
 
@@ -63,8 +73,8 @@ app.use(cors({
       return callback(null, true);
     }
     
-    // Development mode - allow all
-    if (process.env.NODE_ENV === 'development') {
+    // Local / non-production: allow any origin (covers unset NODE_ENV and alternate ports)
+    if (process.env.NODE_ENV !== 'production') {
       return callback(null, true);
     }
     
@@ -96,10 +106,21 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/shiprocket', shiprocketRoutes);
+app.use('/api/pincode', pincodeRoutes);
 
-// Health check
+// Health check (public — used by checkout to show Shiprocket one-click status)
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running' });
+  const shiprocketEnabled =
+    Boolean(process.env.SHIPROCKET_EMAIL?.trim()) && Boolean(process.env.SHIPROCKET_PASSWORD?.trim());
+  res.json({
+    status: 'OK',
+    message: 'Server is running',
+    shiprocket: {
+      enabled: shiprocketEnabled,
+      /** AWB assign runs after create unless SHIPROCKET_AUTO_AWB=false */
+      autoAwb: process.env.SHIPROCKET_AUTO_AWB !== 'false',
+    },
+  });
 });
 
 const PORT = Number(process.env.PORT) || 5000;

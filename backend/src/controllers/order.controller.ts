@@ -148,35 +148,33 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       // Don't fail the order if notification creation fails
     }
 
-    // Create Shiprocket order (optional - won't fail if Shiprocket is not configured)
-    if (process.env.SHIPROCKET_EMAIL && process.env.SHIPROCKET_PASSWORD) {
-      // Create Shiprocket order in background (don't wait for it)
-      setImmediate(async () => {
-        try {
-          const { createShiprocketOrder } = await import('./shiprocket.controller');
-          const mockReq = {
-            user: req.user,
-            body: { orderId: order._id.toString() },
-          } as any;
-          const mockRes = {
-            json: (data: any) => {
-              console.log('Shiprocket order created:', data);
-            },
-            status: (code: number) => ({
-              json: (data: any) => {
-                console.error('Shiprocket order creation error:', data);
-              },
-            }),
-          } as any;
-          await createShiprocketOrder(mockReq, mockRes);
-        } catch (shiprocketError) {
-          console.error('Error initiating Shiprocket order:', shiprocketError);
-          // Don't fail the order if Shiprocket integration fails
-        }
-      });
+    // Shiprocket: COD = sync immediately. Online prepaid = sync after Razorpay verify (payment.controller).
+    let shiprocketMeta: { synced: boolean; message?: string } | undefined;
+    const payMethod = (paymentMethod || 'cod').toLowerCase();
+    if (
+      payMethod !== 'online' &&
+      process.env.SHIPROCKET_EMAIL?.trim() &&
+      process.env.SHIPROCKET_PASSWORD?.trim()
+    ) {
+      const { syncShiprocketOrderFromDb } = await import('../services/shiprocket.service');
+      const sr = await syncShiprocketOrderFromDb(order._id.toString());
+      shiprocketMeta = sr.ok
+        ? { synced: true }
+        : { synced: false, message: sr.message };
+      if (!sr.ok) {
+        console.error('[Shiprocket] Checkout sync failed:', sr.message, sr.details ?? '');
+      }
     }
 
-    res.status(201).json(populatedOrder);
+    const payload =
+      typeof (populatedOrder as any).toObject === 'function'
+        ? (populatedOrder as any).toObject()
+        : { ...(populatedOrder as any) };
+    if (shiprocketMeta) {
+      (payload as any).shiprocket = shiprocketMeta;
+    }
+
+    res.status(201).json(payload);
   } catch (error: any) {
     console.error('Error creating order:', error);
     res.status(500).json({ 

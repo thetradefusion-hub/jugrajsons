@@ -194,11 +194,9 @@ const MyOrders = () => {
 
         {orders.length === 0 ? (
           <EmptyState
-            type="order"
+            type="orders"
             title="No Orders Yet"
             description="Start shopping to see your orders here"
-            actionLabel="Browse Products"
-            actionPath="/products"
           />
         ) : (
           <Tabs defaultValue="all" className="space-y-4">

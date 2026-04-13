@@ -41,7 +41,7 @@ const emptyStates = {
 };
 
 const EmptyState: React.FC<EmptyStateProps> = ({ type, title, description }) => {
-  const state = emptyStates[type];
+  const state = emptyStates[type] ?? emptyStates.orders;
   const Icon = state.icon;
 
   return (

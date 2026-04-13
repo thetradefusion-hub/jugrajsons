@@ -49,7 +49,7 @@ interface Address {
 
 const Addresses = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated, updateUser } = useAuth();
+  const { isAuthenticated, updateUser } = useAuth();
   const { toast } = useToast();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
@@ -156,6 +156,8 @@ const Addresses = () => {
         description: 'Address deleted successfully',
       });
       fetchAddresses();
+      const userResponse = await api.get('/auth/me');
+      updateUser(userResponse.data);
     } catch (error: any) {
       toast({
         title: 'Error',

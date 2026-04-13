@@ -3,6 +3,7 @@ import { AuthRequest } from '../middleware/auth.middleware';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import Order from '../models/Order';
+import { syncShiprocketOrderFromDb } from '../services/shiprocket.service';
 
 // Lazy-initialize Razorpay (after dotenv is loaded in server.ts)
 function getRazorpay(): Razorpay | null {
@@ -112,10 +113,20 @@ export const verifyRazorpayPayment = async (req: AuthRequest, res: Response) => 
       order.paymentMethod = 'razorpay';
       await order.save();
 
+      let shiprocket: { synced: boolean; message?: string } | undefined;
+      if (process.env.SHIPROCKET_EMAIL?.trim() && process.env.SHIPROCKET_PASSWORD?.trim()) {
+        const sr = await syncShiprocketOrderFromDb(orderId);
+        shiprocket = sr.ok ? { synced: true } : { synced: false, message: sr.message };
+        if (!sr.ok) {
+          console.error('[Shiprocket] Post-payment sync failed:', sr.message, sr.details ?? '');
+        }
+      }
+
       return res.json({
         success: true,
         message: 'Payment verified successfully (development mode, signature not strictly validated)',
         order,
+        ...(shiprocket ? { shiprocket } : {}),
       });
     }
 
@@ -146,10 +157,20 @@ export const verifyRazorpayPayment = async (req: AuthRequest, res: Response) => 
     order.paymentMethod = 'razorpay';
     await order.save();
 
+    let shiprocket: { synced: boolean; message?: string } | undefined;
+    if (process.env.SHIPROCKET_EMAIL?.trim() && process.env.SHIPROCKET_PASSWORD?.trim()) {
+      const sr = await syncShiprocketOrderFromDb(orderId);
+      shiprocket = sr.ok ? { synced: true } : { synced: false, message: sr.message };
+      if (!sr.ok) {
+        console.error('[Shiprocket] Post-payment sync failed:', sr.message, sr.details ?? '');
+      }
+    }
+
     res.json({
       success: true,
       message: 'Payment verified successfully',
       order: order,
+      ...(shiprocket ? { shiprocket } : {}),
     });
   } catch (error: any) {
     console.error('Payment verification error:', error);

@@ -9,6 +9,8 @@ export interface User {
   phone?: string;
   avatar?: string;
   role?: 'user' | 'admin';
+  /** Mirrored from API for profile completion UI; canonical list is also in context `addresses` */
+  addresses?: Address[];
 }
 
 export interface Address {
@@ -32,6 +34,8 @@ interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   updateProfile: (updates: Partial<User>) => void;
+  /** Apply full user payload from PUT /auth/me or GET /auth/me (used by Settings / Addresses pages) */
+  updateUser: (userData: Record<string, unknown>) => void;
   addAddress: (address: Omit<Address, 'id'>) => void;
   updateAddress: (id: string, address: Partial<Address>) => void;
   removeAddress: (id: string) => void;
@@ -41,6 +45,24 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Mock user data for demo
+function mapApiAddressesToLocal(raw: unknown[] | undefined): Address[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((item: unknown, i: number) => {
+    const a = item as Record<string, unknown>;
+    return {
+      id: a._id != null ? String(a._id) : `addr-${i}`,
+      name: String(a.name ?? ''),
+      phone: String(a.phone ?? ''),
+      addressLine1: String(a.addressLine1 ?? ''),
+      addressLine2: a.addressLine2 != null ? String(a.addressLine2) : undefined,
+      city: String(a.city ?? ''),
+      state: String(a.state ?? ''),
+      pincode: String(a.pincode ?? ''),
+      isDefault: Boolean(a.isDefault),
+    };
+  });
+}
+
 const mockUsers: { email: string; password: string; user: User }[] = [
   {
     email: 'demo@atharva.com',
@@ -67,50 +89,55 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       if (token) {
         try {
-          // Verify token and get user from backend
           const response = await api.get('/auth/me');
           const userData = response.data;
-          const loadedUser = {
+          const mappedAddresses = mapApiAddressesToLocal(userData.addresses);
+          const loadedUser: User = {
             id: userData._id || userData.id,
             _id: userData._id || userData.id,
             email: userData.email,
             name: userData.name,
             phone: userData.phone,
             avatar: userData.avatar,
-            role: userData.role || 'user'
+            role: userData.role || 'user',
+            addresses: mappedAddresses,
           };
           setUser(loadedUser);
-          // Update localStorage with fresh user data
+          setAddresses(mappedAddresses);
           localStorage.setItem('atharva-user', JSON.stringify(loadedUser));
         } catch (error: any) {
-          // Only clear storage if it's a 401 (unauthorized), not network errors
           if (error.response?.status === 401) {
             localStorage.removeItem('token');
             localStorage.removeItem('atharva-user');
+            localStorage.removeItem('atharva-addresses');
           } else if (savedUser) {
-            // If network error but we have saved user, use it temporarily
             try {
               const parsedUser = JSON.parse(savedUser);
               setUser(parsedUser);
             } catch (parseError) {
               console.error('Error parsing saved user:', parseError);
             }
+            if (savedAddresses) {
+              try {
+                setAddresses(JSON.parse(savedAddresses));
+              } catch {
+                /* ignore */
+              }
+            }
           }
         }
       } else if (savedUser) {
-        // No token but saved user exists - load it (might be from previous session)
         try {
           setUser(JSON.parse(savedUser));
         } catch (error) {
           console.error('Error loading user from localStorage:', error);
         }
-      }
-      
-      if (savedAddresses) {
-        try {
-          setAddresses(JSON.parse(savedAddresses));
-        } catch (error) {
-          console.error('Error loading addresses from localStorage:', error);
+        if (savedAddresses) {
+          try {
+            setAddresses(JSON.parse(savedAddresses));
+          } catch (error) {
+            console.error('Error loading addresses from localStorage:', error);
+          }
         }
       }
       
@@ -136,24 +163,43 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const response = await api.post('/auth/login', { email, password });
       const { token, _id, name, email: userEmail, role } = response.data;
-      
+
       localStorage.setItem('token', token);
-      
-      const user: User = {
-        id: _id,
-        _id,
-        email: userEmail,
-        name,
-        role: role || 'user'
-      };
-      
-      setUser(user);
-      localStorage.setItem('atharva-user', JSON.stringify(user));
+
+      try {
+        const me = await api.get('/auth/me');
+        const userData = me.data;
+        const mappedAddresses = mapApiAddressesToLocal(userData.addresses);
+        const fullUser: User = {
+          id: userData._id || _id,
+          _id: userData._id || _id,
+          email: userData.email || userEmail,
+          name: userData.name || name,
+          phone: userData.phone,
+          avatar: userData.avatar,
+          role: userData.role || role || 'user',
+          addresses: mappedAddresses,
+        };
+        setUser(fullUser);
+        setAddresses(mappedAddresses);
+        localStorage.setItem('atharva-user', JSON.stringify(fullUser));
+      } catch {
+        const minimal: User = {
+          id: _id,
+          _id,
+          email: userEmail,
+          name,
+          role: role || 'user',
+        };
+        setUser(minimal);
+        setAddresses([]);
+        localStorage.setItem('atharva-user', JSON.stringify(minimal));
+      }
       return { success: true };
     } catch (error: any) {
-      return { 
-        success: false, 
-        error: error.response?.data?.message || 'Login failed. Please check your credentials.' 
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Login failed. Please check your credentials.',
       };
     }
   };
@@ -162,36 +208,112 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const response = await api.post('/auth/register', { name, email, password });
       const { token, _id, name: userName, email: userEmail, role } = response.data;
-      
+
       localStorage.setItem('token', token);
-      
-      const user: User = {
-        id: _id,
-        _id,
-        email: userEmail,
-        name: userName,
-        role: role || 'user'
-      };
-      
-      setUser(user);
-      localStorage.setItem('atharva-user', JSON.stringify(user));
+
+      try {
+        const me = await api.get('/auth/me');
+        const userData = me.data;
+        const mappedAddresses = mapApiAddressesToLocal(userData.addresses);
+        const fullUser: User = {
+          id: userData._id || _id,
+          _id: userData._id || _id,
+          email: userData.email || userEmail,
+          name: userData.name || userName,
+          phone: userData.phone,
+          avatar: userData.avatar,
+          role: userData.role || role || 'user',
+          addresses: mappedAddresses,
+        };
+        setUser(fullUser);
+        setAddresses(mappedAddresses);
+        localStorage.setItem('atharva-user', JSON.stringify(fullUser));
+      } catch {
+        const minimal: User = {
+          id: _id,
+          _id,
+          email: userEmail,
+          name: userName,
+          role: role || 'user',
+        };
+        setUser(minimal);
+        setAddresses([]);
+        localStorage.setItem('atharva-user', JSON.stringify(minimal));
+      }
       return { success: true };
     } catch (error: any) {
-      return { 
-        success: false, 
-        error: error.response?.data?.message || 'Registration failed. Please try again.' 
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Registration failed. Please try again.',
       };
     }
   };
 
   const logout = () => {
     setUser(null);
+    setAddresses([]);
     localStorage.removeItem('token');
     localStorage.removeItem('atharva-user');
+    localStorage.removeItem('atharva-addresses');
   };
 
   const updateProfile = (updates: Partial<User>) => {
-    setUser(prev => prev ? { ...prev, ...updates } : null);
+    setUser((prev) => (prev ? { ...prev, ...updates } : null));
+  };
+
+  const updateUser = (userData: Record<string, unknown>) => {
+    const u = userData as {
+      _id?: string;
+      id?: string;
+      name?: string;
+      email?: string;
+      phone?: string;
+      avatar?: string;
+      role?: string;
+      addresses?: unknown[];
+    };
+    const id = String(u._id || u.id || '');
+    if (!id) return;
+
+    const mappedAddresses =
+      u.addresses !== undefined ? mapApiAddressesToLocal(u.addresses as unknown[]) : null;
+
+    setUser((prev) => {
+      const base = prev ?? {
+        id,
+        _id: u._id,
+        email: u.email ?? '',
+        name: u.name ?? '',
+        role: 'user' as const,
+      };
+      return {
+        ...base,
+        id,
+        _id: u._id ?? base._id,
+        name: u.name ?? base.name,
+        email: u.email ?? base.email,
+        phone: u.phone !== undefined ? u.phone : base.phone,
+        avatar: u.avatar !== undefined ? u.avatar : base.avatar,
+        role: (u.role as 'user' | 'admin' | undefined) ?? base.role ?? 'user',
+        addresses: mappedAddresses !== null ? mappedAddresses : base.addresses,
+      };
+    });
+
+    if (mappedAddresses !== null) {
+      setAddresses(mappedAddresses);
+    }
+
+    const stored = {
+      id,
+      _id: u._id,
+      name: u.name,
+      email: u.email,
+      phone: u.phone,
+      avatar: u.avatar,
+      role: u.role || 'user',
+      addresses: mappedAddresses ?? undefined,
+    };
+    localStorage.setItem('atharva-user', JSON.stringify(stored));
   };
 
   const addAddress = (address: Omit<Address, 'id'>) => {
@@ -238,6 +360,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         register,
         logout,
         updateProfile,
+        updateUser,
         addAddress,
         updateAddress,
         removeAddress,
