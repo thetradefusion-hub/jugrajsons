@@ -30,11 +30,30 @@ interface DashboardStats {
   recentOrders: any[];
 }
 
+interface StatusChartItem {
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface TopProductItem {
+  name: string;
+  sales: number;
+  revenue: number;
+}
+
 const AdminDashboard = () => {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [orderStatusData, setOrderStatusData] = useState<StatusChartItem[]>([
+    { name: 'Delivered', value: 0, color: '#10b981' },
+    { name: 'Pending', value: 0, color: '#f59e0b' },
+    { name: 'Processing', value: 0, color: '#3b82f6' },
+    { name: 'Cancelled', value: 0, color: '#ef4444' },
+  ]);
+  const [topProducts, setTopProducts] = useState<TopProductItem[]>([]);
 
   useEffect(() => {
     if (isLoading) return;
@@ -47,8 +66,62 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await api.get('/admin/stats');
-      setStats(response.data);
+      const [statsResponse, ordersResponse] = await Promise.all([
+        api.get('/admin/stats'),
+        api.get('/admin/orders'),
+      ]);
+
+      setStats(statsResponse.data);
+
+      const orders = Array.isArray(ordersResponse.data) ? ordersResponse.data : [];
+
+      const statusCounts = {
+        delivered: 0,
+        pending: 0,
+        processing: 0,
+        cancelled: 0,
+      };
+
+      const productSalesMap = new Map<string, TopProductItem>();
+
+      orders.forEach((order: any) => {
+        const status = String(order?.status || '').toLowerCase();
+
+        if (status === 'delivered') {
+          statusCounts.delivered += 1;
+        } else if (status === 'pending') {
+          statusCounts.pending += 1;
+        } else if (status === 'cancelled') {
+          statusCounts.cancelled += 1;
+        } else if (['confirmed', 'processing', 'shipped'].includes(status)) {
+          statusCounts.processing += 1;
+        }
+
+        (order?.items || []).forEach((item: any) => {
+          const productId = item?.product?._id || item?.productId || item?._id || item?.name;
+          const key = String(productId || `item-${Math.random()}`);
+          const name = item?.product?.name || item?.name || 'Product';
+          const qty = Number(item?.quantity || 1);
+          const unitPrice = Number(item?.price ?? item?.product?.price ?? 0);
+
+          const existing = productSalesMap.get(key) || { name, sales: 0, revenue: 0 };
+          existing.sales += qty;
+          existing.revenue += qty * unitPrice;
+          productSalesMap.set(key, existing);
+        });
+      });
+
+      setOrderStatusData([
+        { name: 'Delivered', value: statusCounts.delivered, color: '#10b981' },
+        { name: 'Pending', value: statusCounts.pending, color: '#f59e0b' },
+        { name: 'Processing', value: statusCounts.processing, color: '#3b82f6' },
+        { name: 'Cancelled', value: statusCounts.cancelled, color: '#ef4444' },
+      ]);
+
+      const computedTopProducts = Array.from(productSalesMap.values())
+        .sort((a, b) => b.sales - a.sales)
+        .slice(0, 5);
+      setTopProducts(computedTopProducts);
     } catch (error) {
       console.error('Error fetching stats:', error);
     } finally {
@@ -80,20 +153,7 @@ const AdminDashboard = () => {
     { month: 'Jul', revenue: stats?.totalRevenue || 0, orders: stats?.totalOrders || 0 },
   ];
 
-  const orderStatusData = [
-    { name: 'Delivered', value: stats?.paidOrders || 0, color: '#10b981' },
-    { name: 'Pending', value: stats?.pendingOrders || 0, color: '#f59e0b' },
-    { name: 'Processing', value: 15, color: '#3b82f6' },
-    { name: 'Cancelled', value: 5, color: '#ef4444' },
-  ];
-
-  const topProducts = [
-    { name: 'Balbuddhi Swarn', sales: 125, revenue: 125000 },
-    { name: 'Deep Slim Fit', sales: 98, revenue: 98000 },
-    { name: 'Diaba Tune DS', sales: 87, revenue: 87000 },
-    { name: 'Himalayan Shilajit', sales: 76, revenue: 76000 },
-    { name: 'Kasadeep Syrup', sales: 65, revenue: 65000 },
-  ];
+  const totalStatusOrders = orderStatusData.reduce((sum, item) => sum + item.value, 0);
 
   // First row KPIs
   const firstRowStats = [
@@ -349,11 +409,11 @@ const AdminDashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="flex items-center justify-between p-4 border-2 border-amber-200 dark:border-amber-900 rounded-xl hover:bg-amber-50/50 dark:hover:bg-amber-950/20 transition-all cursor-pointer group hover:shadow-md"
+                      className="flex cursor-pointer flex-col gap-3 border-2 border-amber-200 p-4 transition-all hover:bg-amber-50/50 hover:shadow-md group dark:border-amber-900 dark:hover:bg-amber-950/20 sm:flex-row sm:items-center sm:justify-between"
                       onClick={() => navigate('/admin/orders')}
                     >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-2 flex flex-wrap items-center gap-2 sm:gap-3">
                           <div className="font-mono admin-body-small font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-lg">
                             #{order._id.slice(-6).toUpperCase()}
                           </div>
@@ -391,11 +451,11 @@ const AdminDashboard = () => {
                           })}
                         </p>
                       </div>
-                      <div className="text-right ml-4">
+                      <div className="ml-0 flex shrink-0 items-center justify-between gap-2 sm:ml-4 sm:flex-col sm:items-end sm:text-right">
                         <p className="admin-heading-4 text-foreground">
                           Rs. {order.total?.toLocaleString() || '0'}
                         </p>
-                        <ArrowRight className="h-4 w-4 text-muted-foreground mt-2 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 sm:mt-2" />
                       </div>
                     </motion.div>
                   ))}
@@ -423,7 +483,7 @@ const AdminDashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
                 {[
                   { icon: Package, label: 'Products', path: '/admin/products', color: 'emerald' },
                   { icon: ShoppingCart, label: 'Orders', path: '/admin/orders', color: 'amber' },
@@ -458,22 +518,23 @@ const AdminDashboard = () => {
         <motion.div variants={itemVariants}>
           <Card className="border-2 border-emerald-500 shadow-xl bg-gradient-to-br from-white to-emerald-50/30 dark:from-card dark:to-emerald-950/10">
             <CardHeader className="pb-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-2">
-                  <CardTitle className="admin-heading-3 flex items-center gap-3">
-                    <TrendingUp className="h-6 w-6 text-emerald-600" />
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 space-y-2">
+                  <CardTitle className="admin-heading-3 flex flex-wrap items-center gap-3">
+                    <TrendingUp className="h-6 w-6 shrink-0 text-emerald-600" />
                     Revenue Trend
                   </CardTitle>
                   <CardDescription className="admin-description">Monthly revenue and orders overview</CardDescription>
                 </div>
-                <Badge variant="outline" className="admin-body-small px-4 py-2 font-semibold">
-                  <Target className="h-3.5 w-3.5 mr-2" />
+                <Badge variant="outline" className="w-fit shrink-0 px-4 py-2 font-semibold admin-body-small">
+                  <Target className="mr-2 inline h-3.5 w-3.5" />
                   Last 7 Months
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={350}>
+            <CardContent className="min-w-0">
+              <div className="h-[260px] w-full min-w-0 sm:h-[300px] md:h-[350px]">
+              <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={revenueData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
@@ -524,12 +585,13 @@ const AdminDashboard = () => {
                   />
                 </AreaChart>
               </ResponsiveContainer>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
 
         {/* Bottom Section - Order Status & Top Products (2 boxes side by side) */}
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid min-w-0 gap-6 md:grid-cols-2">
           {/* Order Status */}
           <motion.div variants={itemVariants}>
             <Card className="border-2 border-amber-500 shadow-xl">
@@ -540,16 +602,20 @@ const AdminDashboard = () => {
                 </CardTitle>
                 <CardDescription className="admin-card-description">Current order distribution</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+              <CardContent className="min-w-0">
+                <div className="h-[240px] w-full min-w-0 sm:h-[280px] md:h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={orderStatusData}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={100}
+                      label={({ name, value }) => {
+                        const pct = totalStatusOrders > 0 ? ((Number(value) / totalStatusOrders) * 100).toFixed(0) : '0';
+                        return `${name}: ${pct}%`;
+                      }}
+                      outerRadius={88}
                       fill="#8884d8"
                       dataKey="value"
                       animationDuration={1000}
@@ -562,6 +628,7 @@ const AdminDashboard = () => {
                     <Legend />
                   </PieChart>
                 </ResponsiveContainer>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
@@ -576,31 +643,40 @@ const AdminDashboard = () => {
                 </CardTitle>
                 <CardDescription className="admin-card-description">Best selling products this month</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={topProducts} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" opacity={0.3} />
-                    <XAxis type="number" stroke="#6b7280" />
-                    <YAxis dataKey="name" type="category" stroke="#6b7280" width={100} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '12px',
-                      }}
-                    />
-                    <Bar
-                      dataKey="sales"
-                      fill="#a855f7"
-                      radius={[0, 8, 8, 0]}
-                      animationDuration={1500}
-                    >
-                      {topProducts.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={`hsl(${270 + index * 20}, 70%, 60%)`} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+              <CardContent className="min-w-0">
+                {topProducts.length > 0 ? (
+                  <div className="h-[240px] w-full min-w-0 sm:h-[280px] md:h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={topProducts} layout="vertical" margin={{ top: 5, right: 16, left: 4, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" opacity={0.3} />
+                      <XAxis type="number" stroke="#6b7280" />
+                      <YAxis dataKey="name" type="category" stroke="#6b7280" width={100} />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '12px',
+                        }}
+                      />
+                      <Bar
+                        dataKey="sales"
+                        fill="#a855f7"
+                        radius={[0, 8, 8, 0]}
+                        animationDuration={1500}
+                      >
+                        {topProducts.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={`hsl(${270 + index * 20}, 70%, 60%)`} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground text-sm">No product sales data yet</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </motion.div>

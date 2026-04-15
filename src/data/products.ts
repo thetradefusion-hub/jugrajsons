@@ -43,14 +43,14 @@ export interface Concern {
 }
 
 export const concerns: Concern[] = [
-  { id: "1", name: "Immunity", slug: "immunity", icon: "🛡️", description: "Boost your natural immunity" },
-  { id: "2", name: "Digestion", slug: "digestion", icon: "🌿", description: "Improve digestive health" },
-  { id: "3", name: "Weight Management", slug: "weight-management", icon: "⚖️", description: "Healthy weight solutions" },
-  { id: "4", name: "Skin & Hair", slug: "skin-hair", icon: "✨", description: "Natural beauty care" },
-  { id: "5", name: "Women Health", slug: "women-health", icon: "🌸", description: "Complete women wellness" },
-  { id: "6", name: "Men Health", slug: "men-health", icon: "💪", description: "Vitality for men" },
-  { id: "7", name: "Joint & Bone", slug: "joint-bone", icon: "🦴", description: "Mobility & strength" },
-  { id: "8", name: "Sleep & Stress", slug: "sleep-stress", icon: "😴", description: "Calm mind, better sleep" },
+  { id: "1", name: "Daily Immunity", slug: "immunity", icon: "🛡️", description: "Everyday wellness support" },
+  { id: "2", name: "Gut Comfort", slug: "digestion", icon: "🌿", description: "Light and soothing honey choices" },
+  { id: "3", name: "Fitness Lifestyle", slug: "weight-management", icon: "⚖️", description: "Natural sweetener alternatives" },
+  { id: "4", name: "Skin Glow", slug: "skin-hair", icon: "✨", description: "Honey picks for skin-friendly routines" },
+  { id: "5", name: "Women's Wellness", slug: "women-health", icon: "🌸", description: "Gentle daily nutrition options" },
+  { id: "6", name: "Energy & Vitality", slug: "men-health", icon: "💪", description: "Strong taste, active day support" },
+  { id: "7", name: "Joint Care", slug: "joint-bone", icon: "🦴", description: "Balanced diet companion honey" },
+  { id: "8", name: "Relax & Sleep", slug: "sleep-stress", icon: "😴", description: "Warm-milk and bedtime pairings" },
   { id: "9", name: "Heart Health", slug: "heart-health", icon: "❤️", description: "Cardiovascular wellness" },
   { id: "10", name: "Diabetes Care", slug: "diabetes-care", icon: "🩸", description: "Blood sugar support" },
   { id: "11", name: "Skin Disease", slug: "skin-disease", icon: "🔴", description: "Natural treatment for skin conditions" },
@@ -77,12 +77,12 @@ export const concerns: Concern[] = [
 ];
 
 export const productTypes: Category[] = [
-  { id: "1", name: "Capsules & Tablets", slug: "capsules", description: "Easy to consume herbal capsules", image: "/placeholder.svg", productCount: 45 },
-  { id: "2", name: "Oils", slug: "oils", description: "Therapeutic herbal oils", image: "/placeholder.svg", productCount: 23 },
-  { id: "3", name: "Syrups & Juices", slug: "syrups", description: "Liquid herbal formulations", image: "/placeholder.svg", productCount: 18 },
-  { id: "4", name: "Powders", slug: "powders", description: "Traditional churnas & powders", image: "/placeholder.svg", productCount: 32 },
-  { id: "5", name: "Balms & Ointments", slug: "balms", description: "Topical herbal applications", image: "/placeholder.svg", productCount: 15 },
-  { id: "6", name: "Combo Packs", slug: "combos", description: "Value bundles for complete care", image: "/placeholder.svg", productCount: 12 },
+  { id: "1", name: "Multi-Flora Honey", slug: "capsules", description: "Balanced flavor from varied blossoms", image: "/placeholder.svg", productCount: 45 },
+  { id: "2", name: "Mono-Flora Honey", slug: "oils", description: "Single-flower origin premium honey", image: "/placeholder.svg", productCount: 23 },
+  { id: "3", name: "Raw Farm Honey", slug: "syrups", description: "Natural unprocessed everyday honey", image: "/placeholder.svg", productCount: 18 },
+  { id: "4", name: "Wellness Range", slug: "powders", description: "Functional picks for routine use", image: "/placeholder.svg", productCount: 32 },
+  { id: "5", name: "Gift Packs", slug: "balms", description: "Curated honey gifting options", image: "/placeholder.svg", productCount: 15 },
+  { id: "6", name: "Combo Value Packs", slug: "combos", description: "Bundled jars for family usage", image: "/placeholder.svg", productCount: 12 },
 ];
 
 export const products: Product[] = [
@@ -484,8 +484,8 @@ export const testimonials = [
     name: "Rajesh Sharma",
     location: "Delhi",
     rating: 5,
-    text: "I've been using Ashwagandha Gold for 3 months now and the difference in my energy levels is remarkable. Highly recommend!",
-    product: "Ashwagandha Gold Capsules",
+    text: "Ajwain Honey ka taste bahut rich hai aur subah garam paani ke saath lena easy habit ban gaya. Purity genuinely feel hoti hai.",
+    product: "Ajwain Honey",
     image: "/placeholder.svg"
   },
   {
@@ -493,8 +493,8 @@ export const testimonials = [
     name: "Priya Patel",
     location: "Mumbai",
     rating: 5,
-    text: "The Kumkumadi Face Oil has transformed my skin. Natural glow without any harsh chemicals. Love it!",
-    product: "Kumkumadi Face Oil",
+    text: "Lychee Honey ka flavor bilkul natural aur fruity hai. Bachchon ko bhi pasand aata hai, aur packaging bhi kaafi premium lagi.",
+    product: "Lychee Honey",
     image: "/placeholder.svg"
   },
   {
@@ -502,8 +502,8 @@ export const testimonials = [
     name: "Amit Kumar",
     location: "Bangalore",
     rating: 5,
-    text: "Chyawanprash Special has become a family tradition now. Kids love the taste and we've seen fewer sick days!",
-    product: "Chyawanprash Special",
+    text: "Mustard Honey ki creamy texture bread ke saath perfect hai. Everyday sugar replacement ke liye yeh hamare ghar ka regular choice ban gaya.",
+    product: "Mustard Honey",
     image: "/placeholder.svg"
   },
   {
@@ -511,8 +511,8 @@ export const testimonials = [
     name: "Sunita Devi",
     location: "Jaipur",
     rating: 5,
-    text: "Shatavari helped me during my menopause journey. Natural and effective without any side effects.",
-    product: "Shatavari Women's Wellness",
+    text: "Jamun Honey ka earthy taste unique hai aur quality consistently acchi mili. Delivery bhi time par hui.",
+    product: "Jamun Honey",
     image: "/placeholder.svg"
   },
 ];

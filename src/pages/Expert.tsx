@@ -140,7 +140,7 @@ const Expert = () => {
   return (
     <>
       <SEO
-        title="Consult Ayurvedic Expert | Atharva Health Solutions"
+        title="Consult Honey Expert | Jugraj Son's Hive"
         description="Get personalized Ayurvedic consultation from certified experts"
       />
       

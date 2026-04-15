@@ -19,12 +19,9 @@ import {
   Star,
   Bell,
   History,
-  Sparkles,
   UserCircle,
-  Stethoscope,
-  Calendar,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -33,10 +30,29 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
+  const logoSrc = '/WhatsApp%20Image%202026-03-21%20at%203.15.06%20PM.jpeg';
   const { user, logout, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 1023px)');
+    const apply = () => {
+      if (mq.matches && sidebarOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    };
+    apply();
+    mq.addEventListener('change', apply);
+    return () => {
+      mq.removeEventListener('change', apply);
+      document.body.style.overflow = '';
+    };
+  }, [sidebarOpen]);
 
   // Show loading state while auth is loading
   if (isLoading) {
@@ -67,8 +83,6 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: Warehouse, label: 'Inventory', path: '/admin/inventory', color: 'emerald' },
     { icon: ShoppingCart, label: 'Orders', path: '/admin/orders', color: 'amber' },
     { icon: Users, label: 'Users', path: '/admin/users', color: 'blue' },
-    { icon: Stethoscope, label: 'Experts', path: '/admin/experts', color: 'teal' },
-    { icon: Calendar, label: 'Appointments', path: '/admin/appointments', color: 'indigo' },
     { icon: Ticket, label: 'Coupons', path: '/admin/coupons', color: 'orange' },
     { icon: Star, label: 'Reviews', path: '/admin/reviews', color: 'purple' },
     { icon: FileText, label: 'Reports', path: '/admin/reports', color: 'emerald' },
@@ -79,7 +93,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-emerald-50/60 via-teal-50/50 to-cyan-50/40 dark:from-background dark:via-emerald-950/25 dark:via-teal-950/20 dark:to-cyan-950/15 relative">
+    <div className="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-background via-emerald-50/60 via-teal-50/50 to-cyan-50/40 dark:from-background dark:via-emerald-950/25 dark:via-teal-950/20 dark:to-cyan-950/15">
       {/* Subtle pattern overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.08),transparent_50%)] pointer-events-none"></div>
       {/* Gradient orbs for depth */}
@@ -89,17 +103,19 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       
       <div className="relative z-10">
       {/* Mobile Header */}
-      <div className="lg:hidden border-b-2 border-emerald-200/50 dark:border-emerald-900/50 bg-card/80 backdrop-blur-sm shadow-sm">
-        <div className="flex items-center justify-between p-4">
+      <div className="border-b-2 border-emerald-200/50 bg-card/80 shadow-sm backdrop-blur-sm dark:border-emerald-900/50 lg:hidden pt-[env(safe-area-inset-top,0px)]">
+        <div className="flex items-center justify-between gap-2 p-3 sm:p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
-              <Sparkles className="h-5 w-5 text-white" />
-            </div>
+            <img
+              src={logoSrc}
+              alt="Jugraj Son's Hive"
+              className="h-9 w-9 rounded-xl object-cover ring-1 ring-emerald-200 shadow-lg"
+            />
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                 Admin Panel
               </h1>
-              <p className="text-xs text-muted-foreground">AtharvaHelth</p>
+              <p className="text-xs text-muted-foreground">Jugraj Son's Hive</p>
             </div>
           </div>
           <Button
@@ -113,24 +129,26 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </div>
       </div>
 
-      <div className="flex relative z-10">
+      <div className="relative z-10 flex min-w-0">
         {/* Enhanced Sidebar */}
         <aside
           className={cn(
             sidebarOpen ? 'translate-x-0' : '-translate-x-full',
-            'lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-card via-card to-emerald-50/40 dark:to-emerald-950/15 border-r-2 border-emerald-200/50 dark:border-emerald-900/50 transition-transform duration-300 h-screen lg:h-auto shadow-xl lg:shadow-none backdrop-blur-sm'
+            'fixed inset-y-0 left-0 z-50 h-[100dvh] w-[min(18rem,calc(100vw-1rem))] max-w-[85vw] border-r-2 border-emerald-200/50 bg-gradient-to-b from-card via-card to-emerald-50/40 shadow-xl backdrop-blur-sm transition-transform duration-300 dark:border-emerald-900/50 dark:to-emerald-950/15 sm:max-w-none sm:w-72 lg:static lg:h-auto lg:max-w-none lg:translate-x-0 lg:shadow-none',
           )}
         >
-          <div className="flex flex-col h-full overflow-y-auto scrollbar-hide">
+          <div className="scrollbar-hide flex h-full flex-col overflow-y-auto overscroll-y-contain pb-[env(safe-area-inset-bottom)]">
             {/* Sidebar Header */}
             <div className="p-6 border-b-2 border-emerald-200/50 dark:border-emerald-900/50 bg-gradient-to-r from-emerald-50/50 to-teal-50/50 dark:from-emerald-950/20 dark:to-teal-950/20">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
-                  <Sparkles className="h-6 w-6 text-white" />
-                </div>
+                <img
+                  src={logoSrc}
+                  alt="Jugraj Son's Hive"
+                  className="h-11 w-11 rounded-xl object-cover ring-1 ring-emerald-200 shadow-lg"
+                />
                 <div>
                   <h2 className="text-xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
-                    AtharvaHelth
+                    Jugraj Son's Hive
                   </h2>
                   <p className="text-xs text-muted-foreground font-medium">Admin Panel</p>
                 </div>
@@ -275,12 +293,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         </AnimatePresence>
 
         {/* Main Content with Gradient Background */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 w-full overflow-x-hidden min-h-screen relative">
+        <main className="relative min-h-0 w-full min-w-0 flex-1 overflow-x-hidden p-3 sm:p-6 lg:min-h-screen lg:p-8">
           {/* Additional gradient layers for depth */}
           <div className="absolute top-0 right-0 w-2/3 h-2/3 bg-gradient-to-br from-emerald-100/40 via-teal-100/30 to-transparent dark:from-emerald-900/20 dark:via-teal-900/15 rounded-full blur-3xl pointer-events-none"></div>
           <div className="absolute bottom-0 left-0 w-2/3 h-2/3 bg-gradient-to-tr from-cyan-100/40 via-blue-100/30 to-transparent dark:from-cyan-900/20 dark:via-blue-900/15 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div className="max-w-7xl mx-auto relative z-10">
+          <div className="relative z-10 mx-auto w-full min-w-0 max-w-7xl">
             {children}
           </div>
         </main>

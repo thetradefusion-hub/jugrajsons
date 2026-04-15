@@ -22,8 +22,8 @@ const faqs: FAQ[] = [
   {
     id: '1',
     category: 'general',
-    question: 'What is Atharva Health Solutions?',
-    answer: 'Atharva Health Solutions is a trusted provider of authentic Ayurvedic and natural health products. We offer a wide range of herbal supplements, wellness products, and expert consultations to help you achieve optimal health naturally.',
+    question: "What is Jugraj Son's Hive?",
+    answer: "Jugraj Son's Hive is a trusted raw honey brand focused on pure, natural honey sourced from reliable apiaries. We offer multiple honey variants for daily use, wellness, and gifting.",
   },
   {
     id: '2',
@@ -34,8 +34,8 @@ const faqs: FAQ[] = [
   {
     id: '3',
     category: 'general',
-    question: 'Do you offer expert consultations?',
-    answer: 'Yes, we have a team of certified Ayurvedic experts and health consultants available for online consultations. You can book an appointment through our Expert section and get personalized health advice.',
+    question: 'How do I choose the right honey for daily use?',
+    answer: 'For daily use, start with mild variants like Lychee or Multi-Flora. For stronger flavor, try Ajwain or Jamun honey. You can also choose based on taste preference and usage like tea, toast, or warm water.',
   },
   {
     id: '4',
@@ -54,7 +54,7 @@ const faqs: FAQ[] = [
     id: '6',
     category: 'products',
     question: 'Are your products safe to use?',
-    answer: 'Absolutely! All our products are made from natural ingredients, tested for quality and safety, and manufactured following strict GMP guidelines. However, we recommend consulting with our experts or your healthcare provider before starting any new supplement.',
+    answer: 'Absolutely! Our honey is sourced from trusted apiaries and checked for quality and purity. If you have specific medical conditions, please consult your healthcare provider before making dietary changes.',
   },
   {
     id: '7',
@@ -91,7 +91,7 @@ const faqs: FAQ[] = [
     id: '12',
     category: 'orders',
     question: 'Can I order products in bulk?',
-    answer: 'Yes, we offer bulk ordering options for businesses and institutions. Please contact our sales team at support@atharvahealthsolutions.com for bulk pricing and custom orders.',
+    answer: "Yes, we offer bulk ordering options for businesses and institutions. Please contact our sales team at connect@jugrajsonshive.com for bulk pricing and custom orders.",
   },
   // Shipping
   {
@@ -226,8 +226,8 @@ const FAQs = () => {
   return (
     <>
       <SEO 
-        title="FAQs - Frequently Asked Questions | Atharva Health Solutions"
-        description="Find answers to frequently asked questions about our products, orders, shipping, payments, returns, and more. Get help with your queries at Atharva Health Solutions."
+        title="FAQs - Frequently Asked Questions | Jugraj Son's Hive"
+        description="Find answers to frequently asked questions about our honey products, orders, shipping, payments, returns, and more at Jugraj Son's Hive."
       />
       <main className="pb-24">
         {/* Hero Section */}

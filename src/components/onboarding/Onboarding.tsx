@@ -20,15 +20,15 @@ const slides = [
   },
   {
     icon: Heart,
-    title: "Expert Consultations",
-    description: "Connect with certified Ayurvedic doctors for personalized health guidance",
+    title: "Pure Honey Promise",
+    description: "Every batch is selected for taste, purity, and trusted sourcing",
     gradient: "from-rose-500 to-pink-600",
     bgPattern: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15) 0%, transparent 50%)",
   },
   {
     icon: Sparkles,
     title: "Start Your Journey",
-    description: "Join millions who trust Atharva Health for their wellness needs",
+    description: "Join thousands who trust Jugraj Son's Hive for pure raw honey",
     gradient: "from-violet-500 to-purple-600",
     bgPattern: "radial-gradient(circle at 20% 80%, rgba(255,255,255,0.15) 0%, transparent 50%)",
   },

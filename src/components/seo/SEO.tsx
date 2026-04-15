@@ -10,14 +10,14 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({
-  title = 'Atharva Health Solutions - Premium Ayurvedic Products',
-  description = 'Discover authentic Ayurvedic products for immunity, digestion, skin care, and overall wellness. 100% natural, GMP certified, and trusted by millions.',
-  keywords = 'Ayurvedic products, herbal medicine, natural health, immunity booster, Ayurveda, wellness, organic supplements',
+  title = "Jugraj Son's Hive - Pure Raw Natural Honey",
+  description = "Shop pure raw natural honey online at Jugraj Son's Hive. Discover mono-flora and multi-flora honey sourced directly from trusted apiaries.",
+  keywords = 'raw honey, natural honey, pure honey, monofloral honey, multiflora honey, honey store, honey gifts',
   image = '/og-image.png',
-  url = 'http://atharvahealthsolutions.com',
+  url = 'https://jugrajsonshive.com',
   type = 'website',
 }) => {
-  const fullTitle = title.includes('Atharva') ? title : `${title} | Atharva Health Solutions`;
+  const fullTitle = title.includes("Jugraj Son's Hive") ? title : `${title} | Jugraj Son's Hive`;
   
   return (
     <Helmet>

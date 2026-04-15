@@ -139,12 +139,12 @@ const AdminProducts = () => {
   return (
     <AdminLayout>
       <div className="admin-section-spacing">
-        <div className="flex items-center justify-between">
-          <div className="space-y-2">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0 space-y-2">
             <h1 className="admin-heading-1">Products</h1>
             <p className="admin-description">Manage your product catalog</p>
           </div>
-          <Button onClick={() => navigate('/admin/products/new')}>
+          <Button className="w-full shrink-0 sm:w-auto" onClick={() => navigate('/admin/products/new')}>
             <Plus className="h-4 w-4 mr-2" />
             Add Product
           </Button>
@@ -152,8 +152,8 @@ const AdminProducts = () => {
 
         <Card className="border-2 border-purple-500 shadow-xl">
           <CardHeader>
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
+            <div className="flex flex-col gap-4 lg:flex-row">
+              <div className="relative min-w-0 flex-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search products..."
@@ -162,9 +162,9 @@ const AdminProducts = () => {
                   className="pl-10"
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-full sm:w-[180px]">
                     <Filter className="h-4 w-4 mr-2" />
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
@@ -176,7 +176,7 @@ const AdminProducts = () => {
                   </SelectContent>
                 </Select>
                 <Select value={stockFilter} onValueChange={setStockFilter}>
-                  <SelectTrigger className="w-[150px]">
+                  <SelectTrigger className="w-full sm:w-[150px]">
                     <SelectValue placeholder="Stock" />
                   </SelectTrigger>
                   <SelectContent>
@@ -185,7 +185,7 @@ const AdminProducts = () => {
                     <SelectItem value="outOfStock">Out of Stock</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button variant="outline" onClick={handleExport}>
+                <Button variant="outline" className="w-full sm:w-auto" onClick={handleExport}>
                   <Download className="h-4 w-4 mr-2" />
                   Export
                 </Button>

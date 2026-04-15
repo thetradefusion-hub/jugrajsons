@@ -11,12 +11,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdminLayout from '@/components/admin/AdminLayout';
 import api from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
-import { concerns } from '@/data/products';
 
 const productSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
@@ -25,19 +23,10 @@ const productSchema = z.object({
   shortDescription: z.string().min(5, 'Short description required'),
   price: z.number().min(1, 'Price must be greater than 0'),
   originalPrice: z.number().min(1, 'Original price required'),
-  category: z.string().min(1, 'Category required'),
-  productType: z.string().min(1, 'Product type required'),
-  sku: z.string().min(1, 'SKU required'),
   stockCount: z.number().min(0, 'Stock count must be 0 or more'),
   inStock: z.boolean(),
   isBestseller: z.boolean(),
   isNew: z.boolean(),
-  ingredients: z.string(),
-  benefits: z.string(),
-  usage: z.string(),
-  whoShouldUse: z.string(),
-  concern: z.string(),
-  tags: z.string(),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -108,19 +97,23 @@ const AdminAddProduct = () => {
         return;
       }
 
-      // Convert string fields to arrays
-      // Include the selected category (health concern) in the concern array
-      const additionalConcerns = data.concern.split(',').map(c => c.trim()).filter(Boolean);
-      const mainConcern = data.category ? [data.category] : [];
-      const allConcerns = [...new Set([...mainConcern, ...additionalConcerns])]; // Remove duplicates
+      // Required backend fields that are hidden from the form
+      const defaultCategory = 'raw-honey';
+      const defaultProductType = 'Honey';
+      const generatedSku = `JSH-${Date.now()}`;
+      const allConcerns = [defaultCategory];
       
       const productData = {
         ...data,
-        ingredients: data.ingredients.split(',').map(i => i.trim()).filter(Boolean),
-        benefits: data.benefits.split(',').map(b => b.trim()).filter(Boolean),
-        whoShouldUse: data.whoShouldUse.split(',').map(w => w.trim()).filter(Boolean),
-        concern: allConcerns, // Include both main category and additional concerns
-        tags: data.tags.split(',').map(t => t.trim()).filter(Boolean),
+        category: defaultCategory,
+        productType: defaultProductType,
+        sku: generatedSku,
+        ingredients: [],
+        benefits: [],
+        usage: '',
+        whoShouldUse: [],
+        concern: allConcerns,
+        tags: [],
         images: validImages,
         discount: data.originalPrice > data.price 
           ? Math.round(((data.originalPrice - data.price) / data.originalPrice) * 100)
@@ -192,39 +185,6 @@ const AdminAddProduct = () => {
                     {errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Health Concern (Category) *</Label>
-                      <Select
-                        value={watch('category') || ''}
-                        onValueChange={(value) => setValue('category', value, { shouldValidate: true })}
-                      >
-                        <SelectTrigger id="category">
-                          <SelectValue placeholder="Select Health Concern" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {concerns.map((concern) => (
-                            <SelectItem key={concern.id} value={concern.slug}>
-                              {concern.icon} {concern.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {errors.category && <p className="text-sm text-destructive">{errors.category.message}</p>}
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="productType">Product Type *</Label>
-                      <Input id="productType" {...register('productType')} placeholder="Capsules" />
-                      {errors.productType && <p className="text-sm text-destructive">{errors.productType.message}</p>}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="sku">SKU *</Label>
-                    <Input id="sku" {...register('sku')} placeholder="VD-PROD-001" />
-                    {errors.sku && <p className="text-sm text-destructive">{errors.sku.message}</p>}
-                  </div>
                 </CardContent>
               </Card>
 
@@ -282,44 +242,6 @@ const AdminAddProduct = () => {
 
             {/* Right Column */}
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Product Details</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="ingredients">Ingredients (comma separated)</Label>
-                    <Textarea id="ingredients" {...register('ingredients')} rows={3} placeholder="Ingredient 1, Ingredient 2" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="benefits">Benefits (comma separated)</Label>
-                    <Textarea id="benefits" {...register('benefits')} rows={3} placeholder="Benefit 1, Benefit 2" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="usage">Usage Instructions</Label>
-                    <Textarea id="usage" {...register('usage')} rows={3} placeholder="How to use this product" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="whoShouldUse">Who Should Use (comma separated)</Label>
-                    <Textarea id="whoShouldUse" {...register('whoShouldUse')} rows={2} placeholder="Adults, Children" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="concern">Additional Health Concerns (comma separated, optional)</Label>
-                    <Input id="concern" {...register('concern')} placeholder="immunity, digestion" />
-                    <p className="text-xs text-muted-foreground">Add additional concerns if product addresses multiple health issues</p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="tags">Tags (comma separated)</Label>
-                    <Input id="tags" {...register('tags')} placeholder="bestseller, new, ayurvedic" />
-                  </div>
-                </CardContent>
-              </Card>
-
               <Card>
                 <CardHeader>
                   <CardTitle>Product Images</CardTitle>

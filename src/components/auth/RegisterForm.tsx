@@ -58,7 +58,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
       const result = await registerUser(data.name, data.email, data.password);
       if (result.success) {
         toast({
-          title: 'Welcome to Atharva!',
+          title: "Welcome to Jugraj Son's Hive!",
           description: 'Your account has been created successfully.',
         });
         onSuccess?.();

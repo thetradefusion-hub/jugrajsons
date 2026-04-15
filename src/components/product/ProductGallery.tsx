@@ -14,13 +14,14 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName }) 
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
   const imageRef = useRef<HTMLDivElement>(null);
+  const safeImages = images?.length ? images : ['/placeholder.svg'];
 
   const handlePrevious = () => {
-    setActiveIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setActiveIndex((prev) => (prev === 0 ? safeImages.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    setActiveIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setActiveIndex((prev) => (prev === safeImages.length - 1 ? 0 : prev + 1));
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -33,10 +34,9 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName }) 
 
   return (
     <div className="space-y-4">
-      {/* Main Image */}
-      <div 
+      <div
         ref={imageRef}
-        className="relative aspect-square bg-muted rounded-xl overflow-hidden cursor-zoom-in"
+        className="group relative aspect-square cursor-zoom-in overflow-hidden rounded-2xl border border-[#E6A817]/25 bg-[#fffaf2] md:rounded-3xl"
         onMouseEnter={() => setIsZoomed(true)}
         onMouseLeave={() => setIsZoomed(false)}
         onMouseMove={handleMouseMove}
@@ -44,71 +44,71 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName }) 
         <AnimatePresence mode="wait">
           <motion.img
             key={activeIndex}
-            src={images[activeIndex]}
+            src={safeImages[activeIndex]}
             alt={`${productName} - Image ${activeIndex + 1}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className={cn(
-              'w-full h-full object-cover transition-transform duration-200',
-              isZoomed && 'scale-150'
+              'h-full w-full object-contain p-6 transition-transform duration-200 md:p-8',
+              isZoomed && 'scale-[1.35]',
             )}
-            style={isZoomed ? {
-              transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`
-            } : undefined}
+            style={isZoomed ? { transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` } : undefined}
           />
         </AnimatePresence>
 
-        {/* Zoom Indicator */}
         {!isZoomed && (
-          <div className="absolute bottom-4 right-4 bg-card/80 backdrop-blur-sm rounded-lg px-3 py-1.5 flex items-center gap-2 text-sm">
-            <ZoomIn className="w-4 h-4" />
-            <span>Hover to zoom</span>
+          <div className="absolute bottom-3 right-3 flex items-center gap-2 rounded-full border border-[#E6A817]/25 bg-white/90 px-3 py-1.5 text-xs text-[#2B1D0E]/80 shadow-sm backdrop-blur-sm">
+            <ZoomIn className="h-3.5 w-3.5 text-[#1F3D2B]" />
+            <span className="hidden sm:inline">Hover to zoom</span>
           </div>
         )}
 
-        {/* Navigation Arrows */}
-        {images.length > 1 && (
+        {safeImages.length > 1 && (
           <>
             <Button
+              type="button"
               variant="secondary"
               size="icon"
-              className="absolute left-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute left-2 top-1/2 h-9 w-9 -translate-y-1/2 rounded-full border border-[#E6A817]/20 bg-white/95 opacity-90 shadow-sm transition-opacity hover:opacity-100 md:left-3 md:opacity-0 md:group-hover:opacity-100"
               onClick={handlePrevious}
+              aria-label="Previous image"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="h-4 w-4 text-[#2B1D0E]" />
             </Button>
             <Button
+              type="button"
               variant="secondary"
               size="icon"
-              className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute right-2 top-1/2 h-9 w-9 -translate-y-1/2 rounded-full border border-[#E6A817]/20 bg-white/95 opacity-90 shadow-sm transition-opacity hover:opacity-100 md:right-3 md:opacity-0 md:group-hover:opacity-100"
               onClick={handleNext}
+              aria-label="Next image"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="h-4 w-4 text-[#2B1D0E]" />
             </Button>
           </>
         )}
       </div>
 
-      {/* Thumbnails */}
-      {images.length > 1 && (
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
-          {images.map((image, index) => (
+      {safeImages.length > 1 && (
+        <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
+          {safeImages.map((image, index) => (
             <button
               key={index}
+              type="button"
               onClick={() => setActiveIndex(index)}
               className={cn(
-                'flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all',
+                'h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border-2 transition-all md:h-20 md:w-20 md:rounded-2xl',
                 index === activeIndex
-                  ? 'border-primary ring-2 ring-primary/20'
-                  : 'border-transparent hover:border-border'
+                  ? 'border-[#1F3D2B] ring-2 ring-[#E6A817]/40'
+                  : 'border-transparent hover:border-[#E6A817]/40',
               )}
             >
               <img
                 src={image}
                 alt={`${productName} thumbnail ${index + 1}`}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-contain bg-[#fffaf2] p-1"
               />
             </button>
           ))}

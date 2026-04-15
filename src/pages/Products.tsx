@@ -1,15 +1,15 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Grid3X3, List, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronRight, Home, Sparkles, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import SEO from '@/components/seo/SEO';
 import ProductCard from '@/components/product/ProductCard';
-import ProductFilter from '@/components/product/ProductFilter';
 import EmptyState from '@/components/common/EmptyState';
 import api from '@/lib/api';
+import { cn } from '@/lib/utils';
 
 interface Product {
   _id: string;
@@ -45,83 +45,70 @@ const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedConcerns, setSelectedConcerns] = useState<string[]>(
-    searchParams.get('concern') ? [searchParams.get('concern')!] : []
-  );
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    searchParams.get('category') ? [searchParams.get('category')!] : []
-  );
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
-  const [selectedRating, setSelectedRating] = useState<number | null>(null);
 
   const searchQuery = searchParams.get('search')?.toLowerCase() || '';
   const tagFilter = searchParams.get('tag');
   const categoryParam = searchParams.get('category');
   const concernParam = searchParams.get('concern');
 
-  // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const params: any = {
-          limit: 1000, // Get all products
-        };
-        
+        const params: Record<string, string | number> = { limit: 1000 };
         if (categoryParam) params.category = categoryParam;
         if (concernParam) params.concern = concernParam;
         if (searchQuery) params.search = searchQuery;
 
-        console.log('Fetching products with params:', params);
         const response = await api.get('/products', { params });
-        console.log('Products API response:', response.data);
-        
-        // Handle different response formats
-        let fetchedProducts = [];
+
+        let fetchedProducts: unknown[] = [];
         if (Array.isArray(response.data)) {
           fetchedProducts = response.data;
         } else if (response.data && Array.isArray(response.data.products)) {
           fetchedProducts = response.data.products;
-        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+        } else if (response.data?.data && Array.isArray(response.data.data)) {
           fetchedProducts = response.data.data;
         }
-        
-        console.log('Fetched products count:', fetchedProducts.length);
-        
-        // Transform backend products to frontend format
-        const transformedProducts = fetchedProducts.map((p: any) => ({
-          _id: p._id,
-          id: p._id || p.slug,
-          name: p.name,
-          slug: p.slug,
-          description: p.description,
-          shortDescription: p.shortDescription,
-          price: p.price,
-          originalPrice: p.originalPrice,
-          discount: p.discount || 0,
-          rating: p.rating || 0,
-          reviewCount: p.reviewCount || 0,
-          images: p.images || [],
-          category: p.category,
-          concern: Array.isArray(p.concern) ? p.concern : (p.concern ? [p.concern] : []),
-          productType: p.productType,
-          tags: Array.isArray(p.tags) ? p.tags : (p.tags ? [p.tags] : []),
+
+        const transformedProducts = fetchedProducts.map((p: Record<string, unknown>) => ({
+          _id: p._id as string,
+          id: (p._id || p.slug) as string,
+          name: p.name as string,
+          slug: p.slug as string,
+          description: p.description as string,
+          shortDescription: p.shortDescription as string,
+          price: p.price as number,
+          originalPrice: p.originalPrice as number,
+          discount: (p.discount as number) || 0,
+          rating: (p.rating as number) || 0,
+          reviewCount: (p.reviewCount as number) || 0,
+          images: (p.images as string[]) || [],
+          category: p.category as string,
+          concern: Array.isArray(p.concern) ? (p.concern as string[]) : p.concern ? [p.concern as string] : [],
+          productType: p.productType as string,
+          tags: Array.isArray(p.tags) ? (p.tags as string[]) : p.tags ? [p.tags as string] : [],
           inStock: p.inStock !== false,
-          stockCount: p.stockCount || 0,
-          ingredients: Array.isArray(p.ingredients) ? p.ingredients : (p.ingredients ? [p.ingredients] : []),
-          benefits: Array.isArray(p.benefits) ? p.benefits : (p.benefits ? [p.benefits] : []),
-          usage: p.usage || '',
-          whoShouldUse: Array.isArray(p.whoShouldUse) ? p.whoShouldUse : (p.whoShouldUse ? [p.whoShouldUse] : []),
-          isBestseller: p.isBestseller || false,
-          isNew: p.isNew || false,
-          sku: p.sku,
+          stockCount: (p.stockCount as number) || 0,
+          ingredients: Array.isArray(p.ingredients)
+            ? (p.ingredients as string[])
+            : p.ingredients
+              ? [p.ingredients as string]
+              : [],
+          benefits: Array.isArray(p.benefits) ? (p.benefits as string[]) : p.benefits ? [p.benefits as string] : [],
+          usage: (p.usage as string) || '',
+          whoShouldUse: Array.isArray(p.whoShouldUse)
+            ? (p.whoShouldUse as string[])
+            : p.whoShouldUse
+              ? [p.whoShouldUse as string]
+              : [],
+          isBestseller: Boolean(p.isBestseller),
+          isNew: Boolean(p.isNew),
+          sku: p.sku as string,
         }));
-        
-        console.log('Transformed products count:', transformedProducts.length);
+
         setProducts(transformedProducts);
-      } catch (error: any) {
-        console.error('Error fetching products:', error);
-        console.error('Error response:', error.response?.data);
+      } catch {
         setProducts([]);
       } finally {
         setLoading(false);
@@ -133,52 +120,18 @@ const Products = () => {
 
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
-    
-    console.log('Filtering products. Total products:', products.length);
-    console.log('Initial filtered count:', filtered.length);
 
     if (searchQuery) {
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(searchQuery) ||
-        p.description.toLowerCase().includes(searchQuery)
+      filtered = filtered.filter(
+        (p) =>
+          p.name.toLowerCase().includes(searchQuery) || p.description.toLowerCase().includes(searchQuery),
       );
-      console.log('After search filter:', filtered.length);
     }
 
     if (tagFilter === 'bestseller') {
-      filtered = filtered.filter(p => p.isBestseller);
-      console.log('After bestseller filter:', filtered.length);
+      filtered = filtered.filter((p) => p.isBestseller);
     } else if (tagFilter === 'new') {
-      filtered = filtered.filter(p => p.isNew);
-      console.log('After new filter:', filtered.length);
-    }
-
-    if (selectedConcerns.length > 0) {
-      filtered = filtered.filter(p => {
-        // Check if concern array contains any selected concern
-        const hasConcern = p.concern && Array.isArray(p.concern) && p.concern.some(c => selectedConcerns.includes(c));
-        // Also check if category matches any selected concern (for backward compatibility)
-        const hasCategoryMatch = p.category && selectedConcerns.includes(p.category);
-        return hasConcern || hasCategoryMatch;
-      });
-      console.log('After concerns filter:', filtered.length);
-    }
-
-    if (selectedCategories.length > 0) {
-      filtered = filtered.filter(p => selectedCategories.includes(p.category));
-      console.log('After categories filter:', filtered.length);
-    }
-
-    // Price filter - check if price exists and is a number
-    filtered = filtered.filter(p => {
-      const price = Number(p.price);
-      return !isNaN(price) && price >= priceRange[0] && price <= priceRange[1];
-    });
-    console.log('After price filter (range:', priceRange, '):', filtered.length);
-
-    if (selectedRating) {
-      filtered = filtered.filter(p => (p.rating || 0) >= selectedRating);
-      console.log('After rating filter:', filtered.length);
+      filtered = filtered.filter((p) => p.isNew);
     }
 
     switch (sortBy) {
@@ -195,9 +148,8 @@ const Products = () => {
         filtered.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
     }
 
-    console.log('Final filtered products count:', filtered.length);
     return filtered;
-  }, [products, searchQuery, tagFilter, selectedConcerns, selectedCategories, priceRange, selectedRating, sortBy]);
+  }, [products, searchQuery, tagFilter, sortBy]);
 
   const itemsPerPage = 12;
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
@@ -208,89 +160,68 @@ const Products = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, tagFilter, selectedConcerns, selectedCategories, priceRange, selectedRating, sortBy]);
+  }, [searchQuery, tagFilter, sortBy]);
 
-  const handleClearAll = () => {
-    setSelectedConcerns([]);
-    setSelectedCategories([]);
-    setPriceRange([0, 2000]);
-    setSelectedRating(null);
+  const pageTitle =
+    tagFilter === 'bestseller' ? 'Bestsellers' : tagFilter === 'new' ? 'New Arrivals' : 'Shop Honey';
+
+  const filterLink = (tag: string | null, label: string, icon?: React.ReactNode) => {
+    const to = tag ? `/products?tag=${tag}` : '/products';
+    const active = tagFilter === tag || (!tag && !tagFilter);
+    return (
+      <Link
+        to={to}
+        className={cn(
+          'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors sm:gap-1.5 sm:px-3 sm:text-xs md:px-3.5 md:text-sm',
+          active
+            ? 'border-[#1F3D2B] bg-[#1F3D2B] text-[#F5E9D7]'
+            : 'border-[#E6A817]/35 bg-white/80 text-[#2B1D0E]/85 hover:border-[#E6A817]/60',
+        )}
+      >
+        {icon}
+        {label}
+      </Link>
+    );
   };
 
   return (
     <>
-      <SEO title="Shop All Products" description="Browse our complete collection of authentic Ayurvedic products" />
-      <main className="container-custom py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Desktop Filter */}
-          <aside className="hidden lg:block w-72 flex-shrink-0">
-            <ProductFilter
-              selectedConcerns={selectedConcerns}
-              selectedCategories={selectedCategories}
-              priceRange={priceRange}
-              selectedRating={selectedRating}
-              onConcernChange={setSelectedConcerns}
-              onCategoryChange={setSelectedCategories}
-              onPriceChange={setPriceRange}
-              onRatingChange={setSelectedRating}
-              onClearAll={handleClearAll}
-            />
-          </aside>
+      <SEO
+        title={`${pageTitle} | Jugraj Son's Hive`}
+        description="Browse premium raw forest honey — pure, natural, direct from beekeepers."
+      />
+      <main className="min-h-screen overflow-x-hidden bg-[#F5E9D7] pb-24 text-[#2B1D0E] md:pb-10">
+        <section className="relative isolate border-b border-[#E6A817]/15 bg-gradient-to-br from-[#F5E9D7] via-[#fff8ed] to-[#f0e1cb]">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.12] [background:radial-gradient(circle_at_1px_1px,#1F3D2B_1px,transparent_0)] [background-size:22px_22px]" />
+          <div className="container-custom relative py-3 sm:py-4 md:py-6">
+            <nav className="mb-2 flex flex-wrap items-center gap-1 text-[11px] text-[#2B1D0E]/65 sm:mb-2.5 sm:text-xs md:text-sm">
+              <Link to="/" className="inline-flex items-center gap-1 hover:text-[#1F3D2B]">
+                <Home className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                Home
+              </Link>
+              <ChevronRight className="h-3 w-3 shrink-0 opacity-50 sm:h-3.5 sm:w-3.5" />
+              <span className="font-medium text-[#2B1D0E]">Shop</span>
+            </nav>
 
-          {/* Products */}
-          <div className="flex-1">
-            {/* Header */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <div>
-                <h1 className="font-display text-2xl md:text-3xl font-bold">
-                  {tagFilter === 'bestseller' ? 'Bestsellers' : tagFilter === 'new' ? 'New Arrivals' : 'All Products'}
+            <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-start md:justify-between md:gap-6">
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="min-w-0 flex-1">
+                <Badge className="border-0 bg-[#1F3D2B] px-2 py-0.5 text-[10px] text-[#F5E9D7] md:px-2.5 md:text-xs">Jugraj Son&apos;s Hive</Badge>
+                <h1 className="mt-1.5 font-display text-2xl font-bold leading-[1.15] text-[#2B1D0E] sm:text-3xl md:text-4xl lg:text-[2.5rem]">
+                  {pageTitle}
                 </h1>
-                <p className="text-muted-foreground">
-                  {filteredProducts.length} products
-                  {filteredProducts.length > 0 && (
-                    <>
-                      {' • '}
-                      Showing{' '}
-                      {Math.min((currentPage - 1) * itemsPerPage + 1, filteredProducts.length)}
-                      {'–'}
-                      {Math.min(currentPage * itemsPerPage, filteredProducts.length)}
-                    </>
-                  )}
+                <p className="mt-1 max-w-xl text-xs leading-snug text-[#2B1D0E]/75 sm:text-sm md:text-[0.9375rem]">
+                  Forest-sourced raw honey. Limited batches, no added sugar, no over-processing.
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="flex items-center gap-3">
-                {/* Mobile Filter */}
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Button variant="outline" size="sm" className="lg:hidden">
-                      <SlidersHorizontal className="w-4 h-4 mr-2" />
-                      Filters
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent side="left" className="w-80 overflow-y-auto">
-                    <SheetHeader>
-                      <SheetTitle>Filters</SheetTitle>
-                    </SheetHeader>
-                    <div className="mt-6">
-                      <ProductFilter
-                        selectedConcerns={selectedConcerns}
-                        selectedCategories={selectedCategories}
-                        priceRange={priceRange}
-                        selectedRating={selectedRating}
-                        onConcernChange={setSelectedConcerns}
-                        onCategoryChange={setSelectedCategories}
-                        onPriceChange={setPriceRange}
-                        onRatingChange={setSelectedRating}
-                        onClearAll={handleClearAll}
-                      />
-                    </div>
-                  </SheetContent>
-                </Sheet>
-
-                {/* Sort */}
+              <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center md:max-w-md md:justify-end">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                  {filterLink(null, 'All')}
+                  {filterLink('bestseller', 'Bestsellers', <TrendingUp className="h-3 w-3 sm:h-3.5 sm:w-3.5" />)}
+                  {filterLink('new', 'New', <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" />)}
+                </div>
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-40">
+                  <SelectTrigger className="h-9 w-full rounded-full border-[#E6A817]/35 bg-white/90 text-xs text-[#2B1D0E] sm:h-10 sm:text-sm md:w-[min(200px,100%)]">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
@@ -303,59 +234,84 @@ const Products = () => {
               </div>
             </div>
 
-            {/* Products Grid */}
-            {loading ? (
-              <div className="flex items-center justify-center py-20">
-                <div className="text-muted-foreground">Loading products...</div>
-              </div>
-            ) : filteredProducts.length > 0 ? (
-              <>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                  {paginatedProducts.map((product, index) => (
-                    <ProductCard key={product.id || product._id} product={product} index={index} />
-                  ))}
-                </div>
-
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={currentPage === 1}
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    >
-                      Previous
-                    </Button>
-
-                    <div className="flex items-center gap-1">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <Button
-                          key={page}
-                          variant={page === currentPage ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setCurrentPage(page)}
-                        >
-                          {page}
-                        </Button>
-                      ))}
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={currentPage === totalPages}
-                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <EmptyState type="search" />
-            )}
+            <p className="mt-3 text-[11px] text-[#2B1D0E]/70 sm:text-xs md:mt-4 md:text-sm">
+              {filteredProducts.length} products
+              {filteredProducts.length > 0 && (
+                <>
+                  {' · '}
+                  Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredProducts.length)}–
+                  {Math.min(currentPage * itemsPerPage, filteredProducts.length)}
+                </>
+              )}
+            </p>
           </div>
-        </div>
+        </section>
+
+        <section className="container-custom py-4 sm:py-6 md:py-8">
+          {loading ? (
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-5">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="aspect-[3/4] animate-pulse rounded-3xl border border-[#E6A817]/20 bg-white/60"
+                />
+              ))}
+            </div>
+          ) : filteredProducts.length > 0 ? (
+            <>
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-5">
+                {paginatedProducts.map((product, index) => (
+                  <ProductCard key={product.id || product._id} product={product} index={index} />
+                ))}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-2 md:mt-8">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    className="rounded-full border-[#E6A817]/40 bg-white/90 text-[#2B1D0E] hover:bg-[#fff9ef]"
+                  >
+                    Previous
+                  </Button>
+                  <div className="flex flex-wrap items-center justify-center gap-1.5">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <Button
+                        key={page}
+                        size="sm"
+                        variant={page === currentPage ? 'default' : 'outline'}
+                        onClick={() => setCurrentPage(page)}
+                        className={cn(
+                          'min-w-[2.25rem] rounded-full',
+                          page === currentPage
+                            ? 'border-0 bg-[#E6A817] text-[#2B1D0E] hover:bg-[#d89c14]'
+                            : 'border-[#E6A817]/35 bg-white/90 text-[#2B1D0E] hover:bg-[#fff9ef]',
+                        )}
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    className="rounded-full border-[#E6A817]/40 bg-white/90 text-[#2B1D0E] hover:bg-[#fff9ef]"
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="rounded-3xl border border-[#E6A817]/20 bg-white/80 p-8 shadow-sm">
+              <EmptyState type="search" />
+            </div>
+          )}
+        </section>
       </main>
     </>
   );

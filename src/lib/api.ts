@@ -42,6 +42,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
+      localStorage.removeItem('jugrajsonshive-user');
       localStorage.removeItem('atharva-user');
       // Redirect to admin login if on admin route, otherwise regular login
       const isAdminRoute = window.location.pathname.startsWith('/admin');

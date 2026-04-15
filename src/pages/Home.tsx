@@ -1,26 +1,30 @@
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Leaf, Award, Truck, Star, ChevronRight, CheckCircle2, Mail, Send } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Leaf,
+  ShieldCheck,
+  TestTube2,
+  Trees,
+  Sparkles,
+  HeartPulse,
+  Activity,
+  Zap,
+  CheckCircle2,
+  ShoppingBag,
+  Star,
+  Quote,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import SEO from '@/components/seo/SEO';
-import ProductCard from '@/components/product/ProductCard';
-import { concerns, testimonials } from '@/data/products';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from '@/components/ui/carousel';
-import { useState, useEffect } from 'react';
 import api from '@/lib/api';
-import { Input } from '@/components/ui/input';
-
-interface ActiveCoupon {
-  _id: string;
-  code: string;
-  description: string;
-  discountType: 'percentage' | 'fixed';
-  discountValue: number;
-  minPurchase: number;
-  validUntil: string;
-}
+import { useCart } from '@/context/CartContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface Product {
   _id: string;
@@ -50,100 +54,66 @@ interface Product {
   sku: string;
 }
 
+interface Testimonial {
+  name: string;
+  city: string;
+  text: string;
+}
+
 const Home = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
-  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [email, setEmail] = useState('');
+  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
+  const { addItem } = useCart();
+  const { toast } = useToast();
 
-  const bestsellers = products.filter(p => p.isBestseller).slice(0, 4);
-  const featuredProducts = products.slice(0, 6);
+  const heroSlides = ['/slider1.png', '/slider2.png', '/slider3.png'];
 
-  // Hero slider images (Balbuddhi, Glow Face Oil, Himaliyan Shilajit)
-  const heroSlides = [
-    { id: 1, image: '/slider1.jpeg', alt: 'Balbuddhi Swarn Prashan Drop - Ayurvedic Formula for Kids' },
-    { id: 2, image: '/slider2.jpeg', alt: 'Glow Face Oil - Kumkumadi by Vaidyadeep Ayurveda' },
-    { id: 3, image: '/slider3.jpeg', alt: 'Himaliyan Shilajit - Stamina & Vitality Booster' },
-  ];
-
-  // Trust features matching reference
   const trustFeatures = [
-    { 
-      icon: Shield, 
-      title: '100% Authentic', 
-      description: 'Genuine Ayurveda',
-      image: '/placeholder.svg'
-    },
-    { 
-      icon: Leaf, 
-      title: 'Natural Herbs', 
-      description: 'Pure ingredients',
-      image: '/placeholder.svg'
-    },
-    { 
-      icon: Award, 
-      title: 'GMP Certified', 
-      description: 'Quality assured',
-      image: '/placeholder.svg'
-    },
-    { 
-      icon: Truck, 
-      title: 'Free Delivery', 
-      description: 'Above Rs. 499',
-      image: '/placeholder.svg'
-    },
+    { icon: Leaf, title: '100% Natural', subtitle: 'Bilkul shuddh, bina processing' },
+    { icon: ShieldCheck, title: 'No Added Sugar', subtitle: 'Jo taste hai, wo asli hai' },
+    { icon: Trees, title: 'Direct from Beekeepers', subtitle: 'Forest source se seedha' },
+    { icon: TestTube2, title: 'Lab Tested Purity', subtitle: 'Quality pe no compromise' },
   ];
 
-  // Trending tags
-  const trendingTags = [
-    { name: 'Ashwagandha', url: '/products?search=Ashwagandha' },
-    { name: 'Immunity', url: '/products?search=Immunity' },
-    { name: 'Digestive Care', url: '/products?search=Digestive Care' },
-    { name: 'Hair Care', url: '/products?search=Hair Care' },
-    { name: 'Weight Loss', url: '/products?search=Weight Loss' },
-    { name: 'Skin Glow', url: '/products?search=Skin Glow' },
-  ];
-
-  // Why choose us
   const whyChooseUs = [
+    { icon: Sparkles, title: 'Raw & Unprocessed', text: 'Heat treatment aur over-filtering ke bina natural enzymes preserve rehte hain.' },
+    { icon: Trees, title: 'Forest Sourced', text: 'Jungle belt ke trusted apiaries se seasonal collection from authentic regions.' },
+    { icon: ShieldCheck, title: 'Limited Batch Production', text: 'Small batches for tighter quality control and better traceability.' },
+    { icon: CheckCircle2, title: 'Better than Commercial Honey', text: 'No dilution, no artificial blending, no sugar tricks.' },
+  ];
+
+  const benefits = [
+    { icon: HeartPulse, title: 'Immunity Support', text: 'Roz subah 1 spoon se natural wellness routine build hota hai.' },
+    { icon: Activity, title: 'Better Digestion', text: 'Warm water ke saath lene par gut ko soothing support milta hai.' },
+    { icon: Zap, title: 'Natural Energy', text: 'Refined sugar ka cleaner alternative for daily active lifestyle.' },
+  ];
+
+  const testimonials: Testimonial[] = [
     {
-      icon: Leaf,
-      title: 'Pure Ingredients',
-      description: 'Sourced from organic farms across India',
-      image: '/placeholder.svg'
+      name: 'Neha Arora',
+      city: 'Gurgaon',
+      text: 'Asli shahad ka taste tabhi aata hai jab wo seedha prakriti se aaye. Iska flavor genuinely rich hai.',
     },
     {
-      icon: Award,
-      title: 'Expert Formulas',
-      description: 'By Ayurvedic doctors with decades of experience',
-      image: '/placeholder.svg'
+      name: 'Rohit Mehta',
+      city: 'Mumbai',
+      text: 'Morning lemon-honey routine mein clear difference feel hua. Premium quality lagti hai aur repeat order worth hai.',
     },
     {
-      icon: CheckCircle2,
-      title: 'Lab Tested',
-      description: 'Every batch tested for purity & potency',
-      image: '/placeholder.svg'
-    },
-    {
-      icon: Truck,
-      title: 'Fast Delivery',
-      description: 'Free shipping above Rs. 499, 3-5 days delivery',
-      image: '/placeholder.svg'
+      name: 'Priyanka S.',
+      city: 'Bengaluru',
+      text: 'Packaging classy hai, taste natural hai, aur sweetness bilkul balanced. Family ke liye trusted ban gaya.',
     },
   ];
 
-  // Shop by concern - 8 concerns matching reference
-  const shopByConcern = concerns.slice(0, 8);
-
-  // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setProductsLoading(true);
         const response = await api.get('/products', { params: { limit: 1000 } });
         const fetchedProducts = response.data.products || response.data || [];
-        
+
         const transformedProducts = fetchedProducts.map((p: any) => ({
           _id: p._id,
           id: p._id || p.slug,
@@ -171,7 +141,7 @@ const Home = () => {
           isNew: p.isNew || false,
           sku: p.sku,
         }));
-        
+
         setProducts(transformedProducts);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -185,362 +155,373 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (!carouselApi) {
-      return;
-    }
+    const timer = setInterval(() => {
+      setActiveHeroSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [heroSlides.length]);
 
-    setCurrent(carouselApi.selectedScrollSnap());
-
-    carouselApi.on('select', () => {
-      setCurrent(carouselApi.selectedScrollSnap());
+  const handleAddToCart = (product: Product) => {
+    addItem(product as any);
+    toast({
+      title: 'Added to cart',
+      description: `${product.name} cart me add ho gaya.`,
     });
-  }, [carouselApi]);
-
-  // Auto-play functionality
-  useEffect(() => {
-    if (!carouselApi) return;
-
-    const interval = setInterval(() => {
-      if (carouselApi.canScrollNext()) {
-        carouselApi.scrollNext();
-      } else {
-        carouselApi.scrollTo(0);
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [carouselApi]);
-
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Newsletter subscription logic
-    console.log('Newsletter subscription:', email);
-    setEmail('');
   };
+
+  const variantProducts = useMemo(() => {
+    const packOrder = ['250', '500', '1kg'];
+    const extraHints = ['750', '2kg', 'combo', 'gift', 'forest', 'raw'];
+    const selected: Product[] = [];
+    const usedIds = new Set<string>();
+
+    const findByHint = (hint: string) =>
+      products.find((p) => {
+        const hay = `${p.name} ${p.shortDescription} ${p.description}`.toLowerCase();
+        return !usedIds.has(p._id) && hay.includes(hint);
+      });
+
+    packOrder.forEach((pack) => {
+      const matched = findByHint(pack);
+      if (matched) {
+        selected.push(matched);
+        usedIds.add(matched._id);
+      }
+    });
+
+    extraHints.forEach((hint) => {
+      if (selected.length >= 4) return;
+      const matched = findByHint(hint);
+      if (matched) {
+        selected.push(matched);
+        usedIds.add(matched._id);
+      }
+    });
+
+    products.forEach((p) => {
+      if (!usedIds.has(p._id) && selected.length < 4) {
+        selected.push(p);
+        usedIds.add(p._id);
+      }
+    });
+
+    return selected;
+  }, [products]);
+
+  const revealUp = (delay = 0, y = 18) => ({
+    initial: { opacity: 0, y },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.45, ease: 'easeOut', delay },
+  });
 
   return (
     <>
-      <SEO />
-      <main className="overflow-x-hidden bg-white">
-        {/* Hero Section - Matching Reference */}
-        <section className="relative overflow-hidden">
-          <Carousel setApi={setCarouselApi} opts={{ loop: true }} className="w-full">
-            <CarouselContent className="-ml-0">
-              {heroSlides.map((slide) => (
-                <CarouselItem key={slide.id} className="pl-0">
-                  <Link to="/products" className="block w-full">
-                    <div className="relative min-h-[200px] md:min-h-[380px] lg:min-h-[420px] overflow-hidden bg-gray-100">
-                      <img
-                        src={slide.image}
-                        alt={slide.alt}
-                        className="w-full h-full object-cover object-center"
+      <SEO
+        title="Jugraj Son's Hive - Premium Forest Honey"
+        description="Asli Jungle Shahad, Ab Online. Pure forest honey, direct from beekeepers."
+      />
+      <main className="overflow-x-hidden bg-[#F5E9D7] pb-24 text-[#2B1D0E] md:pb-0">
+        {/* Hero */}
+        <section className="relative isolate overflow-hidden border-b border-[#E6A817]/20 bg-gradient-to-br from-[#F5E9D7] via-[#fff8ed] to-[#f0e1cb]">
+          <div className="absolute inset-0 opacity-15 [background:radial-gradient(circle_at_1px_1px,#1F3D2B_1px,transparent_0)] [background-size:26px_26px]" />
+          <div className="absolute -top-16 right-0 h-52 w-52 rounded-full bg-[#E6A817]/25 blur-3xl" />
+          <div className="container-custom relative py-8 md:py-20">
+            <div className="grid items-center gap-8 lg:grid-cols-2">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                className="text-center md:text-left"
+              >
+                <Badge className="mb-4 border-0 bg-[#1F3D2B] px-3 py-1 text-xs text-[#F5E9D7] md:px-4 md:text-sm">Premium Raw Forest Honey</Badge>
+                <h1 className="font-display text-3xl font-bold leading-tight text-[#2B1D0E] md:text-6xl">
+                  Asli Jungle Shahad,
+                  <span className="block text-[#1F3D2B]">Ab Online</span>
+                </h1>
+                <p className="mt-4 max-w-xl text-sm text-[#2B1D0E]/80 md:text-lg">
+                  Pure Forest Honey, Direct from Beekeepers. No chemicals, no added sugar, no over-processing.
+                </p>
+
+                <div className="mt-5 flex flex-wrap justify-center gap-1.5 md:justify-start md:gap-2">
+                  {['Limited Batch', 'Forest Sourced', 'No Added Sugar'].map((tag) => (
+                    <span key={tag} className="rounded-full border border-[#E6A817]/40 bg-white/70 px-2.5 py-1 text-[10px] font-medium text-[#2B1D0E]/80 md:px-3 md:text-xs">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex items-center justify-center gap-2 md:mt-8 md:justify-start md:gap-3">
+                  <Button asChild size="lg" className="h-11 flex-1 rounded-full bg-[#E6A817] px-5 text-sm text-[#2B1D0E] hover:bg-[#d89c14] md:h-12 md:flex-none md:px-8 md:text-base">
+                    <Link to="/products">
+                      Shop Now <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" size="lg" className="h-11 rounded-full border-[#1F3D2B]/40 bg-transparent px-4 text-sm text-[#1F3D2B] hover:bg-[#1F3D2B]/5 md:h-12 md:px-6 md:text-base">
+                    <a href="#our-story">Our Story</a>
+                  </Button>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.55, ease: 'easeOut' }}
+                className="relative"
+              >
+                <div className="rounded-2xl border border-[#E6A817]/30 bg-white/80 p-3 shadow-[0_20px_40px_rgba(43,29,14,0.12)] md:rounded-3xl md:p-4">
+                  <div className="relative overflow-hidden rounded-2xl">
+                    <AnimatePresence mode="wait">
+                      <motion.img
+                        key={heroSlides[activeHeroSlide]}
+                        src={heroSlides[activeHeroSlide]}
+                        alt={`Jugraj Son's Hive hero ${activeHeroSlide + 1}`}
+                        initial={{ opacity: 0, scale: 1.03 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.45, ease: 'easeOut' }}
+                        className="aspect-[4/3] w-full bg-[#2B1D0E]/5 object-contain md:h-[380px] md:aspect-auto md:object-cover"
                       />
-                    </div>
-                  </Link>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            
-            {/* Navigation */}
-            <CarouselPrevious className="left-4 bg-white/20 hover:bg-white/30 border-white/30 text-white" />
-            <CarouselNext className="right-4 bg-white/20 hover:bg-white/30 border-white/30 text-white" />
-            
-            {/* Dots */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {heroSlides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => carouselApi?.scrollTo(index)}
-                  className={`h-2 rounded-full transition-all ${
-                    current === index ? 'w-8 bg-white' : 'w-2 bg-white/50'
-                  }`}
-                />
-              ))}
-            </div>
-          </Carousel>
-        </section>
+                    </AnimatePresence>
 
-        {/* Enhanced Trust Features Section - Compact */}
-        <section className="py-4 md:py-6 bg-white border-b border-gray-100">
-          <div className="container-custom">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
-              {trustFeatures.map((feature, index) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  className="flex flex-col items-center text-center p-2 md:p-4 rounded-lg bg-gradient-to-br from-emerald-50/50 to-teal-50/50 hover:from-emerald-50 hover:to-teal-50 transition-all duration-300 border border-emerald-100/50 hover:border-emerald-200"
-                >
-                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mb-1.5 md:mb-3 shadow-md">
-                    <feature.icon className="w-4 h-4 md:w-6 md:h-6 text-white" />
-                  </div>
-                  <h3 className="font-bold text-[10px] md:text-sm text-gray-900 mb-0.5 leading-tight">{feature.title}</h3>
-                  <p className="text-[9px] md:text-xs text-gray-600 leading-tight">{feature.description}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+                    <div className="absolute inset-x-0 bottom-3 flex items-center justify-between px-3">
+                      <button
+                        type="button"
+                        onClick={() => setActiveHeroSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/35 text-white backdrop-blur hover:bg-black/50 md:h-9 md:w-9"
+                        aria-label="Previous slide"
+                      >
+                        <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
+                      </button>
 
-        {/* About Atharva - Compact Section */}
-        <section className="py-6 md:py-8 bg-gradient-to-r from-emerald-50 via-teal-50 to-green-50 border-b border-gray-100">
-          <div className="container-custom">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="max-w-4xl mx-auto"
-            >
-              <Card className="border-0 shadow-md bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4 md:p-6">
-                  <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-                    <div className="flex-shrink-0">
-                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg">
-                        <Leaf className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                      </div>
-                    </div>
-                    <div className="flex-1 text-center md:text-left">
-                      <h3 className="font-bold text-base md:text-lg text-gray-900 mb-1 md:mb-2">
-                        About Atharva Health Solution
-                      </h3>
-                      <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-                        Atharva Health Solution is a <span className="font-semibold text-emerald-700">distributor and promoter</span> of <span className="font-semibold text-teal-700">Vaidyadeep Ayurveda</span>. We are dedicated to bringing authentic Ayurvedic products and natural health solutions to customers across India.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Enhanced Trending Section */}
-        <section className="py-6 md:py-8 bg-gradient-to-r from-emerald-50/50 via-teal-50/30 to-green-50/50 border-b border-gray-100">
-          <div className="container-custom">
-            <div className="flex flex-wrap items-center gap-3 md:gap-4">
-              <span className="font-bold text-gray-900 text-sm md:text-base flex items-center gap-2">
-                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                Trending:
-              </span>
-              {trendingTags.map((tag) => (
-                <Link
-                  key={tag.name}
-                  to={tag.url}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm md:text-base font-semibold text-emerald-700 bg-white hover:bg-emerald-50 border border-emerald-200 hover:border-emerald-400 rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 hover:text-emerald-800"
-                >
-                  {tag.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Bestsellers Section - Matching Reference */}
-        <section className="py-16 bg-white">
-          <div className="container-custom">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <Badge className="mb-2 bg-emerald-100 text-emerald-700 border-0">Top Picks</Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Bestsellers</h2>
-              </div>
-              <Link 
-                to="/products?filter=bestseller" 
-                className="hidden md:flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold"
-              >
-                View All
-                <ChevronRight className="w-5 h-5" />
-              </Link>
-            </div>
-            
-            {productsLoading ? (
-              <div className="text-center py-12">Loading products...</div>
-            ) : bestsellers.length > 0 ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                {bestsellers.map((product, index) => (
-                  <ProductCard key={product.id || product._id} product={product} index={index} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 text-gray-500">No bestsellers available</div>
-            )}
-            
-            <div className="mt-8 md:hidden text-center">
-              <Link 
-                to="/products?filter=bestseller" 
-                className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold"
-              >
-                View All
-                <ChevronRight className="w-5 h-5" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Shop by Health Concern - Matching Reference */}
-        <section className="py-16 bg-gray-50">
-          <div className="container-custom">
-            <div className="text-center mb-12">
-              <Badge className="mb-2 bg-emerald-100 text-emerald-700 border-0">Find Your Solution</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Shop by Health Concern</h2>
-              <p className="text-gray-600">Discover Ayurvedic solutions tailored to your wellness needs</p>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {shopByConcern.map((concern, index) => (
-                <motion.div
-                  key={concern.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Link to={`/products?concern=${concern.slug}`}>
-                    <Card className="h-full hover:shadow-lg transition-all cursor-pointer group">
-                      <CardContent className="p-6 text-center">
-                        <div className="text-4xl mb-3">{concern.icon}</div>
-                        <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors">
-                          {concern.name}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          {products.filter(p => 
-                            (p.concern && Array.isArray(p.concern) && p.concern.includes(concern.slug)) || 
-                            p.category === concern.slug
-                          ).length} Products
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Featured Products Section - Matching Reference */}
-        <section className="py-16 bg-white">
-          <div className="container-custom">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <Badge className="mb-2 bg-purple-100 text-purple-700 border-0">Curated For You</Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Featured Products</h2>
-              </div>
-              <Link 
-                to="/products" 
-                className="hidden md:flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold"
-              >
-                View All
-                <ChevronRight className="w-5 h-5" />
-              </Link>
-            </div>
-            
-            {productsLoading ? (
-              <div className="text-center py-12">Loading products...</div>
-            ) : featuredProducts.length > 0 ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                {featuredProducts.map((product, index) => (
-                  <ProductCard key={product.id || product._id} product={product} index={index} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 text-gray-500">No products available</div>
-            )}
-            
-            <div className="mt-8 md:hidden text-center">
-              <Link 
-                to="/products" 
-                className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold"
-              >
-                View All
-                <ChevronRight className="w-5 h-5" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Why Choose Us Section - Matching Reference */}
-        <section className="py-16 bg-gray-50">
-          <div className="container-custom">
-            <div className="text-center mb-12">
-              <Badge className="mb-2 bg-amber-100 text-amber-700 border-0">The Atharva Difference</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Why Choose Us?</h2>
-              <p className="text-gray-600">Pure Ayurveda with modern quality standards</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {whyChooseUs.map((item, index) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Card className="h-full text-center">
-                    <CardContent className="p-6">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-100 flex items-center justify-center">
-                        <item.icon className="w-8 h-8 text-emerald-600" />
-                      </div>
-                      <h3 className="font-bold text-lg text-gray-900 mb-2">{item.title}</h3>
-                      <p className="text-gray-600 text-sm">{item.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Testimonials Section - Matching Reference */}
-        <section className="py-16 bg-white">
-          <div className="container-custom">
-            <div className="text-center mb-12">
-              <Badge className="mb-2 bg-rose-100 text-rose-700 border-0">Real Reviews</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">What Our Customers Say</h2>
-              <p className="text-gray-600">Trusted by 50,000+ happy customers</p>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={testimonial.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Card className="h-full">
-                    <CardContent className="p-6">
-                      {/* Stars */}
-                      <div className="flex gap-1 mb-4">
-                        {Array.from({ length: testimonial.rating }).map((_, i) => (
-                          <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      <div className="flex items-center gap-1.5 rounded-full bg-black/30 px-2.5 py-1.5 backdrop-blur md:gap-2 md:px-3">
+                        {heroSlides.map((_, index) => (
+                          <button
+                            key={index}
+                            type="button"
+                            onClick={() => setActiveHeroSlide(index)}
+                            className={`h-2.5 rounded-full transition-all ${
+                              activeHeroSlide === index ? 'w-6 bg-[#E6A817]' : 'w-2.5 bg-white/80'
+                            }`}
+                            aria-label={`Go to slide ${index + 1}`}
+                          />
                         ))}
                       </div>
-                      
-                      {/* Review Text */}
-                      <p className="text-gray-700 mb-6 text-sm leading-relaxed">"{testimonial.text}"</p>
-                      
-                      {/* Customer Info */}
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                          <span className="text-sm font-semibold text-gray-700">
-                            {testimonial.name.charAt(0)}
-                          </span>
+
+                      <button
+                        type="button"
+                        onClick={() => setActiveHeroSlide((prev) => (prev + 1) % heroSlides.length)}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/35 text-white backdrop-blur hover:bg-black/50 md:h-9 md:w-9"
+                        aria-label="Next slide"
+                      >
+                        <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="absolute left-4 top-0 h-10 w-20 rounded-b-2xl bg-[#E6A817]/90 md:left-6 md:h-12 md:w-24" />
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Trust */}
+        <section className="border-b border-[#E6A817]/10 bg-white py-10 md:py-12">
+          <div className="container-custom">
+            <div className="mb-8 text-center">
+              <h2 className="font-display text-2xl text-[#2B1D0E] md:text-3xl">Built on Purity and Trust</h2>
+              <p className="mt-2 text-sm text-[#2B1D0E]/70">Premium quality standards with authentic sourcing.</p>
+            </div>
+            <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 md:mx-0 md:grid md:grid-cols-4 md:overflow-visible md:px-0">
+              {trustFeatures.map((feature, index) => (
+                <motion.div key={feature.title} {...revealUp(index * 0.08, 14)} className="w-[80%] min-w-[80%] snap-center rounded-2xl border border-[#E6A817]/20 bg-[#fffaf2] p-4 shadow-sm md:w-auto md:min-w-0 md:p-5">
+                  <div className="mb-3 inline-flex rounded-full bg-[#1F3D2B] p-3">
+                    <feature.icon className="h-5 w-5 text-[#F5E9D7]" />
+                  </div>
+                  <h3 className="font-display text-xl text-[#2B1D0E]">{feature.title}</h3>
+                  <p className="mt-1 text-sm text-[#2B1D0E]/70">{feature.subtitle}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Products */}
+        <section id="products" className="py-12 md:py-16">
+          <div className="container-custom">
+            <div className="mb-10 text-center">
+              <Badge className="border-0 bg-[#2B1D0E] text-[#F5E9D7]">Best Seller Variants</Badge>
+              <h2 className="mt-3 font-display text-3xl text-[#2B1D0E] md:text-4xl">Pick Your Perfect Jar</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-[#2B1D0E]/75">
+                Premium raw forest honey in convenient sizes for daily wellness and gifting.
+              </p>
+            </div>
+
+            {productsLoading ? (
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4 md:gap-4">
+                {[1, 2, 3, 4].map((item) => (
+                  <div
+                    key={item}
+                    className="h-72 animate-pulse rounded-2xl border border-[#E6A817]/20 bg-white/70 sm:h-80 md:rounded-3xl"
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4 md:gap-4">
+                {variantProducts.map((product, idx) => {
+                  const sizeLabels = ['250g', '500g', '1kg'];
+                  const displayTitle =
+                    sizeLabels[idx] ||
+                    (product.name.length > 22 ? `${product.name.slice(0, 20)}…` : product.name);
+                  return (
+                    <motion.div key={product._id} {...revealUp(idx * 0.1, 18)} className="min-w-0">
+                      <Card className="h-full overflow-hidden rounded-2xl border border-[#E6A817]/20 bg-white shadow-[0_10px_22px_rgba(43,29,14,0.07)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_28px_rgba(43,29,14,0.1)] md:rounded-3xl md:hover:-translate-y-1 md:hover:shadow-[0_20px_36px_rgba(43,29,14,0.12)]">
+                        <div className="flex min-h-[10.5rem] items-center justify-center bg-[#fff9ef] p-2 sm:min-h-[12.5rem] sm:p-3 md:min-h-[15rem] md:p-4">
+                          <img
+                            src={product.images?.[0] || '/placeholder.svg'}
+                            alt={product.name}
+                            className="h-auto max-h-44 w-full max-w-full object-contain sm:max-h-52 md:max-h-64"
+                          />
                         </div>
-                        <div>
-                          <p className="font-semibold text-sm text-gray-900">{testimonial.name}</p>
-                          <p className="text-xs text-gray-600">{testimonial.location}</p>
+                        <CardContent className="p-2.5 sm:p-4 md:p-6">
+                          <div className="mb-1.5 flex flex-col gap-1 sm:mb-2 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+                            <h3 className="truncate font-display text-base leading-tight text-[#2B1D0E] sm:text-xl md:text-2xl">
+                              {displayTitle}
+                            </h3>
+                            <Badge className="w-fit shrink-0 border-0 bg-[#1F3D2B] px-1.5 py-0 text-[10px] text-[#F5E9D7] sm:px-2 sm:text-xs">
+                              {product.inStock ? 'In Stock' : 'Limited'}
+                            </Badge>
+                          </div>
+                          <p className="line-clamp-2 text-[11px] leading-snug text-[#2B1D0E]/70 sm:text-sm">
+                            {product.shortDescription || 'Asli shahad ka rich taste, seedha jungle source se.'}
+                          </p>
+                          <p className="mt-2 text-base font-semibold text-[#2B1D0E] sm:mt-3 sm:text-xl md:mt-4 md:text-2xl">
+                            Rs. {product.price}
+                          </p>
+                          <p className="hidden text-xs text-[#2B1D0E]/60 sm:block">Natural sweetness, no added sugar.</p>
+                          <Button
+                            size="sm"
+                            onClick={() => handleAddToCart(product)}
+                            className="mt-2 h-8 w-full rounded-full bg-[#E6A817] px-2 text-[11px] text-[#2B1D0E] hover:bg-[#d89c14] sm:mt-4 sm:h-9 sm:text-sm md:mt-5 md:h-10 md:text-sm"
+                          >
+                            <ShoppingBag className="mr-1 h-3 w-3 shrink-0 sm:mr-2 sm:h-4 sm:w-4" />
+                            <span className="sm:hidden">Add</span>
+                            <span className="hidden sm:inline">Add to Cart</span>
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Why Choose */}
+        <section className="bg-white py-12 md:py-16">
+          <div className="container-custom">
+            <div className="mb-10 text-center">
+              <h2 className="font-display text-3xl text-[#2B1D0E] md:text-4xl">Why Choose Jugraj Son&apos;s Hive</h2>
+              <p className="mt-2 text-sm text-[#2B1D0E]/70">Not mass-market. Premium, authentic, direct-from-source honey.</p>
+            </div>
+            <div className="grid gap-4 md:gap-5 md:grid-cols-2">
+              {whyChooseUs.map((item, idx) => (
+                <motion.div key={item.title} {...revealUp(idx * 0.08, 14)}>
+                  <Card className="h-full rounded-2xl border border-[#E6A817]/20 bg-[#fff9ef]">
+                    <CardContent className="p-5 md:p-6">
+                      <div className="mb-3 inline-flex rounded-full bg-[#1F3D2B] p-2.5">
+                        <item.icon className="h-5 w-5 text-[#F5E9D7]" />
+                      </div>
+                      <h3 className="font-display text-2xl text-[#2B1D0E]">{item.title}</h3>
+                      <p className="mt-2 text-sm text-[#2B1D0E]/75">{item.text}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Story */}
+        <section id="our-story" className="py-12 md:py-16">
+          <div className="container-custom">
+            <Card className="overflow-hidden rounded-3xl border border-[#E6A817]/20 bg-[#2B1D0E] text-[#F5E9D7]">
+              <CardContent className="grid gap-6 p-5 md:grid-cols-2 md:gap-8 md:p-12">
+                <div>
+                  <Badge className="border-0 bg-[#E6A817] text-[#2B1D0E]">Our Story</Badge>
+                  <h2 className="mt-4 font-display text-3xl text-[#F5E9D7] md:text-4xl">Jugraj ji ke chhote beekeeping safar se</h2>
+                  <p className="mt-4 text-[#F5E9D7]/85">
+                    Jugraj ji ke chhote se beekeeping se shuru hua safar, aaj premium forest honey brand ban chuka hai.
+                    Humne hamesha ek hi wada rakha: asli shahad, imaandari ke saath.
+                  </p>
+                  <p className="mt-3 text-[#F5E9D7]/85">
+                    Har batch limited hota hai, direct source se aata hai, aur quality checks ke baad hi aap tak pahuchta hai.
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-[#F5E9D7]/10 p-5 md:p-6">
+                  <p className="text-sm uppercase tracking-wider text-[#E6A817]">Brand Promise</p>
+                  <p className="mt-3 text-lg leading-relaxed">
+                    "Asli shahad ka taste tabhi aata hai jab wo seedha prakriti se aaye."
+                  </p>
+                  <div className="mt-6 space-y-3 text-sm">
+                    <p className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#E6A817]" /> Forest-sourced origins</p>
+                    <p className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#E6A817]" /> No added sugar or chemicals</p>
+                    <p className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#E6A817]" /> Premium D2C quality focus</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* Benefits */}
+        <section className="bg-white py-12 md:py-16">
+          <div className="container-custom">
+            <div className="mb-10 text-center">
+              <h2 className="font-display text-3xl text-[#2B1D0E] md:text-4xl">Daily Honey Benefits</h2>
+            </div>
+            <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-1 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
+              {benefits.map((benefit, idx) => (
+                <motion.div key={benefit.title} {...revealUp(idx * 0.08, 16)} className="w-[82%] min-w-[82%] snap-center md:w-auto md:min-w-0">
+                  <Card className="rounded-2xl border border-[#E6A817]/20 bg-[#fff9ef]">
+                    <CardContent className="p-6 text-center">
+                      <div className="mx-auto mb-3 inline-flex rounded-full bg-[#E6A817] p-3">
+                        <benefit.icon className="h-5 w-5 text-[#2B1D0E]" />
+                      </div>
+                      <h3 className="font-display text-2xl text-[#2B1D0E]">{benefit.title}</h3>
+                      <p className="mt-2 text-sm text-[#2B1D0E]/75">{benefit.text}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="py-12 md:py-16">
+          <div className="container-custom">
+            <div className="mb-10 text-center">
+              <h2 className="font-display text-3xl text-[#2B1D0E] md:text-4xl">What Honey Lovers Say</h2>
+            </div>
+            <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-1 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
+              {testimonials.map((item, idx) => (
+                <motion.div key={item.name} {...revealUp(idx * 0.08, 12)} className="w-[86%] min-w-[86%] snap-center md:w-auto md:min-w-0">
+                  <Card className="h-full rounded-2xl border border-[#E6A817]/20 bg-white">
+                    <CardContent className="p-6">
+                      <div className="mb-3 flex items-center justify-between">
+                        <Quote className="h-4 w-4 text-[#E6A817]" />
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star key={i} className="h-4 w-4 fill-[#E6A817] text-[#E6A817]" />
+                          ))}
                         </div>
                       </div>
-                      
-                      {/* Verified Badge */}
-                      <div className="mt-4 pt-4 border-t">
-                        <p className="text-xs text-emerald-600 font-medium">
-                          ✓ Verified: {testimonial.product}
-                        </p>
+                      <p className="text-sm leading-relaxed text-[#2B1D0E]/80">"{item.text}"</p>
+                      <div className="mt-5 border-t border-[#E6A817]/20 pt-4">
+                        <p className="font-semibold text-[#2B1D0E]">{item.name}</p>
+                        <p className="text-xs text-[#2B1D0E]/60">{item.city}</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -550,32 +531,22 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Newsletter Section - Matching Reference */}
-        <section className="py-16 bg-emerald-600">
+        {/* Final CTA */}
+        <section className="border-t border-[#E6A817]/25 bg-white py-10 md:py-14">
           <div className="container-custom">
-            <div className="max-w-2xl mx-auto text-center">
-              <Mail className="w-12 h-12 text-white mx-auto mb-4" />
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">Get Wellness Tips & Offers</h2>
-              <p className="text-emerald-50 mb-8">Subscribe for Ayurvedic health tips, new launches & exclusive discounts</p>
-              
-              <form onSubmit={handleNewsletterSubmit} className="flex gap-2 max-w-md mx-auto">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 bg-white border-0 rounded-full px-6"
-                  required
-                />
-                <Button type="submit" size="lg" className="bg-white text-emerald-600 hover:bg-gray-50 rounded-full px-8">
-                  <Send className="w-5 h-5" />
+            <Card className="rounded-3xl border border-[#E6A817]/20 bg-gradient-to-r from-[#173423] to-[#214733] text-[#FFF8E9] shadow-[0_20px_40px_rgba(23,52,35,0.25)]">
+              <CardContent className="flex flex-col items-center justify-between gap-4 p-5 text-center md:gap-6 md:p-8 md:flex-row md:text-left">
+                <div>
+                  <h3 className="font-display text-2xl text-[#FFF8E9] md:text-3xl">Taste the difference of real forest honey.</h3>
+                  <p className="mt-2 text-sm text-[#FFF8E9]">Mindful living ke liye premium, authentic honey choose kijiye.</p>
+                </div>
+                <Button asChild size="lg" className="h-11 w-full rounded-full bg-[#E6A817] px-8 text-[#2B1D0E] hover:bg-[#d89c14] md:h-12 md:w-auto">
+                  <Link to="/products">
+                    Explore Products <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
                 </Button>
-              </form>
-              
-              <p className="text-sm text-emerald-50 mt-4">
-                By subscribing, you agree to our Privacy Policy. Unsubscribe anytime.
-              </p>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </section>
       </main>

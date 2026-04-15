@@ -226,7 +226,7 @@ const Returns = () => {
   return (
     <>
       <SEO 
-        title="Returns & Refund Policy - Easy Returns | Atharva Health Solutions"
+        title="Returns & Refund Policy - Easy Returns | Jugraj Son's Hive"
         description="Learn about our easy return policy. 7-day return window, free returns, and quick refunds. Return unopened products for full refund within 5-7 business days."
       />
       <main className="pb-24">

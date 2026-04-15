@@ -79,13 +79,13 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
       </div>
 
       <div className="space-y-4">
-        {/* Health Concerns */}
+        {/* Honey Use Cases */}
         <div className="border-b border-border pb-4">
           <button
             onClick={() => toggleSection('concern')}
             className="flex items-center justify-between w-full py-2"
           >
-            <span className="font-medium">Health Concerns</span>
+            <span className="font-medium">Shop by Use</span>
             <ChevronDown
               className={cn(
                 'w-4 h-4 transition-transform',
@@ -118,13 +118,13 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
           )}
         </div>
 
-        {/* Product Categories */}
+        {/* Honey Range */}
         <div className="border-b border-border pb-4">
           <button
             onClick={() => toggleSection('category')}
             className="flex items-center justify-between w-full py-2"
           >
-            <span className="font-medium">Product Type</span>
+            <span className="font-medium">Honey Range</span>
             <ChevronDown
               className={cn(
                 'w-4 h-4 transition-transform',

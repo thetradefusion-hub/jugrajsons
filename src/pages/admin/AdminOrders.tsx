@@ -270,7 +270,7 @@ const AdminOrders = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 lg:grid-cols-5">
           <Card className="border-2 border-blue-500 shadow-lg">
             <CardContent className="p-5">
               <div className="admin-stat-value">{stats.total}</div>
@@ -549,7 +549,7 @@ const AdminOrders = () => {
 
         {/* Order Details Dialog */}
         <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-h-[min(90dvh,90vh)] w-[calc(100vw-1rem)] max-w-4xl overflow-y-auto p-4 sm:p-6">
             {selectedOrder && (
               <>
                 <DialogHeader>

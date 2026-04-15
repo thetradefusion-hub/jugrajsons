@@ -155,7 +155,7 @@ const Shipping = () => {
   return (
     <>
       <SEO 
-        title="Shipping Information - Delivery & Shipping Policy | Atharva Health Solutions"
+        title="Shipping Information - Delivery & Shipping Policy | Jugraj Son's Hive"
         description="Learn about our shipping methods, delivery times, charges, and tracking. Free shipping on orders above Rs. 999. Fast and secure delivery across India."
       />
       <main className="pb-24">

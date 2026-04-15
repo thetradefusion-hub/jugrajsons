@@ -95,8 +95,8 @@ const About = () => {
   return (
     <>
       <SEO 
-        title="About Us - Atharva Health Solutions"
-        description="Learn about Atharva Health Solutions - 50+ years of Ayurvedic expertise, 100% natural products, GMP certified, and trusted by millions."
+        title="About Us - Jugraj Son's Hive"
+        description="Learn about Jugraj Son's Hive - a pure raw honey brand focused on trusted sourcing, quality, and authentic taste."
       />
       <main className="pb-24">
         {/* Hero Section */}
@@ -113,11 +113,11 @@ const About = () => {
                 Our Story
               </Badge>
               <h1 className="font-display text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                About Atharva Health Solutions
+                About Jugraj Son's Hive
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Atharva Health Solution is a distributor and promoter of Vaidyadeep Ayurveda. We are dedicated 
-                to bringing authentic Ayurvedic products and natural health solutions to customers across India.
+                Jugraj Son's Hive is dedicated to bringing pure raw natural honey from trusted beekeepers
+                to customers across India.
               </p>
             </motion.div>
           </div>
@@ -140,9 +140,8 @@ const About = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed">
-                    To make authentic Ayurvedic wellness accessible to everyone. We believe in the power of 
-                    natural healing and are committed to providing high-quality, scientifically-backed products 
-                    that support your health journey.
+                    To make authentic raw honey accessible to everyone. We focus on trusted sourcing,
+                    purity-first quality checks, and honest products that support daily wellness.
                   </p>
                 </CardContent>
               </Card>
@@ -162,9 +161,8 @@ const About = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground leading-relaxed">
-                    To become India's most trusted Ayurvedic wellness brand, recognized globally for our 
-                    commitment to authenticity, quality, and customer care. We envision a world where 
-                    natural healing is the first choice for wellness.
+                    To become India's most trusted raw honey brand, recognized for authenticity,
+                    quality, and customer care from hive to home.
                   </p>
                 </CardContent>
               </Card>
@@ -269,7 +267,7 @@ const About = () => {
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">Our Expert Team</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Meet the dedicated professionals behind Atharva Health Solutions
+              Meet the dedicated professionals behind Jugraj Son's Hive
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -342,14 +340,11 @@ const About = () => {
                 Join Our Wellness Journey
               </h2>
               <p className="text-emerald-50 mb-8 max-w-2xl mx-auto">
-                Experience the power of authentic Ayurveda. Start your wellness journey with us today.
+                Experience the taste of pure raw natural honey. Start your journey with us today.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="lg" variant="secondary">
                   <Link to="/products">Explore Products</Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="bg-transparent text-white border-white hover:bg-white/10">
-                  <Link to="/expert">Consult Expert</Link>
                 </Button>
               </div>
             </CardContent>
@@ -379,8 +374,8 @@ const About = () => {
                 <CardContent className="p-6">
                   <Mail className="w-8 h-8 text-primary mx-auto mb-3" />
                   <h3 className="font-semibold mb-2">Email</h3>
-                  <a href="mailto:support@atharvahealthsolutions.com" className="text-primary hover:underline">
-                    support@atharvahealthsolutions.com
+                  <a href="mailto:connect@jugrajsonshive.com" className="text-primary hover:underline">
+                    connect@jugrajsonshive.com
                   </a>
                 </CardContent>
               </Card>
@@ -389,8 +384,8 @@ const About = () => {
                   <MapPin className="w-8 h-8 text-primary mx-auto mb-3" />
                   <h3 className="font-semibold mb-2">Address</h3>
                   <p className="text-sm text-muted-foreground">
-                    Atharva Health Solution, Dunda Seoni<br />
-                    Seoni, Madhya Pradesh – 480661, India
+                    Jugraj Son's Hive<br />
+                    India
                   </p>
                 </CardContent>
               </Card>

@@ -1,67 +1,68 @@
-import { Home, Package, User, Stethoscope, Truck } from "lucide-react";
-import { NavLink as RouterNavLink, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { Home, Package, User, Truck } from 'lucide-react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 const navItems = [
-  { icon: Home, label: "Home", path: "/" },
-  { icon: Package, label: "Products", path: "/products" },
-  { icon: Truck, label: "Track", path: "/track-order" },
-  { icon: Stethoscope, label: "Consult", path: "/expert" },
-  { icon: User, label: "Profile", path: "/profile" },
-];
+  { icon: Home, label: 'Home', path: '/' },
+  { icon: Package, label: 'Shop', path: '/products' },
+  { icon: Truck, label: 'Track', path: '/track-order' },
+  { icon: User, label: 'Profile', path: '/profile' },
+] as const;
 
 const BottomNav = () => {
   const location = useLocation();
-  
+
   const isActive = (path: string) => {
-    if (path === "/") return location.pathname === "/";
+    if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
   };
 
   const handleLinkClick = () => {
-    // Scroll to top when clicking any navigation link
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'smooth',
-    });
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   };
 
-      return (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-emerald-600 to-emerald-500 border-t border-emerald-700/30 md:hidden safe-area-bottom shadow-[0_-2px_8px_rgba(0,0,0,0.15)]">
-          <div className="flex items-center justify-around h-16 px-2">
-            {navItems.map((item) => {
-              const active = isActive(item.path);
-              return (
-                <RouterNavLink
-                  key={item.path}
-                  to={item.path}
-                  onClick={handleLinkClick}
-                  className={cn(
-                    "flex flex-col items-center justify-center flex-1 py-2 px-1 transition-colors duration-200",
-                    active 
-                      ? "text-white" 
-                      : "text-white/80"
-                  )}
-                >
-                  <item.icon className={cn(
-                    "w-5 h-5 mb-1 transition-colors",
-                    active && "text-white scale-110"
-                  )} />
-                  <span className={cn(
-                    "text-xs font-medium transition-colors",
-                    active 
-                      ? "text-white font-semibold" 
-                      : "text-white/80"
-                  )}>
-                    {item.label}
-                  </span>
-                </RouterNavLink>
-              );
-            })}
-          </div>
-        </nav>
-      );
+  return (
+    <nav
+      className="safe-area-bottom fixed bottom-0 left-0 right-0 z-50 border-t border-[#E6A817]/30 bg-[#F5E9D7]/95 shadow-[0_-10px_32px_rgba(43,29,14,0.12)] backdrop-blur-lg md:hidden"
+      aria-label="Main mobile navigation"
+    >
+      <div className="mx-auto flex h-[4.25rem] max-w-lg items-stretch justify-around px-1 pt-1">
+        {navItems.map((item) => {
+          const active = isActive(item.path);
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.path === '/'}
+              onClick={handleLinkClick}
+              className={cn(
+                'flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-2xl py-2 transition-all duration-200',
+                active
+                  ? 'bg-[#1F3D2B] text-[#F5E9D7] shadow-[0_4px_14px_rgba(31,61,43,0.35)]'
+                  : 'text-[#2B1D0E]/55 active:scale-[0.98]',
+              )}
+            >
+              <item.icon
+                className={cn(
+                  'h-[1.35rem] w-[1.35rem] shrink-0 transition-transform duration-200',
+                  active && 'scale-105 text-[#E6A817]',
+                )}
+                strokeWidth={active ? 2.25 : 2}
+              />
+              <span
+                className={cn(
+                  'max-w-full truncate px-0.5 text-[10px] font-medium leading-tight tracking-wide',
+                  active ? 'font-semibold text-[#F5E9D7]' : 'text-[#2B1D0E]/65',
+                )}
+              >
+                {item.label}
+              </span>
+            </NavLink>
+          );
+        })}
+      </div>
+    </nav>
+  );
 };
 
 export default BottomNav;

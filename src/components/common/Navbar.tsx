@@ -1,44 +1,32 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, 
-  ShoppingCart, 
-  Heart, 
-  User, 
-  Menu, 
-  X, 
-  ChevronDown,
-  Phone,
-  Leaf,
-  Truck
-} from 'lucide-react';
+import { Search, ShoppingCart, Heart, User, Menu, X, ChevronDown, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
-import { concerns } from '@/data/products';
+import { productTypes } from '@/data/products';
 import { cn } from '@/lib/utils';
 
 const Navbar = () => {
+  const logoSrc = '/WhatsApp%20Image%202026-03-21%20at%203.15.06%20PM.jpeg';
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  
   const dropdownRef = useRef<HTMLDivElement>(null);
+
   const navigate = useNavigate();
   const { itemCount } = useCart();
   const { items: wishlistItems } = useWishlist();
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 8);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -55,121 +43,96 @@ const Navbar = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
-      setIsSearchOpen(false);
-      setSearchQuery('');
-    }
+    if (!searchQuery.trim()) return;
+    navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+    setSearchQuery('');
+    setIsSearchOpen(false);
   };
 
   const navLinks = [
-    { 
-      label: 'Shop by Concern', 
-      key: 'concern',
-      items: concerns.map(c => ({ name: c.name, slug: c.slug, icon: c.icon }))
+    {
+      label: 'Honey Range',
+      key: 'category',
+      items: productTypes.map((c) => ({ name: c.name, slug: c.slug })),
     },
-    { label: 'All Products', href: '/products' },
+    { label: 'Shop All', href: '/products' },
+    { label: 'Gift Packs', href: '/products?search=gift' },
     { label: 'New Arrivals', href: '/products?tag=new' },
   ];
 
   return (
     <>
-      {/* Top Bar - Clean Premium Style */}
-      <div className="bg-emerald-600 dark:bg-emerald-700 text-white py-2.5 text-sm hidden md:block border-b border-emerald-700 dark:border-emerald-800">
-        <div className="container-custom flex justify-between items-center">
-          <div className="flex items-center gap-6">
-            <span className="flex items-center gap-2 font-medium">
-              <Leaf className="w-4 h-4" />
-              100% Authentic Ayurvedic Products
-            </span>
-          </div>
-          <div className="flex items-center gap-6">
-            <a href="tel:+919669361290" className="flex items-center gap-2 hover:text-emerald-100 transition-colors font-medium">
-              <Phone className="w-4 h-4" />
-              09669361290
-            </a>
-            <span className="flex items-center gap-2">
-              <Truck className="w-4 h-4" />
-              Free Shipping Above Rs. 499
-            </span>
-          </div>
+      <div className="hidden border-b border-[#E6A817]/15 bg-[#1F3D2B] py-2 text-sm text-[#F5E9D7] md:block">
+        <div className="container-custom flex items-center justify-between">
+          <span className="flex items-center gap-2 font-medium">
+            <img src={logoSrc} alt="Jugraj Son's Hive Logo" className="h-5 w-5 rounded-full object-cover ring-1 ring-[#E6A817]/40" />
+            Premium Raw Forest Honey
+          </span>
+          <a href="tel:+919669361290" className="flex items-center gap-2 hover:text-[#E6A817]">
+            <Phone className="h-4 w-4" />
+            09669361290
+          </a>
         </div>
       </div>
 
-      {/* Main Navbar - Premium Clean Style */}
-      <header 
+      <header
         className={cn(
-          'sticky top-0 z-50 transition-all duration-300 border-b border-border bg-background/95 backdrop-blur-sm',
-          isScrolled && 'shadow-sm'
+          'sticky top-0 z-50 border-b border-[#E6A817]/15 bg-[#F5E9D7]/95 backdrop-blur-md transition-all duration-300',
+          isScrolled && 'shadow-[0_10px_25px_rgba(43,29,14,0.08)]'
         )}
       >
         <div className="container-custom">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo - Clean Premium */}
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-white" />
-              </div>
+          <div className="flex h-16 items-center justify-between lg:h-20">
+            <Link to="/" className="flex items-center gap-3">
+              <img
+                src={logoSrc}
+                alt="Jugraj Son's Hive"
+                className="h-10 w-10 rounded-xl object-cover ring-1 ring-[#E6A817]/35"
+              />
               <div>
-                <h1 className="font-display text-lg md:text-xl font-bold text-foreground leading-tight">
-                  Atharva
-                </h1>
-                <p className="text-xs text-muted-foreground">Health Solutions</p>
+                <p className="font-display text-lg font-bold leading-tight text-[#2B1D0E]">Jugraj Son&apos;s</p>
+                <p className="text-xs text-[#2B1D0E]/65">Hive</p>
               </div>
             </Link>
 
-            {/* Desktop Navigation - Clean */}
-            <nav className="hidden lg:flex items-center gap-1" ref={dropdownRef}>
+            <nav className="hidden items-center gap-1 lg:flex" ref={dropdownRef}>
               {navLinks.map((link) => (
                 <div key={link.key || link.label} className="relative">
                   {link.items ? (
                     <button
                       onClick={() => setActiveDropdown(activeDropdown === link.key ? null : link.key!)}
-                      className={cn(
-                        'flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors',
-                        activeDropdown === link.key
-                          ? 'bg-muted text-foreground'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                      )}
+                      className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-[#2B1D0E]/80 hover:bg-[#E6A817]/15 hover:text-[#2B1D0E]"
                     >
                       {link.label}
-                      <ChevronDown className={cn(
-                        'w-4 h-4 transition-transform duration-200',
-                        activeDropdown === link.key && 'rotate-180'
-                      )} />
+                      <ChevronDown className={cn('h-4 w-4 transition-transform', activeDropdown === link.key && 'rotate-180')} />
                     </button>
                   ) : (
                     <Link
                       to={link.href!}
-                      className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors"
+                      className="rounded-full px-4 py-2 text-sm font-medium text-[#2B1D0E]/80 hover:bg-[#E6A817]/15 hover:text-[#2B1D0E]"
                     >
                       {link.label}
                     </Link>
                   )}
 
-                  {/* Dropdown Menu - Clean */}
                   <AnimatePresence>
                     {link.items && activeDropdown === link.key && (
                       <motion.div
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute top-full left-0 mt-2 w-64 bg-popover rounded-lg shadow-lg border border-border overflow-hidden z-50"
+                        exit={{ opacity: 0, y: 8 }}
+                        className="absolute left-0 top-full z-50 mt-2 w-72 rounded-2xl border border-[#E6A817]/20 bg-white p-2 shadow-xl"
                       >
-                        <div className="p-2">
-                          {link.items.map((item: { name: string; slug: string; icon?: string }) => (
-                            <Link
-                              key={item.slug}
-                              to={`/products?${link.key === 'concern' ? 'concern' : 'category'}=${item.slug}`}
-                              onClick={() => setActiveDropdown(null)}
-                              className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-muted transition-colors text-sm font-medium"
-                            >
-                              {item.icon && <span className="text-lg">{item.icon}</span>}
-                              <span>{item.name}</span>
-                            </Link>
-                          ))}
-                        </div>
+                        {link.items.map((item) => (
+                          <Link
+                            key={item.slug}
+                            to={`/products?category=${item.slug}`}
+                            onClick={() => setActiveDropdown(null)}
+                            className="block rounded-xl px-4 py-2.5 text-sm font-medium text-[#2B1D0E]/85 hover:bg-[#F5E9D7]"
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -177,95 +140,75 @@ const Navbar = () => {
               ))}
             </nav>
 
-            {/* Search Bar - Desktop Clean */}
-            <form onSubmit={handleSearch} className="hidden md:flex relative max-w-xs lg:max-w-md w-full">
-              <div className="relative w-full">
-                <Input
-                  type="search"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 h-10 w-full bg-background border-border focus-visible:ring-1 focus-visible:ring-emerald-600 rounded-lg"
-                />
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              </div>
+            <form onSubmit={handleSearch} className="relative hidden w-full max-w-xs md:block lg:max-w-sm">
+              <Input
+                type="search"
+                placeholder="Search raw honey..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-10 rounded-full border-[#E6A817]/30 bg-white pl-10 pr-4 text-[#2B1D0E] placeholder:text-[#2B1D0E]/45 focus-visible:ring-[#1F3D2B]"
+              />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#2B1D0E]/45" />
             </form>
 
-            {/* Right Actions - Clean */}
             <div className="flex items-center gap-1">
-              {/* Mobile Search Toggle */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden h-10 w-10"
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-              >
-                <Search className="w-5 h-5" />
+              <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsSearchOpen(!isSearchOpen)}>
+                <Search className="h-5 w-5 text-[#2B1D0E]" />
               </Button>
 
-              {/* Wishlist */}
-              <Button variant="ghost" size="icon" asChild className="relative h-10 w-10">
+              <Button variant="ghost" size="icon" asChild className="relative">
                 <Link to="/wishlist">
-                  <Heart className="w-5 h-5" />
+                  <Heart className="h-5 w-5 text-[#2B1D0E]" />
                   {wishlistItems.length > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs bg-emerald-600 text-white">
+                    <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-[#1F3D2B] p-0 text-xs text-[#F5E9D7]">
                       {wishlistItems.length}
                     </Badge>
                   )}
                 </Link>
               </Button>
 
-              {/* Cart */}
-              <Button variant="ghost" size="icon" asChild className="relative h-10 w-10">
+              <Button variant="ghost" size="icon" asChild className="relative">
                 <Link to="/cart">
-                  <ShoppingCart className="w-5 h-5" />
+                  <ShoppingCart className="h-5 w-5 text-[#2B1D0E]" />
                   {itemCount > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs bg-emerald-600 text-white">
+                    <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-[#1F3D2B] p-0 text-xs text-[#F5E9D7]">
                       {itemCount}
                     </Badge>
                   )}
                 </Link>
               </Button>
 
-              {/* Account */}
-              <Button variant="ghost" size="icon" asChild className="h-10 w-10">
+              <Button variant="ghost" size="icon" asChild>
                 <Link to={isAuthenticated ? '/profile' : '/login'}>
-                  <User className="w-5 h-5" />
+                  <User className="h-5 w-5 text-[#2B1D0E]" />
                 </Link>
               </Button>
 
-              {/* Mobile Menu Toggle */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden h-10 w-10"
-                onClick={() => setIsMobileMenuOpen(true)}
-              >
-                <Menu className="w-5 h-5" />
+              <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsMobileMenuOpen(true)}>
+                <Menu className="h-5 w-5 text-[#2B1D0E]" />
               </Button>
             </div>
           </div>
 
-          {/* Mobile Search Bar */}
           <AnimatePresence>
             {isSearchOpen && (
               <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="md:hidden overflow-hidden border-t border-border"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="overflow-hidden border-t border-[#E6A817]/20 md:hidden"
               >
-                <form onSubmit={handleSearch} className="p-4">
+                <form onSubmit={handleSearch} className="py-3">
                   <div className="relative">
                     <Input
                       type="search"
-                      placeholder="Search products..."
+                      placeholder="Search raw honey..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 pr-4 h-10 w-full"
+                      className="h-10 rounded-full border-[#E6A817]/30 bg-white pl-10 pr-4"
                       autoFocus
                     />
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#2B1D0E]/45" />
                   </div>
                 </form>
               </motion.div>
@@ -274,7 +217,6 @@ const Navbar = () => {
         </div>
       </header>
 
-      {/* Mobile Menu - Clean */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -282,53 +224,46 @@ const Navbar = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 lg:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm lg:hidden"
             />
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 w-80 bg-background z-50 lg:hidden shadow-xl border-l border-border"
+              transition={{ type: 'spring', stiffness: 280, damping: 30 }}
+              className="fixed right-0 top-0 z-50 h-full w-80 border-l border-[#E6A817]/20 bg-[#F5E9D7] p-5 shadow-2xl lg:hidden"
             >
-              <div className="flex items-center justify-between p-6 border-b border-border">
-                <span className="font-display font-bold text-lg">Menu</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="h-10 w-10"
-                >
-                  <X className="w-5 h-5" />
+              <div className="mb-5 flex items-center justify-between">
+                <p className="font-display text-xl text-[#2B1D0E]">Menu</p>
+                <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
+                  <X className="h-5 w-5 text-[#2B1D0E]" />
                 </Button>
               </div>
-              
-              <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(100vh-80px)]">
+              <div className="space-y-5">
                 {navLinks.map((link) => (
                   <div key={link.key || link.label}>
                     {link.items ? (
-                      <div className="space-y-3">
-                        <span className="text-sm font-semibold text-foreground block">{link.label}</span>
+                      <>
+                        <p className="mb-2 text-sm font-semibold text-[#2B1D0E]/70">{link.label}</p>
                         <div className="grid grid-cols-2 gap-2">
-                          {link.items.map((item: { name: string; slug: string; icon?: string }) => (
+                          {link.items.map((item) => (
                             <Link
                               key={item.slug}
-                              to={`/products?${link.key === 'concern' ? 'concern' : 'category'}=${item.slug}`}
+                              to={`/products?category=${item.slug}`}
                               onClick={() => setIsMobileMenuOpen(false)}
-                              className="flex flex-col items-center gap-2 p-3 text-sm text-foreground hover:bg-muted rounded-lg transition-colors border border-border"
+                              className="rounded-xl border border-[#E6A817]/20 bg-white px-3 py-2 text-center text-sm text-[#2B1D0E]"
                             >
-                              {item.icon && <span className="text-2xl">{item.icon}</span>}
-                              <span className="font-medium text-center">{item.name}</span>
+                              {item.name}
                             </Link>
                           ))}
                         </div>
-                      </div>
+                      </>
                     ) : (
                       <Link
                         to={link.href!}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="block py-3 text-base font-medium text-foreground hover:text-emerald-600 transition-colors"
+                        className="block rounded-xl bg-white px-4 py-3 text-sm font-medium text-[#2B1D0E]"
                       >
                         {link.label}
                       </Link>

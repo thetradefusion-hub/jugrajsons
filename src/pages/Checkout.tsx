@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowLeft, CreditCard, Package, Phone, Tag, Truck, X, Zap } from 'lucide-react';
+import { ArrowLeft, CreditCard, Package, Phone, Tag, X, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +15,6 @@ import { useAuth, type Address } from '@/context/AuthContext';
 import api from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import SEO from '@/components/seo/SEO';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const quickSchema = z.object({
   name: z.string().min(2, 'Name required'),
@@ -45,11 +44,6 @@ const Checkout = () => {
   } | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
-  const [shiprocketUi, setShiprocketUi] = useState<{
-    enabled: boolean;
-    autoAwb: boolean;
-  } | null>(null);
-
   type LocStatus = 'idle' | 'loading' | 'ok' | 'fail';
   const [locStatus, setLocStatus] = useState<LocStatus>('idle');
   const [manualLocation, setManualLocation] = useState(false);
@@ -182,30 +176,6 @@ const Checkout = () => {
     }
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const { data } = await api.get('/health');
-        if (!cancelled) {
-          if (data?.shiprocket) {
-            setShiprocketUi({
-              enabled: Boolean(data.shiprocket.enabled),
-              autoAwb: data.shiprocket.autoAwb !== false,
-            });
-          } else {
-            setShiprocketUi({ enabled: false, autoAwb: false });
-          }
-        }
-      } catch {
-        if (!cancelled) setShiprocketUi({ enabled: false, autoAwb: false });
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
       setCouponError('Please enter a coupon code');
@@ -334,16 +304,6 @@ const Checkout = () => {
 
       const response = await api.post('/orders', orderData);
       const orderId = response.data._id;
-      const shiprocket = response.data.shiprocket as { synced?: boolean; message?: string } | undefined;
-      if (shiprocket && shiprocket.synced === false) {
-        toast({
-          title: 'Order placed — Shiprocket notice',
-          description:
-            shiprocket.message ||
-            'Order saved but courier sync failed. Check backend logs and Shiprocket pickup location.',
-          variant: 'destructive',
-        });
-      }
 
       if (paymentMethod === 'online') {
         try {
@@ -359,7 +319,7 @@ const Checkout = () => {
             key: keyId,
             amount: paymentResponse.data.amount,
             currency: paymentResponse.data.currency,
-            name: 'Atharva Health',
+            name: "Jugraj Son's Hive",
             description: `Order #${orderId.slice(-6).toUpperCase()}`,
             order_id: razorpayOrderId,
             handler: async function (response: {
@@ -380,18 +340,6 @@ const Checkout = () => {
                     title: 'Payment Successful!',
                     description: 'Your order has been placed successfully',
                   });
-                  const sr = verifyResponse.data.shiprocket as
-                    | { synced?: boolean; message?: string }
-                    | undefined;
-                  if (sr && sr.synced === false) {
-                    toast({
-                      title: 'Shiprocket sync failed',
-                      description:
-                        sr.message ||
-                        'Order is paid; fix pickup location / Shiprocket account and retry from admin.',
-                      variant: 'destructive',
-                    });
-                  }
 
                   clearCart();
                   localStorage.removeItem('applied-coupon');
@@ -497,16 +445,6 @@ const Checkout = () => {
             <p className="text-sm text-muted-foreground mt-0.5">Jaldi se — mobile &amp; pincode se delivery</p>
           </div>
         </div>
-
-        {shiprocketUi?.enabled && (
-          <Alert className="mb-4 border-primary/30 bg-primary/5 py-3">
-            <Truck className="h-4 w-4" />
-            <AlertTitle className="text-sm">Shiprocket delivery</AlertTitle>
-            <AlertDescription className="text-xs text-muted-foreground">
-              Order place hote hi courier panel sync; prepaid mein payment ke baad.
-            </AlertDescription>
-          </Alert>
-        )}
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid lg:grid-cols-5 gap-6 lg:gap-8">
@@ -717,11 +655,7 @@ const Checkout = () => {
                   </div>
 
                   <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-                    {isLoading
-                      ? 'Processing…'
-                      : shiprocketUi?.enabled
-                        ? `Buy now — Rs. ${finalTotal.toLocaleString()}`
-                        : `Place order — Rs. ${finalTotal.toLocaleString()}`}
+                    {isLoading ? 'Processing…' : `Place order — Rs. ${finalTotal.toLocaleString()}`}
                   </Button>
                 </CardContent>
               </Card>

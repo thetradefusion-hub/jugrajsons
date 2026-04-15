@@ -1,17 +1,34 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  Star, Heart, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plus, Check, Leaf,
-  Share2, AlertCircle, TrendingUp, Award, Clock, Users, MessageSquare, HelpCircle,
-  CheckCircle2, Info, Sparkles, Zap
+import {
+  Star,
+  Heart,
+  ShoppingCart,
+  Truck,
+  Shield,
+  RotateCcw,
+  Minus,
+  Plus,
+  Check,
+  Leaf,
+  Share2,
+  AlertCircle,
+  TrendingUp,
+  Award,
+  Clock,
+  Users,
+  MessageSquare,
+  CheckCircle2,
+  Info,
+  Sparkles,
+  ChevronRight,
+  Home,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import SEO from '@/components/seo/SEO';
 import ProductGallery from '@/components/product/ProductGallery';
@@ -65,10 +82,9 @@ interface Review {
 
 const ProductDetails = () => {
   const { slug } = useParams();
-  const navigate = useNavigate();
   const { addItem, getItemQuantity, updateQuantity } = useCart();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
-  const { addItem: addToRecentlyViewed, items: recentlyViewed } = useRecentlyViewed();
+  const { addItem: addToRecentlyViewed } = useRecentlyViewed();
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
@@ -297,17 +313,28 @@ const ProductDetails = () => {
 
   if (loading) {
     return (
-      <div className="container-custom py-16 text-center">
-        <div className="text-muted-foreground">Loading product...</div>
+      <div className="min-h-[50vh] bg-[#F5E9D7] pb-28 pt-12">
+        <div className="container-custom">
+          <div className="mx-auto max-w-lg animate-pulse space-y-4">
+            <div className="h-8 w-40 rounded-full bg-white/60" />
+            <div className="aspect-square max-w-md rounded-3xl border border-[#E6A817]/20 bg-white/50" />
+            <div className="h-24 rounded-2xl border border-[#E6A817]/15 bg-white/50" />
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="container-custom py-16 text-center">
-        <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
-        <Button asChild><Link to="/products">Browse Products</Link></Button>
+      <div className="min-h-[50vh] bg-[#F5E9D7] pb-28 pt-16 text-[#2B1D0E]">
+        <div className="container-custom text-center">
+          <h1 className="font-display text-3xl font-bold">Product not found</h1>
+          <p className="mt-2 text-sm text-[#2B1D0E]/70">Is link sahi nahi lag raha — shop se dobara chuniye.</p>
+          <Button asChild className="mt-8 rounded-full bg-[#E6A817] px-8 text-[#2B1D0E] hover:bg-[#d89c14]">
+            <Link to="/products">Back to shop</Link>
+          </Button>
+        </div>
       </div>
     );
   }
@@ -316,190 +343,214 @@ const ProductDetails = () => {
   return (
     <>
       <SEO title={product.name} description={product.shortDescription} />
-      <main className="pb-24">
-        {/* Product Header - Mobile App Style */}
-        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30">
-          <div className="container-custom pt-4 pb-6">
-            {/* Gallery */}
-            <ProductGallery images={product.images} productName={product.name} />
-          </div>
-        </div>
+      <main className="overflow-x-hidden bg-[#F5E9D7] pb-32 text-[#2B1D0E] md:pb-28">
+        <section className="relative isolate border-b border-[#E6A817]/15 bg-gradient-to-br from-[#F5E9D7] via-[#fff8ed] to-[#f0e1cb]">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.11] [background:radial-gradient(circle_at_1px_1px,#1F3D2B_1px,transparent_0)] [background-size:22px_22px]" />
+          <div className="container-custom relative py-4 md:py-8">
+            <nav className="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-[#2B1D0E]/65 md:text-sm">
+              <Link to="/" className="inline-flex items-center gap-1 hover:text-[#1F3D2B]">
+                <Home className="h-3.5 w-3.5" />
+                Home
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-40" />
+              <Link to="/products" className="hover:text-[#1F3D2B]">
+                Shop
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-40" />
+              <span className="max-w-[200px] truncate font-medium text-[#2B1D0E] sm:max-w-md">{product.name}</span>
+            </nav>
 
-        {/* Product Info Card */}
-        <div className="container-custom -mt-4 relative z-10">
-          <Card className="border-0 shadow-xl rounded-t-3xl overflow-hidden">
-            <CardContent className="p-5 space-y-5">
-              {/* Badges & Actions */}
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex gap-2 flex-wrap">
-                  {product.isBestseller && (
-                    <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-xs px-2.5 py-0.5">
-                      <Award className="w-3 h-3 mr-1" />
-                      Bestseller
-                    </Badge>
-                  )}
-                  {product.isNew && (
-                    <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0 text-xs px-2.5 py-0.5">
-                      <Sparkles className="w-3 h-3 mr-1" />
-                      New
-                    </Badge>
-                  )}
-                  {product.discount > 0 && (
-                    <Badge className="bg-gradient-to-r from-red-500 to-pink-500 text-white border-0 text-xs px-2.5 py-0.5">
-                      <TrendingUp className="w-3 h-3 mr-1" />
-                      {product.discount}% OFF
-                    </Badge>
-                  )}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={handleShare}
-                >
-                  <Share2 className="w-4 h-4" />
-                </Button>
+            <div className="grid items-start gap-6 lg:grid-cols-2 lg:gap-10 xl:gap-14">
+              <div className="rounded-3xl border border-[#E6A817]/25 bg-white/90 p-3 shadow-[0_16px_40px_rgba(43,29,14,0.08)] md:p-5">
+                <ProductGallery images={product.images} productName={product.name} />
               </div>
 
-              {/* Title & Category */}
-              <div>
-                <p className="text-xs text-primary uppercase tracking-wider font-medium mb-1">{product.productType}</p>
-                <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground leading-tight">{product.name}</h1>
-              </div>
-
-              {/* Rating & Stock Status */}
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-0.5 bg-amber-100 dark:bg-amber-900/30 px-2 py-1 rounded-lg">
-                    <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
-                    <span className="font-semibold text-sm text-amber-700 dark:text-amber-400">{product.rating}</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">({product.reviewCount.toLocaleString()} reviews)</span>
-                </div>
-                {stockStatus.icon && (
-                  <div className={cn("flex items-center gap-1.5 text-xs font-medium", stockStatus.color)}>
-                    <stockStatus.icon className="w-4 h-4" />
-                    <span>{stockStatus.text}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* SKU */}
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span>SKU:</span>
-                <span className="font-mono font-medium">{product.sku}</span>
-              </div>
-
-              {/* Price */}
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-2xl">
-                <div className="flex-1">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-foreground">Rs. {product.price.toLocaleString()}</span>
-                    {product.originalPrice > product.price && (
-                      <>
-                        <span className="text-sm text-muted-foreground line-through">Rs. {product.originalPrice.toLocaleString()}</span>
-                        <Badge className="bg-red-500/10 text-red-600 dark:text-red-400 border-0 text-xs">
+              <Card className="overflow-hidden rounded-3xl border border-[#E6A817]/25 bg-white shadow-[0_16px_40px_rgba(43,29,14,0.08)]">
+                <CardContent className="space-y-5 p-5 md:p-7">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex flex-wrap gap-2">
+                      {product.isBestseller && (
+                        <Badge className="flex items-center gap-1 border-0 bg-[#1F3D2B] px-2.5 py-1 text-xs text-[#F5E9D7]">
+                          <Award className="h-3 w-3" />
+                          Bestseller
+                        </Badge>
+                      )}
+                      {product.isNew && (
+                        <Badge className="flex items-center gap-1 border-0 bg-[#E6A817] px-2.5 py-1 text-xs font-semibold text-[#2B1D0E]">
+                          <Sparkles className="h-3 w-3" />
+                          New
+                        </Badge>
+                      )}
+                      {product.discount > 0 && (
+                        <Badge className="flex items-center gap-1 border-0 bg-[#2B1D0E]/10 px-2.5 py-1 text-xs font-semibold text-[#2B1D0E]">
+                          <TrendingUp className="h-3 w-3" />
                           {product.discount}% OFF
                         </Badge>
-                      </>
+                      )}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9 shrink-0 rounded-full border border-[#E6A817]/25 bg-[#fff9ef] text-[#2B1D0E] hover:bg-[#fff3df]"
+                      onClick={handleShare}
+                      aria-label="Share product"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-[#1F3D2B]/80">{product.productType}</p>
+                    <h1 className="font-display text-2xl font-bold leading-tight text-[#2B1D0E] sm:text-3xl">{product.name}</h1>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="inline-flex items-center gap-1 rounded-full border border-[#E6A817]/35 bg-[#fff9ef] px-2.5 py-1">
+                        <Star className="h-4 w-4 fill-[#E6A817] text-[#E6A817]" />
+                        <span className="text-sm font-bold text-[#2B1D0E]">{product.rating}</span>
+                      </div>
+                      <span className="text-sm text-[#2B1D0E]/60">({product.reviewCount.toLocaleString()} reviews)</span>
+                    </div>
+                    {stockStatus.icon && (
+                      <div className={cn('flex items-center gap-1.5 text-xs font-semibold', stockStatus.color)}>
+                        <stockStatus.icon className="h-4 w-4" />
+                        <span>{stockStatus.text}</span>
+                      </div>
                     )}
                   </div>
-                </div>
-              </div>
 
-              {/* Short Description */}
-              <p className="text-muted-foreground text-sm leading-relaxed">{product.shortDescription}</p>
+                  <div className="flex items-center gap-2 text-xs text-[#2B1D0E]/55">
+                    <span>SKU</span>
+                    <span className="font-mono font-medium text-[#2B1D0E]">{product.sku}</span>
+                  </div>
 
-              {/* Full Description */}
-              {product.description && product.description !== product.shortDescription && (
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-sm flex items-center gap-2">
-                    <Info className="w-4 h-4" />
-                    Full Description
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                    {product.description}
-                  </p>
-                </div>
-              )}
+                  <div className="rounded-2xl border border-[#E6A817]/25 bg-[#fff9ef] p-4 md:p-5">
+                    <div className="flex flex-wrap items-baseline gap-2">
+                      <span className="text-2xl font-bold text-[#2B1D0E] md:text-3xl">Rs. {product.price.toLocaleString()}</span>
+                      {product.originalPrice > product.price && (
+                        <>
+                          <span className="text-sm text-[#2B1D0E]/50 line-through">Rs. {product.originalPrice.toLocaleString()}</span>
+                          <Badge className="border-0 bg-[#1F3D2B]/10 text-xs font-semibold text-[#1F3D2B]">{product.discount}% OFF</Badge>
+                        </>
+                      )}
+                    </div>
+                  </div>
 
-              {/* Trust Features */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="flex flex-col items-center gap-1 p-3 bg-muted/50 rounded-xl">
-                  <Truck className="w-5 h-5 text-primary" />
-                  <span className="text-[10px] text-center font-medium">Free Shipping</span>
-                </div>
-                <div className="flex flex-col items-center gap-1 p-3 bg-muted/50 rounded-xl">
-                  <Shield className="w-5 h-5 text-primary" />
-                  <span className="text-[10px] text-center font-medium">100% Authentic</span>
-                </div>
-                <div className="flex flex-col items-center gap-1 p-3 bg-muted/50 rounded-xl">
-                  <RotateCcw className="w-5 h-5 text-primary" />
-                  <span className="text-[10px] text-center font-medium">Easy Returns</span>
-                </div>
-              </div>
+                  <p className="text-sm leading-relaxed text-[#2B1D0E]/80">{product.shortDescription}</p>
 
-              {/* Tabs */}
-              <Tabs defaultValue="benefits" className="mt-4">
-                <TabsList className="w-full grid grid-cols-4 h-12 bg-muted/50 rounded-xl p-1">
-                  <TabsTrigger value="benefits" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs">Benefits</TabsTrigger>
-                  <TabsTrigger value="ingredients" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs">Ingredients</TabsTrigger>
-                  <TabsTrigger value="usage" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs">How to Use</TabsTrigger>
-                  <TabsTrigger value="reviews" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs flex items-center gap-1">
-                    <MessageSquare className="w-3 h-3" />
+                  {product.description && product.description !== product.shortDescription && (
+                    <div className="space-y-2 border-t border-[#E6A817]/15 pt-4">
+                      <h3 className="flex items-center gap-2 text-sm font-semibold text-[#2B1D0E]">
+                        <Info className="h-4 w-4 text-[#1F3D2B]" />
+                        Full description
+                      </h3>
+                      <p className="whitespace-pre-line text-sm leading-relaxed text-[#2B1D0E]/75">{product.description}</p>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="flex flex-col items-center gap-1 rounded-xl border border-[#E6A817]/20 bg-[#fffaf2] p-3">
+                      <Truck className="h-5 w-5 text-[#1F3D2B]" />
+                      <span className="text-center text-[10px] font-semibold text-[#2B1D0E]/85">Shipping</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1 rounded-xl border border-[#E6A817]/20 bg-[#fffaf2] p-3">
+                      <Shield className="h-5 w-5 text-[#1F3D2B]" />
+                      <span className="text-center text-[10px] font-semibold text-[#2B1D0E]/85">Authentic</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1 rounded-xl border border-[#E6A817]/20 bg-[#fffaf2] p-3">
+                      <RotateCcw className="h-5 w-5 text-[#1F3D2B]" />
+                      <span className="text-center text-[10px] font-semibold text-[#2B1D0E]/85">Returns</span>
+                    </div>
+                  </div>
+
+                  <Tabs defaultValue="benefits" className="mt-2 border-t border-[#E6A817]/15 pt-5">
+                <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-2xl border border-[#E6A817]/20 bg-[#fff9ef] p-1 sm:grid-cols-4">
+                  <TabsTrigger
+                    value="benefits"
+                    className="rounded-xl text-xs data-[state=active]:bg-white data-[state=active]:text-[#2B1D0E] data-[state=active]:shadow-sm"
+                  >
+                    Benefits
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="ingredients"
+                    className="rounded-xl text-xs data-[state=active]:bg-white data-[state=active]:text-[#2B1D0E] data-[state=active]:shadow-sm"
+                  >
+                    Ingredients
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="usage"
+                    className="rounded-xl text-xs data-[state=active]:bg-white data-[state=active]:text-[#2B1D0E] data-[state=active]:shadow-sm"
+                  >
+                    How to use
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="reviews"
+                    className="flex items-center justify-center gap-1 rounded-xl text-xs data-[state=active]:bg-white data-[state=active]:text-[#2B1D0E] data-[state=active]:shadow-sm"
+                  >
+                    <MessageSquare className="h-3 w-3" />
                     Reviews
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="benefits" className="mt-4">
-                  <ul className="space-y-3">
-                    {product.benefits.map((benefit, i) => (
-                      <motion.li
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="flex items-start gap-3 text-sm p-3 rounded-lg bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20"
-                      >
-                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-4 h-4 text-primary" />
-                        </div>
-                        <span className="flex-1">{benefit}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
+                  {product.benefits?.length ? (
+                    <ul className="space-y-3">
+                      {product.benefits.map((benefit, i) => (
+                        <motion.li
+                          key={i}
+                          initial={{ opacity: 0, x: -12 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.06 }}
+                          className="flex items-start gap-3 rounded-xl border border-[#E6A817]/15 bg-[#fffaf2] p-3 text-sm text-[#2B1D0E]/90"
+                        >
+                          <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#1F3D2B]">
+                            <Check className="h-4 w-4 text-[#F5E9D7]" />
+                          </div>
+                          <span className="flex-1 leading-relaxed">{benefit}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-[#2B1D0E]/60">Pure honey — detailed benefit list jald add ho sakti hai.</p>
+                  )}
                 </TabsContent>
                 <TabsContent value="ingredients" className="mt-4">
-                  <div className="flex flex-wrap gap-2">
-                    {product.ingredients.map((ing, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.05 }}
-                      >
-                        <Badge variant="secondary" className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-0 px-3 py-1.5">
-                          <Leaf className="w-3 h-3 mr-1.5" />
-                          {ing}
-                        </Badge>
-                      </motion.div>
-                    ))}
-                  </div>
+                  {product.ingredients?.length ? (
+                    <div className="flex flex-wrap gap-2">
+                      {product.ingredients.map((ing, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, scale: 0.96 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: i * 0.04 }}
+                        >
+                          <Badge className="border-0 bg-[#1F3D2B] px-3 py-1.5 text-[#F5E9D7]">
+                            <Leaf className="mr-1.5 inline h-3 w-3" />
+                            {ing}
+                          </Badge>
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[#2B1D0E]/60">100% natural honey — single-ingredient purity.</p>
+                  )}
                 </TabsContent>
                 <TabsContent value="usage" className="mt-4">
                   <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                      {product.usage}
+                    <p className="whitespace-pre-line text-sm leading-relaxed text-[#2B1D0E]/80">
+                      {product.usage || 'Roz 1 spoon gungune paani ya doodh ke saath — subah ya shaam, apni routine ke hisaab se.'}
                     </p>
                     {product.whoShouldUse && product.whoShouldUse.length > 0 && (
-                      <div className="mt-4 pt-4 border-t">
-                        <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                          <Users className="w-4 h-4" />
-                          Who Should Use
+                      <div className="mt-4 border-t border-[#E6A817]/15 pt-4">
+                        <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-[#2B1D0E]">
+                          <Users className="h-4 w-4 text-[#1F3D2B]" />
+                          Who should use
                         </h4>
                         <ul className="space-y-2">
                           {product.whoShouldUse.map((person, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm">
-                              <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                            <li key={i} className="flex items-start gap-2 text-sm text-[#2B1D0E]/85">
+                              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#1F3D2B]" />
                               <span>{person}</span>
                             </li>
                           ))}
@@ -510,16 +561,17 @@ const ProductDetails = () => {
                 </TabsContent>
                 <TabsContent value="reviews" className="mt-4">
                   {reviewsLoading ? (
-                    <div className="text-center py-8 text-muted-foreground">Loading reviews...</div>
+                    <div className="py-8 text-center text-sm text-[#2B1D0E]/60">Loading reviews…</div>
                   ) : reviews.length === 0 ? (
-                    <div className="text-center py-8 space-y-2">
-                      <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground/50" />
-                      <p className="text-sm text-muted-foreground">No reviews yet</p>
-                      <p className="text-xs text-muted-foreground/70">Be the first to review this product!</p>
+                    <div className="space-y-2 py-8 text-center">
+                      <MessageSquare className="mx-auto h-12 w-12 text-[#2B1D0E]/25" />
+                      <p className="text-sm text-[#2B1D0E]/75">No reviews yet</p>
+                      <p className="text-xs text-[#2B1D0E]/55">Pehla review aap likh sakte hain.</p>
                       {isAuthenticated && (
                         <Button
                           variant="outline"
                           size="sm"
+                          className="mt-4 rounded-full border-[#E6A817]/40 bg-white text-[#2B1D0E] hover:bg-[#fff9ef]"
                           onClick={() => {
                             // Scroll to review form
                             setTimeout(() => {
@@ -527,59 +579,55 @@ const ProductDetails = () => {
                               if (reviewForm) {
                                 reviewForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
                                 // Highlight the form
-                                reviewForm.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
+                                reviewForm.classList.add('ring-2', 'ring-[#E6A817]', 'ring-offset-2');
                                 setTimeout(() => {
-                                  reviewForm.classList.remove('ring-2', 'ring-primary', 'ring-offset-2');
+                                  reviewForm.classList.remove('ring-2', 'ring-[#E6A817]', 'ring-offset-2');
                                 }, 2000);
                               }
                             }, 100);
                           }}
-                          className="mt-4"
                         >
-                          Write First Review
+                          Write first review
                         </Button>
                       )}
                     </div>
                   ) : (
                     <div className="space-y-4">
                       {reviews.map((review) => (
-                        <Card key={review._id} className="border">
+                        <Card key={review._id} className="border border-[#E6A817]/20 bg-[#fffaf2]">
                           <CardContent className="p-4">
-                            <div className="flex items-start justify-between mb-2">
+                            <div className="mb-2 flex items-start justify-between">
                               <div>
-                                <p className="font-semibold text-sm">{review.userId?.name || 'Anonymous'}</p>
-                                <div className="flex items-center gap-1 mt-1">
+                                <p className="text-sm font-semibold text-[#2B1D0E]">{review.userId?.name || 'Anonymous'}</p>
+                                <div className="mt-1 flex items-center gap-0.5">
                                   {[...Array(5)].map((_, i) => (
                                     <Star
                                       key={i}
                                       className={cn(
-                                        "w-3 h-3",
-                                        i < review.rating
-                                          ? "fill-amber-500 text-amber-500"
-                                          : "text-muted-foreground"
+                                        'h-3 w-3',
+                                        i < review.rating ? 'fill-[#E6A817] text-[#E6A817]' : 'text-[#2B1D0E]/25',
                                       )}
                                     />
                                   ))}
                                 </div>
                               </div>
-                              <span className="text-xs text-muted-foreground">
+                              <span className="text-xs text-[#2B1D0E]/50">
                                 {new Date(review.createdAt).toLocaleDateString()}
                               </span>
                             </div>
-                            <p className="text-sm text-muted-foreground mt-2">{review.comment}</p>
+                            <p className="mt-2 text-sm leading-relaxed text-[#2B1D0E]/80">{review.comment}</p>
                           </CardContent>
                         </Card>
                       ))}
                     </div>
                   )}
-                  
-                  {/* Write Review Form - Always visible when authenticated */}
+
                   {isAuthenticated && (
-                    <Card id="review-form" className="border-2 border-dashed mt-6">
-                      <CardHeader>
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <MessageSquare className="w-4 h-4" />
-                          Write a Review
+                    <Card id="review-form" className="mt-6 border-2 border-dashed border-[#E6A817]/40 bg-white/90">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="flex items-center gap-2 text-base text-[#2B1D0E]">
+                          <MessageSquare className="h-4 w-4 text-[#1F3D2B]" />
+                          Write a review
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
@@ -620,9 +668,10 @@ const ProductDetails = () => {
                           </p>
                         </div>
                         <Button
+                          type="button"
                           onClick={handleSubmitReview}
                           disabled={submittingReview || !reviewComment.trim()}
-                          className="w-full"
+                          className="w-full rounded-full bg-[#1F3D2B] text-[#F5E9D7] hover:bg-[#173423]"
                           size="lg"
                         >
                           {submittingReview ? (
@@ -645,14 +694,12 @@ const ProductDetails = () => {
                   )}
                   
                   {!isAuthenticated && (
-                    <Card className="border-2 border-dashed mt-6">
+                    <Card className="mt-6 border-2 border-dashed border-[#E6A817]/35 bg-white/80">
                       <CardContent className="p-6 text-center">
-                        <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
-                        <p className="text-sm text-muted-foreground mb-4">
-                          Please login to write a review
-                        </p>
-                        <Button asChild>
-                          <Link to="/login">Login to Review</Link>
+                        <MessageSquare className="mx-auto mb-3 h-12 w-12 text-[#2B1D0E]/25" />
+                        <p className="mb-4 text-sm text-[#2B1D0E]/75">Review ke liye login kijiye.</p>
+                        <Button asChild className="rounded-full bg-[#E6A817] text-[#2B1D0E] hover:bg-[#d89c14]">
+                          <Link to="/login">Login</Link>
                         </Button>
                       </CardContent>
                     </Card>
@@ -661,77 +708,87 @@ const ProductDetails = () => {
               </Tabs>
             </CardContent>
           </Card>
-        </div>
+            </div>
+          </div>
+        </section>
 
         {/* Sticky Bottom Action Bar */}
-        <div className="fixed bottom-16 left-0 right-0 z-40 bg-background/95 backdrop-blur-lg border-t border-border p-4 safe-area-bottom shadow-lg">
+        <div className="fixed bottom-16 left-0 right-0 z-40 border-t border-[#E6A817]/25 bg-[#F5E9D7]/95 p-4 shadow-[0_-8px_30px_rgba(43,29,14,0.08)] backdrop-blur-lg safe-area-bottom">
           <div className="container-custom flex items-center gap-3">
-            <Button 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               size="icon"
-              className="h-12 w-12 rounded-xl border-2 hover:scale-105 transition-transform"
+              className="h-12 w-12 rounded-full border-[#E6A817]/40 bg-white text-[#2B1D0E] shadow-sm hover:bg-[#fff9ef]"
               onClick={() => {
+                const pid = product.id || product._id;
                 if (inWishlist) {
-                  removeFromWishlist(product.id);
+                  removeFromWishlist(pid);
                   toast({ title: 'Removed from wishlist', variant: 'default' });
                 } else {
                   addToWishlist(product);
                   toast({ title: 'Added to wishlist', description: 'Product saved for later' });
                 }
               }}
+              aria-label="Wishlist"
             >
-              <Heart className={cn('w-5 h-5 transition-all', inWishlist && 'fill-red-500 text-red-500 scale-110')} />
+              <Heart className={cn('h-5 w-5 transition-all', inWishlist && 'scale-105 fill-[#c45a5a] text-[#c45a5a]')} />
             </Button>
-            
+
             {!product.inStock || product.stockCount === 0 ? (
-              <Button 
-                size="lg" 
-                className="flex-1 h-14 rounded-xl bg-muted text-muted-foreground font-semibold text-base cursor-not-allowed"
+              <Button
+                type="button"
+                size="lg"
                 disabled
+                className="h-14 flex-1 cursor-not-allowed rounded-full bg-[#2B1D0E]/15 text-base font-semibold text-[#2B1D0E]/50"
               >
-                <AlertCircle className="w-5 h-5 mr-2" /> Out of Stock
+                <AlertCircle className="mr-2 h-5 w-5" /> Out of stock
               </Button>
             ) : quantity === 0 ? (
-              <Button 
-                size="lg" 
-                className="flex-1 h-14 rounded-xl bg-gradient-to-r from-emerald-600 via-primary to-teal-600 hover:from-emerald-700 hover:via-primary/90 hover:to-teal-700 font-extrabold text-lg shadow-2xl hover:shadow-emerald-500/50 transition-all hover:scale-[1.02] relative overflow-hidden group"
+              <Button
+                type="button"
+                size="lg"
+                className="group relative h-14 flex-1 overflow-hidden rounded-full bg-[#E6A817] text-base font-bold text-[#2B1D0E] shadow-lg transition-transform hover:scale-[1.01] hover:bg-[#d89c14]"
                 onClick={() => {
                   addItem(product);
                   toast({
-                    title: '✅ Added to Cart!',
-                    description: `${product.name} added successfully`,
+                    title: 'Added to cart',
+                    description: `${product.name} cart me add ho gaya.`,
                   });
                 }}
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
-                  <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                  <span>Add to Cart</span>
-                  <span className="font-black">Rs. {product.price.toLocaleString()}</span>
+                  <ShoppingCart className="h-5 w-5 transition-transform group-hover:scale-105" />
+                  <span>Add to cart</span>
+                  <span className="font-extrabold">Rs. {product.price.toLocaleString()}</span>
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               </Button>
             ) : (
-              <div className="flex-1 flex items-center justify-between bg-gradient-to-r from-emerald-600 via-primary to-teal-600 rounded-xl h-14 px-3 shadow-2xl border-2 border-emerald-500/30">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-10 w-10 text-white hover:bg-white/25 rounded-lg transition-all hover:scale-110"
-                  onClick={() => updateQuantity(product.id, quantity - 1)}
+              <div className="flex h-14 flex-1 items-center justify-between rounded-full border border-[#1F3D2B]/20 bg-[#1F3D2B] px-2 shadow-lg">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 rounded-full text-[#F5E9D7] hover:bg-white/15"
+                  onClick={() => updateQuantity(product.id || product._id, quantity - 1)}
+                  aria-label="Decrease quantity"
                 >
-                  <Minus className="w-5 h-5" />
+                  <Minus className="h-5 w-5" />
                 </Button>
                 <div className="flex flex-col items-center gap-0.5">
-                  <span className="font-extrabold text-xl text-white">{quantity}</span>
-                  <span className="text-[10px] text-white/90 font-semibold">in cart</span>
+                  <span className="text-xl font-extrabold text-[#F5E9D7]">{quantity}</span>
+                  <span className="text-[10px] font-semibold text-[#F5E9D7]/85">in cart</span>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-10 w-10 text-white hover:bg-white/25 rounded-lg transition-all hover:scale-110"
-                  onClick={() => updateQuantity(product.id, quantity + 1)}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 rounded-full text-[#F5E9D7] hover:bg-white/15"
+                  onClick={() => updateQuantity(product.id || product._id, quantity + 1)}
                   disabled={product.stockCount > 0 && quantity >= product.stockCount}
+                  aria-label="Increase quantity"
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="h-5 w-5" />
                 </Button>
               </div>
             )}
@@ -740,10 +797,20 @@ const ProductDetails = () => {
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (
-          <section className="container-custom mt-8">
-            <h2 className="font-display text-lg font-bold mb-4">You May Also Like</h2>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {relatedProducts.map((p, i) => <ProductCard key={p.id || p._id} product={p} index={i} />)}
+          <section className="container-custom mt-10 pb-8 md:mt-14 md:pb-12">
+            <div className="mb-6 flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-[#1F3D2B]/75">More from the hive</p>
+                <h2 className="font-display text-2xl font-bold text-[#2B1D0E] md:text-3xl">You may also like</h2>
+              </div>
+              <Button asChild variant="outline" className="mt-2 w-fit rounded-full border-[#E6A817]/40 bg-white/90 text-[#2B1D0E] hover:bg-[#fff9ef] md:mt-0">
+                <Link to="/products">View all</Link>
+              </Button>
+            </div>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
+              {relatedProducts.map((p, i) => (
+                <ProductCard key={p.id || p._id} product={p} index={i} />
+              ))}
             </div>
           </section>
         )}

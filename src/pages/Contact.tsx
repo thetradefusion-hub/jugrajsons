@@ -75,16 +75,16 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email',
-      content: 'support@atharvahealthsolutions.com',
-      link: 'mailto:support@atharvahealthsolutions.com',
+      content: 'connect@jugrajsonshive.com',
+      link: 'mailto:connect@jugrajsonshive.com',
       description: 'We reply within 24 hours',
     },
     {
       icon: MapPin,
       title: 'Address',
-      content: 'Atharva Health Solution, Dunda Seoni',
+      content: "Jugraj Son's Hive",
       link: 'https://maps.google.com',
-      description: 'Seoni, Madhya Pradesh – 480661, India',
+      description: 'India',
     },
     {
       icon: Clock,
@@ -98,15 +98,14 @@ const Contact = () => {
   const quickLinks = [
     { label: 'Order Support', href: '/orders' },
     { label: 'Product Inquiry', href: '/products' },
-    { label: 'Expert Consultation', href: '/expert' },
     { label: 'FAQs', href: '/faqs' },
   ];
 
   return (
     <>
       <SEO 
-        title="Contact Us - Atharva Health Solutions"
-        description="Get in touch with Atharva Health Solutions. Contact us for product inquiries, support, or expert consultation. We're here to help!"
+        title="Contact Us - Jugraj Son's Hive"
+        description="Get in touch with Jugraj Son's Hive for product inquiries, order support, and bulk raw honey queries."
       />
       <main className="pb-24">
         {/* Hero Section */}
@@ -344,8 +343,8 @@ const Contact = () => {
                 <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                   <div className="text-center">
                     <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground mb-2">Atharva Health Solution, Dunda Seoni</p>
-                    <p className="text-sm text-muted-foreground">Seoni, Madhya Pradesh – 480661, India</p>
+                    <p className="text-muted-foreground mb-2">Jugraj Son's Hive</p>
+                    <p className="text-sm text-muted-foreground">India</p>
                     <Button
                       variant="outline"
                       className="mt-4"

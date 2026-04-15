@@ -35,7 +35,7 @@ const Login = () => {
                   <Leaf className="w-7 h-7 text-primary-foreground" />
                 </div>
               </Link>
-              <h1 className="font-display text-2xl font-bold">Welcome to Atharva</h1>
+              <h1 className="font-display text-2xl font-bold">Welcome to Jugraj Son's Hive</h1>
               <p className="text-muted-foreground">Sign in to continue your wellness journey</p>
             </div>
 

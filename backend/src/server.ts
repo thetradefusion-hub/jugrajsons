@@ -21,7 +21,6 @@ import expertRoutes from './routes/expert.routes';
 import appointmentRoutes from './routes/appointment.routes';
 import chatRoutes from './routes/chat.routes';
 import paymentRoutes from './routes/payment.routes';
-import shiprocketRoutes from './routes/shiprocket.routes';
 import pincodeRoutes from './routes/pincode.routes';
 
 // Connect to database
@@ -105,21 +104,13 @@ app.use('/api/experts', expertRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/payment', paymentRoutes);
-app.use('/api/shiprocket', shiprocketRoutes);
 app.use('/api/pincode', pincodeRoutes);
 
-// Health check (public — used by checkout to show Shiprocket one-click status)
+// Health check
 app.get('/api/health', (req, res) => {
-  const shiprocketEnabled =
-    Boolean(process.env.SHIPROCKET_EMAIL?.trim()) && Boolean(process.env.SHIPROCKET_PASSWORD?.trim());
   res.json({
     status: 'OK',
     message: 'Server is running',
-    shiprocket: {
-      enabled: shiprocketEnabled,
-      /** AWB assign runs after create unless SHIPROCKET_AUTO_AWB=false */
-      autoAwb: process.env.SHIPROCKET_AUTO_AWB !== 'false',
-    },
   });
 });
 

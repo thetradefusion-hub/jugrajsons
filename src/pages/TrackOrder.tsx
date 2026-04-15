@@ -1,11 +1,29 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Search, Package, Truck, CheckCircle2, Clock, MapPin,
-  Phone, Mail, Calendar, CreditCard, AlertCircle, Loader2,
-  RefreshCw, Download, Eye, ArrowRight, Copy, Share2, 
-  MessageCircle, ShoppingCart, TrendingUp, Info, Sparkles
+import {
+  Search,
+  Package,
+  Truck,
+  CheckCircle2,
+  Clock,
+  MapPin,
+  Phone,
+  Calendar,
+  CreditCard,
+  AlertCircle,
+  Loader2,
+  RefreshCw,
+  Download,
+  Eye,
+  ArrowRight,
+  Copy,
+  Share2,
+  MessageCircle,
+  ShoppingCart,
+  Info,
+  ChevronRight,
+  Home,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +34,7 @@ import api from '@/lib/api';
 import SEO from '@/components/seo/SEO';
 import { format, addDays, differenceInDays } from 'date-fns';
 import { useAuth } from '@/context/AuthContext';
+import { cn } from '@/lib/utils';
 
 interface OrderItem {
   product: {
@@ -73,18 +92,16 @@ const TrackOrder = () => {
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [autoRefresh, setAutoRefresh] = useState(false);
 
-  // Auto-refresh tracking every 30 seconds if order is shipped
   useEffect(() => {
     if (order && (order.status === 'shipped' || order.status === 'processing') && autoRefresh && orderId) {
       const interval = setInterval(() => {
         handleSearch();
-      }, 30000); // Refresh every 30 seconds
+      }, 30000);
       return () => clearInterval(interval);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [order, autoRefresh, orderId]);
 
-  // Fetch recent orders if user is logged in
   useEffect(() => {
     if (isAuthenticated && user) {
       fetchRecentOrders();
@@ -94,59 +111,69 @@ const TrackOrder = () => {
   const statusConfig = {
     pending: {
       label: 'Pending',
-      color: 'bg-yellow-500',
       icon: Clock,
-      description: 'Your order is being confirmed',
+      description: 'Order confirm ho raha hai',
+      badge: 'border-[#E6A817]/40 bg-[#fff9ef] text-[#2B1D0E]',
     },
     confirmed: {
       label: 'Confirmed',
-      color: 'bg-blue-500',
       icon: CheckCircle2,
-      description: 'Your order has been confirmed',
+      description: 'Order confirm ho chuka hai',
+      badge: 'border-[#1F3D2B]/30 bg-[#1F3D2B]/10 text-[#1F3D2B]',
     },
     processing: {
       label: 'Processing',
-      color: 'bg-purple-500',
       icon: Package,
-      description: 'Your order is being prepared',
+      description: 'Packaging / dispatch ki taiyaari',
+      badge: 'border-[#E6A817]/40 bg-[#E6A817]/15 text-[#2B1D0E]',
     },
     shipped: {
       label: 'Shipped',
-      color: 'bg-indigo-500',
       icon: Truck,
-      description: 'Your order is on the way',
+      description: 'Courier ke saath raste mein',
+      badge: 'border-[#1F3D2B]/40 bg-[#1F3D2B] text-[#F5E9D7]',
     },
     delivered: {
       label: 'Delivered',
-      color: 'bg-emerald-500',
       icon: CheckCircle2,
-      description: 'Your order has been delivered',
+      description: 'Aap tak pahunch chuka hai',
+      badge: 'border-[#1F3D2B]/30 bg-[#173423] text-[#F5E9D7]',
     },
     cancelled: {
       label: 'Cancelled',
-      color: 'bg-red-500',
       icon: AlertCircle,
-      description: 'Your order has been cancelled',
+      description: 'Order cancel kar diya gaya',
+      badge: 'border-red-200 bg-red-50 text-red-800',
     },
   };
 
   const getStatusSteps = (currentStatus: string) => {
-    const allStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
-    const currentIndex = allStatuses.indexOf(currentStatus);
-    
+    if (currentStatus === 'cancelled') {
+      return [
+        {
+          status: 'cancelled',
+          completed: true,
+          current: true,
+          ...statusConfig.cancelled,
+        },
+      ];
+    }
+    const allStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'] as const;
+    const currentIndex = allStatuses.indexOf(currentStatus as (typeof allStatuses)[number]);
+
     return allStatuses.map((status, index) => ({
       status,
       completed: index <= currentIndex,
       current: index === currentIndex,
-      ...statusConfig[status as keyof typeof statusConfig],
+      ...statusConfig[status],
     }));
   };
 
   const handleSearch = async () => {
     if (!orderId.trim()) {
       toast({
-        title: 'Order ID Required',
-        description: 'Please enter an order ID or tracking number',
+        title: 'Order ID chahiye',
+        description: 'Order ID ya tracking number daaliye',
         variant: 'destructive',
       });
       return;
@@ -155,29 +182,28 @@ const TrackOrder = () => {
     setIsLoading(true);
     try {
       const response = await api.get(`/orders/track/${orderId}`, {
-        // This is a public endpoint, so we don't need auth headers
         headers: {
           'Content-Type': 'application/json',
         },
       });
       setOrder(response.data.order);
-      // Transform Shiprocket tracking data if available
       if (response.data.tracking && Array.isArray(response.data.tracking)) {
-        const transformed = response.data.tracking.map((item: any) => ({
-          status: item.status || item.current_status || 'Unknown',
-          timestamp: item.updated_at || item.timestamp || new Date().toISOString(),
-          location: item.location || item.city || '',
-          description: item.comment || item.status || '',
+        const transformed = response.data.tracking.map((item: Record<string, unknown>) => ({
+          status: (item.status || item.current_status || 'Unknown') as string,
+          timestamp: (item.updated_at || item.timestamp || new Date().toISOString()) as string,
+          location: (item.location || item.city || '') as string,
+          description: (item.comment || item.status || '') as string,
         }));
         setTrackingStatuses(transformed);
       } else {
         setTrackingStatuses([]);
       }
       setSearchParams({ id: orderId });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
       toast({
-        title: 'Order Not Found',
-        description: error.response?.data?.message || 'Could not find order with this ID. Please check and try again.',
+        title: 'Order nahi mila',
+        description: err.response?.data?.message || 'ID check karke dubara try kijiye.',
         variant: 'destructive',
       });
       setOrder(null);
@@ -187,19 +213,13 @@ const TrackOrder = () => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
   const fetchRecentOrders = async () => {
     try {
       const response = await api.get('/orders/my-orders');
       const orders = response.data || [];
-      setRecentOrders(orders.slice(0, 5)); // Get last 5 orders
-    } catch (error) {
-      // Silently fail - not critical
+      setRecentOrders(orders.slice(0, 5));
+    } catch {
+      /* optional */
     }
   };
 
@@ -215,16 +235,10 @@ const TrackOrder = () => {
     if (status === 'delivered' || status === 'cancelled') return null;
     try {
       const orderDateObj = new Date(orderDate);
-      let estimatedDays = 5; // Default 5 days
-      
-      if (status === 'shipped') {
-        estimatedDays = 2; // 2 days if already shipped
-      } else if (status === 'processing') {
-        estimatedDays = 4; // 4 days if processing
-      } else if (status === 'confirmed') {
-        estimatedDays = 5; // 5 days if confirmed
-      }
-      
+      let estimatedDays = 5;
+      if (status === 'shipped') estimatedDays = 2;
+      else if (status === 'processing') estimatedDays = 4;
+      else if (status === 'confirmed') estimatedDays = 5;
       return addDays(orderDateObj, estimatedDays);
     } catch {
       return null;
@@ -242,8 +256,8 @@ const TrackOrder = () => {
       const shortId = order._id.slice(-6).toUpperCase();
       navigator.clipboard.writeText(shortId);
       toast({
-        title: 'Copied!',
-        description: 'Order ID copied to clipboard',
+        title: 'Copy ho gaya',
+        description: 'Order ID clipboard me save ho gayi',
       });
     }
   };
@@ -252,16 +266,15 @@ const TrackOrder = () => {
     if (order) {
       const shortId = order._id.slice(-6).toUpperCase();
       const shareUrl = `${window.location.origin}/track-order?id=${shortId}`;
-      
+
       if (navigator.share) {
         try {
           await navigator.share({
             title: `Track Order #${shortId}`,
-            text: `Track your order #${shortId} from Atharva Health Solutions`,
+            text: `Jugraj Son's Hive — order #${shortId} track karein`,
             url: shareUrl,
           });
-        } catch (error) {
-          // User cancelled or error occurred
+        } catch {
           copyToClipboard(shareUrl);
         }
       } else {
@@ -273,104 +286,110 @@ const TrackOrder = () => {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: 'Link Copied!',
-      description: 'Tracking link copied to clipboard',
+      title: 'Link copy',
+      description: 'Tracking link clipboard me hai',
     });
   };
 
-  const getShortOrderId = (orderId: string) => {
-    return orderId.slice(-6).toUpperCase();
+  const getShortOrderId = (id: string) => {
+    return id.slice(-6).toUpperCase();
   };
 
   return (
     <>
-      <SEO 
-        title="Track Your Order - Order Tracking | Atharva Health Solutions"
-        description="Track your order status in real-time. Enter your order ID or tracking number to see the current status and delivery updates."
+      <SEO
+        title="Track Order | Jugraj Son's Hive"
+        description="Order ID se real-time status aur delivery updates dekhein."
       />
-      <main className="pb-24">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-950/30 dark:via-purple-950/30 dark:to-pink-950/30 py-12 md:py-16">
-          <div className="container-custom">
+      <main className="min-h-screen overflow-x-hidden bg-[#F5E9D7] pb-28 text-[#2B1D0E] md:pb-12">
+        <section className="relative isolate border-b border-[#E6A817]/15 bg-gradient-to-br from-[#F5E9D7] via-[#fff8ed] to-[#f0e1cb]">
+          <div className="pointer-events-none absolute inset-0 opacity-[0.11] [background:radial-gradient(circle_at_1px_1px,#1F3D2B_1px,transparent_0)] [background-size:22px_22px]" />
+          <div className="container-custom relative py-8 md:py-12">
+            <nav className="mb-5 flex flex-wrap items-center gap-1.5 text-xs text-[#2B1D0E]/65 md:text-sm">
+              <Link to="/" className="inline-flex items-center gap-1 hover:text-[#1F3D2B]">
+                <Home className="h-3.5 w-3.5" />
+                Home
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-40" />
+              <span className="font-medium text-[#2B1D0E]">Track order</span>
+            </nav>
+
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center max-w-3xl mx-auto"
+              transition={{ duration: 0.45 }}
+              className="mx-auto max-w-3xl text-center"
             >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
-                <Truck className="w-8 h-8 text-primary" />
+              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#E6A817]/35 bg-white/90 shadow-sm">
+                <Truck className="h-7 w-7 text-[#1F3D2B]" />
               </div>
-              <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Track Your Order
-              </h1>
-              <p className="text-lg text-muted-foreground mb-8">
-                Enter your order ID or tracking number to see real-time updates
+              <h1 className="font-display text-3xl font-bold leading-tight text-[#2B1D0E] md:text-5xl">Track your order</h1>
+              <p className="mx-auto mt-3 max-w-xl text-sm text-[#2B1D0E]/75 md:text-base">
+                Order ID daaliye — status, shipping aur delivery estimate yahin dikhega.
               </p>
 
-              {/* Search Box */}
-              <div className="max-w-2xl mx-auto">
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <Input
-                      type="text"
-                      placeholder="Enter Order ID (e.g., CA1F19)"
-                      value={orderId}
-                      onChange={(e) => setOrderId(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      className="pl-10 h-12 text-base"
-                    />
-                  </div>
-                  <Button
-                    onClick={handleSearch}
-                    disabled={isLoading}
-                    size="lg"
-                    className="h-12 px-8"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Searching...
-                      </>
-                    ) : (
-                      <>
-                        <Search className="w-4 h-4 mr-2" />
-                        Track
-                      </>
-                    )}
-                  </Button>
-                </div>
-                <div className="flex items-center justify-between mt-3">
-                  <p className="text-sm text-muted-foreground">
-                    Don't have your order ID?{' '}
-                    {isAuthenticated ? (
-                      <Link to="/orders" className="text-primary hover:underline font-medium">
-                        View my orders
-                      </Link>
-                    ) : (
-                      <>
-                        Check your email or{' '}
-                        <Link to="/login" className="text-primary hover:underline font-medium">
-                          login to view orders
+              <div className="mx-auto mt-8 max-w-2xl">
+                <Card className="overflow-hidden rounded-3xl border border-[#E6A817]/25 bg-white/95 shadow-[0_16px_40px_rgba(43,29,14,0.08)]">
+                  <CardContent className="p-4 md:p-6">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#2B1D0E]/40" />
+                        <Input
+                          type="text"
+                          placeholder="Order ID (jaise CA1F19)"
+                          value={orderId}
+                          onChange={(e) => setOrderId(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSearch();
+                          }}
+                          className="h-12 rounded-2xl border-[#E6A817]/30 bg-[#fffaf2] pl-10 text-base text-[#2B1D0E] placeholder:text-[#2B1D0E]/40"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={handleSearch}
+                        disabled={isLoading}
+                        size="lg"
+                        className="h-12 shrink-0 rounded-2xl bg-[#E6A817] px-8 font-semibold text-[#2B1D0E] hover:bg-[#d89c14] sm:px-6"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Search…
+                          </>
+                        ) : (
+                          <>
+                            <Search className="mr-2 h-4 w-4" />
+                            Track
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    <p className="mt-4 text-left text-xs text-[#2B1D0E]/60 md:text-sm">
+                      Order ID email / SMS me milti hai.{' '}
+                      {isAuthenticated ? (
+                        <Link to="/orders" className="font-semibold text-[#1F3D2B] underline-offset-2 hover:underline">
+                          Meri orders
                         </Link>
-                      </>
-                    )}
-                  </p>
-                </div>
+                      ) : (
+                        <>
+                          <Link to="/login" className="font-semibold text-[#1F3D2B] underline-offset-2 hover:underline">
+                            Login
+                          </Link>{' '}
+                          karke bhi orders dekh sakte hain.
+                        </>
+                      )}
+                    </p>
+                  </CardContent>
+                </Card>
 
-                {/* Recent Orders Quick Access */}
                 {isAuthenticated && recentOrders.length > 0 && !order && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-6"
-                  >
-                    <Card className="bg-muted/50 border-2">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-sm flex items-center gap-2">
-                          <Clock className="w-4 h-4" />
-                          Recent Orders
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 text-left">
+                    <Card className="rounded-3xl border border-[#E6A817]/20 bg-white/90 shadow-sm">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="flex items-center gap-2 font-display text-lg text-[#2B1D0E]">
+                          <Clock className="h-4 w-4 text-[#1F3D2B]" />
+                          Recent orders
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -378,22 +397,19 @@ const TrackOrder = () => {
                           {recentOrders.map((recentOrder) => (
                             <button
                               key={recentOrder._id}
+                              type="button"
                               onClick={() => {
                                 setOrderId(getShortOrderId(recentOrder._id));
                                 setTimeout(() => handleSearch(), 100);
                               }}
-                              className="w-full text-left p-3 rounded-lg hover:bg-background transition-colors border border-transparent hover:border-border"
+                              className="w-full rounded-2xl border border-transparent p-3 text-left transition-colors hover:border-[#E6A817]/35 hover:bg-[#fff9ef]"
                             >
-                              <div className="flex items-center justify-between">
+                              <div className="flex items-center justify-between gap-2">
                                 <div>
-                                  <p className="font-semibold text-sm">
-                                    Order #{getShortOrderId(recentOrder._id)}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    {formatDate(recentOrder.createdAt)}
-                                  </p>
+                                  <p className="text-sm font-semibold text-[#2B1D0E]">#{getShortOrderId(recentOrder._id)}</p>
+                                  <p className="text-xs text-[#2B1D0E]/55">{formatDate(recentOrder.createdAt)}</p>
                                 </div>
-                                <Badge variant="outline" className="ml-2">
+                                <Badge variant="outline" className="shrink-0 border-[#E6A817]/40 capitalize text-[#2B1D0E]">
                                   {recentOrder.status}
                                 </Badge>
                               </div>
@@ -409,7 +425,7 @@ const TrackOrder = () => {
           </div>
         </section>
 
-        <div className="container-custom py-12">
+        <div className="container-custom py-8 md:py-12">
           <AnimatePresence>
             {order && (
               <motion.div
@@ -418,122 +434,106 @@ const TrackOrder = () => {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-6"
               >
-                {/* Order Status Timeline */}
-                <Card className="border-2 shadow-lg">
-                  <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <CardTitle className="text-2xl">Order Status</CardTitle>
+                <Card className="overflow-hidden rounded-3xl border border-[#E6A817]/25 bg-white shadow-[0_16px_40px_rgba(43,29,14,0.06)]">
+                  <CardHeader className="space-y-4 border-b border-[#E6A817]/15 bg-[#fffaf2]/80 px-4 py-5 md:px-6">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-2 flex flex-wrap items-center gap-2">
+                          <CardTitle className="font-display text-2xl text-[#2B1D0E]">Order status</CardTitle>
                           <Button
+                            type="button"
                             variant="ghost"
-                            size="sm"
+                            size="icon"
                             onClick={copyOrderId}
-                            className="h-8 w-8 p-0"
+                            className="h-9 w-9 rounded-full border border-[#E6A817]/25 text-[#2B1D0E] hover:bg-[#fff9ef]"
+                            aria-label="Copy order ID"
                           >
-                            <Copy className="w-4 h-4" />
+                            <Copy className="h-4 w-4" />
                           </Button>
                           <Button
+                            type="button"
                             variant="ghost"
-                            size="sm"
+                            size="icon"
                             onClick={shareOrder}
-                            className="h-8 w-8 p-0"
+                            className="h-9 w-9 rounded-full border border-[#E6A817]/25 text-[#2B1D0E] hover:bg-[#fff9ef]"
+                            aria-label="Share tracking"
                           >
-                            <Share2 className="w-4 h-4" />
+                            <Share2 className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-muted-foreground">
-                            Order ID: <span className="font-mono font-semibold text-foreground">
-                              {getShortOrderId(order._id)}
-                            </span>
-                          </p>
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[#2B1D0E]/70">
+                          <span>
+                            ID:{' '}
+                            <span className="font-mono font-semibold text-[#2B1D0E]">{getShortOrderId(order._id)}</span>
+                          </span>
                           {order.shiprocketAwbCode && (
                             <>
-                              <span className="text-muted-foreground">•</span>
-                              <p className="text-muted-foreground">
-                                AWB: <span className="font-mono font-semibold text-foreground">
-                                  {order.shiprocketAwbCode}
-                                </span>
-                              </p>
+                              <span className="text-[#2B1D0E]/35">·</span>
+                              <span>
+                                AWB:{' '}
+                                <span className="font-mono font-semibold text-[#2B1D0E]">{order.shiprocketAwbCode}</span>
+                              </span>
                             </>
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Badge
-                          variant={
-                            order.status === 'delivered' ? 'default' :
-                            order.status === 'cancelled' ? 'destructive' :
-                            'secondary'
-                          }
-                          className="text-lg px-4 py-2"
-                        >
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge className={cn('rounded-full px-4 py-2 text-sm font-semibold', statusConfig[order.status].badge)}>
                           {statusConfig[order.status].label}
                         </Badge>
                         {(order.status === 'shipped' || order.status === 'processing') && (
                           <Button
+                            type="button"
                             variant="outline"
                             size="sm"
+                            className="rounded-full border-[#E6A817]/40 bg-white text-[#2B1D0E] hover:bg-[#fff9ef]"
                             onClick={() => {
                               setAutoRefresh(!autoRefresh);
                               toast({
-                                title: autoRefresh ? 'Auto-refresh disabled' : 'Auto-refresh enabled',
-                                description: autoRefresh 
-                                  ? 'Tracking will no longer refresh automatically'
-                                  : 'Tracking will refresh every 30 seconds',
+                                title: autoRefresh ? 'Auto-refresh band' : 'Auto-refresh on',
+                                description: autoRefresh ? '' : 'Har 30 sec par refresh hoga',
                               });
                             }}
                           >
-                            <RefreshCw className={`w-4 h-4 mr-2 ${autoRefresh ? 'animate-spin' : ''}`} />
+                            <RefreshCw className={cn('mr-2 h-4 w-4', autoRefresh && 'animate-spin')} />
                             {autoRefresh ? 'Auto' : 'Manual'}
                           </Button>
                         )}
                       </div>
                     </div>
 
-                    {/* Progress Bar */}
                     {order.status !== 'cancelled' && (
-                      <div className="mt-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Progress</span>
-                          <span className="text-sm text-muted-foreground">
-                            {Math.round(getProgressPercentage(order.status))}%
-                          </span>
+                      <div>
+                        <div className="mb-2 flex items-center justify-between text-sm">
+                          <span className="font-medium text-[#2B1D0E]">Progress</span>
+                          <span className="text-[#2B1D0E]/60">{Math.round(getProgressPercentage(order.status))}%</span>
                         </div>
-                        <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
+                        <div className="h-2.5 w-full overflow-hidden rounded-full bg-[#E6A817]/20">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${getProgressPercentage(order.status)}%` }}
                             transition={{ duration: 0.5, ease: 'easeOut' }}
-                            className={`h-full rounded-full ${
-                              order.status === 'delivered' ? 'bg-emerald-500' :
-                              order.status === 'shipped' ? 'bg-indigo-500' :
-                              order.status === 'processing' ? 'bg-purple-500' :
-                              order.status === 'confirmed' ? 'bg-blue-500' :
-                              'bg-yellow-500'
-                            }`}
+                            className="h-full rounded-full bg-[#1F3D2B]"
                           />
                         </div>
                       </div>
                     )}
 
-                    {/* Estimated Delivery */}
                     {(() => {
                       const estimatedDelivery = getEstimatedDelivery(order.createdAt, order.status);
                       if (estimatedDelivery) {
                         const daysLeft = differenceInDays(estimatedDelivery, new Date());
                         return (
-                          <div className="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/20">
-                            <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-primary" />
+                          <div className="rounded-2xl border border-[#E6A817]/25 bg-white/90 p-4">
+                            <div className="flex items-start gap-3">
+                              <Calendar className="mt-0.5 h-5 w-5 shrink-0 text-[#1F3D2B]" />
                               <div>
-                                <p className="text-sm font-medium">
-                                  Estimated Delivery: {format(estimatedDelivery, 'MMM dd, yyyy')}
+                                <p className="text-sm font-semibold text-[#2B1D0E]">
+                                  Estimated delivery: {format(estimatedDelivery, 'MMM dd, yyyy')}
                                 </p>
                                 {daysLeft > 0 && (
-                                  <p className="text-xs text-muted-foreground">
-                                    {daysLeft} {daysLeft === 1 ? 'day' : 'days'} remaining
+                                  <p className="text-xs text-[#2B1D0E]/60">
+                                    {daysLeft} {daysLeft === 1 ? 'day' : 'days'} baaki
                                   </p>
                                 )}
                               </div>
@@ -544,50 +544,48 @@ const TrackOrder = () => {
                       return null;
                     })()}
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="px-4 py-6 md:px-6">
                     <div className="relative">
                       {getStatusSteps(order.status).map((step, index, array) => {
                         const Icon = step.icon;
                         const isLast = index === array.length - 1;
                         return (
-                          <div key={step.status} className="relative pb-8">
+                          <div key={step.status} className="relative pb-8 last:pb-0">
                             {!isLast && (
                               <div
-                                className={`absolute left-6 top-12 w-0.5 h-full ${
-                                  step.completed ? 'bg-primary' : 'bg-border'
-                                }`}
+                                className={cn(
+                                  'absolute left-6 top-12 h-full w-0.5',
+                                  step.completed ? 'bg-[#1F3D2B]/35' : 'bg-[#E6A817]/20',
+                                )}
                               />
                             )}
                             <div className="flex items-start gap-4">
                               <div
-                                className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                className={cn(
+                                  'flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2',
                                   step.completed
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'bg-muted text-muted-foreground'
-                                }`}
+                                    ? 'border-[#1F3D2B] bg-[#1F3D2B] text-[#F5E9D7]'
+                                    : 'border-[#E6A817]/25 bg-[#fffaf2] text-[#2B1D0E]/35',
+                                )}
                               >
-                                <Icon className="w-6 h-6" />
+                                <Icon className="h-6 w-6" />
                               </div>
-                              <div className="flex-1 pt-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <h3 className="font-semibold">{step.label}</h3>
+                              <div className="min-w-0 flex-1 pt-1">
+                                <div className="mb-1 flex flex-wrap items-center gap-2">
+                                  <h3 className="font-semibold text-[#2B1D0E]">{step.label}</h3>
                                   {step.current && (
-                                    <Badge variant="outline" className="text-xs">
+                                    <Badge variant="outline" className="border-[#E6A817]/50 text-xs text-[#2B1D0E]">
                                       Current
                                     </Badge>
                                   )}
                                 </div>
-                                <p className="text-sm text-muted-foreground">{step.description}</p>
+                                <p className="text-sm text-[#2B1D0E]/65">{step.description}</p>
                                 {step.status === 'shipped' && order.shiprocketAwbCode && (
-                                  <div className="mt-2 space-y-1">
-                                    <p className="text-xs text-muted-foreground">
-                                      AWB: <span className="font-mono">{order.shiprocketAwbCode}</span>
+                                  <div className="mt-2 space-y-1 text-xs text-[#2B1D0E]/60">
+                                    <p>
+                                      AWB: <span className="font-mono text-[#2B1D0E]">{order.shiprocketAwbCode}</span>
                                     </p>
-                                    {order.shiprocketCourierName && (
-                                      <p className="text-xs text-muted-foreground">
-                                        Courier: {order.shiprocketCourierName}
-                                      </p>
-                                    )}
+                                    {order.shiprocketCourierName && <p>Courier: {order.shiprocketCourierName}</p>}
                                   </div>
                                 )}
                               </div>
@@ -599,52 +597,46 @@ const TrackOrder = () => {
                   </CardContent>
                 </Card>
 
-                {/* Order Details */}
-                <div className="grid lg:grid-cols-3 gap-6">
-                  {/* Order Items */}
-                  <div className="lg:col-span-2 space-y-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Order Items</CardTitle>
+                <div className="grid gap-6 lg:grid-cols-3">
+                  <div className="space-y-6 lg:col-span-2">
+                    <Card className="rounded-3xl border border-[#E6A817]/20 bg-white shadow-sm">
+                      <CardHeader className="border-b border-[#E6A817]/10 pb-4">
+                        <CardTitle className="font-display text-xl text-[#2B1D0E]">Order items</CardTitle>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="pt-4">
                         <div className="space-y-4">
                           {order.items.map((item, index) => (
                             <div
                               key={index}
-                              className="flex items-start gap-4 pb-4 border-b last:border-0 last:pb-0"
+                              className="flex items-start gap-4 border-b border-[#E6A817]/10 pb-4 last:border-0 last:pb-0"
                             >
                               {item.product?.images?.[0] ? (
                                 <img
                                   src={item.product.images[0]}
                                   alt={item.product.name}
-                                  className="w-16 h-16 rounded-lg object-cover"
+                                  className="h-16 w-16 shrink-0 rounded-2xl border border-[#E6A817]/20 bg-[#fffaf2] object-contain p-1"
                                 />
                               ) : (
-                                <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center">
-                                  <Package className="w-8 h-8 text-muted-foreground" />
+                                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-[#E6A817]/20 bg-[#fffaf2]">
+                                  <Package className="h-8 w-8 text-[#2B1D0E]/35" />
                                 </div>
                               )}
-                              <div className="flex-1">
-                                <h4 className="font-semibold mb-1">
-                                  {item.product?.name || 'Product not found'}
-                                </h4>
-                                <p className="text-sm text-muted-foreground">
-                                  Quantity: {item.quantity} × Rs. {item.price.toFixed(2)}
+                              <div className="min-w-0 flex-1">
+                                <h4 className="font-semibold text-[#2B1D0E]">{item.product?.name || 'Product'}</h4>
+                                <p className="text-sm text-[#2B1D0E]/60">
+                                  Qty {item.quantity} × Rs. {item.price.toFixed(2)}
                                 </p>
                                 {item.product?.slug && (
                                   <Link
                                     to={`/product/${item.product.slug}`}
-                                    className="text-sm text-primary hover:underline mt-1 inline-flex items-center gap-1"
+                                    className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-[#1F3D2B] hover:underline"
                                   >
-                                    View Product <ArrowRight className="w-3 h-3" />
+                                    View product <ArrowRight className="h-3 w-3" />
                                   </Link>
                                 )}
                               </div>
-                              <div className="text-right">
-                                <p className="font-semibold">
-                                  Rs. {(item.quantity * item.price).toFixed(2)}
-                                </p>
+                              <div className="shrink-0 text-right">
+                                <p className="font-semibold text-[#2B1D0E]">Rs. {(item.quantity * item.price).toFixed(2)}</p>
                               </div>
                             </div>
                           ))}
@@ -652,52 +644,48 @@ const TrackOrder = () => {
                       </CardContent>
                     </Card>
 
-                    {/* Tracking Updates */}
                     {trackingStatuses.length > 0 && (
-                      <Card className="border-2">
-                        <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20">
-                          <CardTitle className="flex items-center gap-2">
-                            <Truck className="w-5 h-5 text-primary" />
-                            Real-time Tracking Updates
+                      <Card className="rounded-3xl border border-[#E6A817]/25 bg-white shadow-sm">
+                        <CardHeader className="border-b border-[#E6A817]/10 bg-[#fffaf2]/80">
+                          <CardTitle className="flex items-center gap-2 font-display text-xl text-[#2B1D0E]">
+                            <Truck className="h-5 w-5 text-[#1F3D2B]" />
+                            Tracking updates
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="pt-6">
                           <div className="relative">
-                            {/* Timeline line */}
-                            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-primary/20" />
+                            <div className="absolute bottom-0 left-4 top-0 w-0.5 bg-[#E6A817]/25" />
                             <div className="space-y-6">
                               {trackingStatuses.map((status, index) => (
                                 <motion.div
                                   key={index}
-                                  initial={{ opacity: 0, x: -20 }}
+                                  initial={{ opacity: 0, x: -12 }}
                                   animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: index * 0.1 }}
+                                  transition={{ delay: index * 0.06 }}
                                   className="relative flex items-start gap-4"
                                 >
-                                  <div className="relative z-10 flex-shrink-0">
-                                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                                      <CheckCircle2 className="w-4 h-4" />
+                                  <div className="relative z-10 flex shrink-0">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1F3D2B] text-[#F5E9D7]">
+                                      <CheckCircle2 className="h-4 w-4" />
                                     </div>
                                   </div>
-                                  <div className="flex-1 pt-1 pb-4">
-                                    <div className="bg-muted/50 rounded-lg p-4 border border-border">
-                                      <p className="font-semibold text-base mb-1">{status.status}</p>
+                                  <div className="min-w-0 flex-1 pb-4">
+                                    <div className="rounded-2xl border border-[#E6A817]/20 bg-[#fff9ef] p-4">
+                                      <p className="mb-1 text-base font-semibold text-[#2B1D0E]">{status.status}</p>
                                       {status.description && (
-                                        <p className="text-sm text-muted-foreground mb-2">
-                                          {status.description}
-                                        </p>
+                                        <p className="mb-2 text-sm text-[#2B1D0E]/70">{status.description}</p>
                                       )}
-                                      <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                                      <div className="flex flex-wrap items-center gap-3 text-xs text-[#2B1D0E]/55">
                                         {status.location && (
-                                          <div className="flex items-center gap-1">
-                                            <MapPin className="w-3 h-3" />
-                                            <span>{status.location}</span>
-                                          </div>
+                                          <span className="inline-flex items-center gap-1">
+                                            <MapPin className="h-3 w-3" />
+                                            {status.location}
+                                          </span>
                                         )}
-                                        <div className="flex items-center gap-1">
-                                          <Clock className="w-3 h-3" />
-                                          <span>{formatDate(status.timestamp)}</span>
-                                        </div>
+                                        <span className="inline-flex items-center gap-1">
+                                          <Clock className="h-3 w-3" />
+                                          {formatDate(status.timestamp)}
+                                        </span>
                                       </div>
                                     </div>
                                   </div>
@@ -709,30 +697,27 @@ const TrackOrder = () => {
                       </Card>
                     )}
 
-                    {/* Info Card for Shipped Orders */}
                     {order.status === 'shipped' && order.shiprocketCourierName && (
-                      <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-2 border-blue-200 dark:border-blue-800">
-                        <CardContent className="p-6">
+                      <Card className="rounded-3xl border border-[#E6A817]/30 bg-[#fff9ef] shadow-sm">
+                        <CardContent className="p-5 md:p-6">
                           <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
-                              <Info className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#1F3D2B] text-[#F5E9D7]">
+                              <Info className="h-6 w-6" />
                             </div>
-                            <div>
-                              <h3 className="font-semibold mb-2 text-blue-900 dark:text-blue-100">
-                                Shipping Information
-                              </h3>
-                              <div className="space-y-2 text-sm">
-                                <p className="text-blue-700 dark:text-blue-300">
-                                  <span className="font-medium">Courier:</span> {order.shiprocketCourierName}
+                            <div className="min-w-0">
+                              <h3 className="mb-2 font-display text-lg font-semibold text-[#2B1D0E]">Shipping info</h3>
+                              <div className="space-y-2 text-sm text-[#2B1D0E]/80">
+                                <p>
+                                  <span className="font-medium text-[#2B1D0E]">Courier:</span> {order.shiprocketCourierName}
                                 </p>
                                 {order.shiprocketAwbCode && (
-                                  <p className="text-blue-700 dark:text-blue-300">
-                                    <span className="font-medium">AWB Number:</span>{' '}
+                                  <p>
+                                    <span className="font-medium text-[#2B1D0E]">AWB:</span>{' '}
                                     <span className="font-mono">{order.shiprocketAwbCode}</span>
                                   </p>
                                 )}
-                                <p className="text-blue-600 dark:text-blue-400 text-xs mt-3">
-                                  Your order is on the way! You can track it using the AWB number on the courier's website.
+                                <p className="mt-3 text-xs text-[#2B1D0E]/60">
+                                  Courier site par AWB se bhi tracking kar sakte hain.
                                 </p>
                               </div>
                             </div>
@@ -742,136 +727,140 @@ const TrackOrder = () => {
                     )}
                   </div>
 
-                  {/* Order Summary & Shipping */}
                   <div className="space-y-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Order Summary</CardTitle>
+                    <Card className="rounded-3xl border border-[#E6A817]/20 bg-white shadow-sm">
+                      <CardHeader className="border-b border-[#E6A817]/10 pb-3">
+                        <CardTitle className="font-display text-lg text-[#2B1D0E]">Summary</CardTitle>
                       </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Subtotal</span>
-                          <span>Rs. {(order.total + (order.discount || 0)).toFixed(2)}</span>
+                      <CardContent className="space-y-3 pt-4">
+                        <div className="flex justify-between text-sm text-[#2B1D0E]/80">
+                          <span>Subtotal</span>
+                          <span className="font-medium">Rs. {(order.total + (order.discount || 0)).toFixed(2)}</span>
                         </div>
-                        {order.discount && order.discount > 0 && (
+                        {order.discount != null && order.discount > 0 && (
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Discount</span>
-                            <span className="text-emerald-600">-Rs. {order.discount.toFixed(2)}</span>
+                            <span className="text-[#2B1D0E]/70">Discount</span>
+                            <span className="font-medium text-[#1F3D2B]">-Rs. {order.discount.toFixed(2)}</span>
                           </div>
                         )}
                         {order.couponCode && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Coupon</span>
-                            <span className="text-xs">{order.couponCode}</span>
+                          <div className="flex justify-between text-sm text-[#2B1D0E]/70">
+                            <span>Coupon</span>
+                            <span className="text-xs font-mono">{order.couponCode}</span>
                           </div>
                         )}
-                        <div className="border-t pt-3 flex justify-between font-semibold">
+                        <div className="flex justify-between border-t border-[#E6A817]/15 pt-3 font-semibold text-[#2B1D0E]">
                           <span>Total</span>
                           <span>Rs. {order.total.toFixed(2)}</span>
                         </div>
-                        <div className="pt-3 border-t space-y-2">
-                          <div className="flex items-center gap-2 text-sm">
-                            <CreditCard className="w-4 h-4 text-muted-foreground" />
-                            <span className="text-muted-foreground">Payment:</span>
+                        <div className="space-y-2 border-t border-[#E6A817]/15 pt-3">
+                          <div className="flex items-center gap-2 text-sm text-[#2B1D0E]/75">
+                            <CreditCard className="h-4 w-4 shrink-0 text-[#1F3D2B]" />
+                            <span>Payment:</span>
                             <Badge
-                              variant={
-                                order.paymentStatus === 'paid' ? 'default' :
-                                order.paymentStatus === 'failed' ? 'destructive' :
-                                'secondary'
-                              }
+                              className={cn(
+                                'capitalize',
+                                order.paymentStatus === 'paid' && 'border-0 bg-[#173423] text-[#F5E9D7]',
+                                order.paymentStatus === 'failed' && 'border-red-200 bg-red-50 text-red-800',
+                                order.paymentStatus === 'pending' && 'border-[#E6A817]/40 bg-[#fff9ef] text-[#2B1D0E]',
+                              )}
                             >
-                              {order.paymentStatus.toUpperCase()}
+                              {order.paymentStatus}
                             </Badge>
                           </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <span className="text-muted-foreground">Method:</span>
-                            <span>{order.paymentMethod}</span>
-                          </div>
+                          <p className="text-sm text-[#2B1D0E]/70">
+                            Method: <span className="font-medium text-[#2B1D0E]">{order.paymentMethod}</span>
+                          </p>
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Shipping Address</CardTitle>
+                    <Card className="rounded-3xl border border-[#E6A817]/20 bg-white shadow-sm">
+                      <CardHeader className="border-b border-[#E6A817]/10 pb-3">
+                        <CardTitle className="font-display text-lg text-[#2B1D0E]">Shipping address</CardTitle>
                       </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          <p className="font-semibold">{order.shippingAddress.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {order.shippingAddress.addressLine1}
-                            {order.shippingAddress.addressLine2 && (
-                              <>, {order.shippingAddress.addressLine2}</>
-                            )}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode}
-                          </p>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-3">
-                            <Phone className="w-4 h-4" />
-                            <span>{order.shippingAddress.phone}</span>
-                          </div>
+                      <CardContent className="space-y-2 pt-4 text-sm text-[#2B1D0E]/80">
+                        <p className="font-semibold text-[#2B1D0E]">{order.shippingAddress.name}</p>
+                        <p>
+                          {order.shippingAddress.addressLine1}
+                          {order.shippingAddress.addressLine2 && <>, {order.shippingAddress.addressLine2}</>}
+                        </p>
+                        <p>
+                          {order.shippingAddress.city}, {order.shippingAddress.state} — {order.shippingAddress.pincode}
+                        </p>
+                        <div className="mt-3 flex items-center gap-2 text-[#2B1D0E]/70">
+                          <Phone className="h-4 w-4 shrink-0 text-[#1F3D2B]" />
+                          <span>{order.shippingAddress.phone}</span>
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Order Information</CardTitle>
+                    <Card className="rounded-3xl border border-[#E6A817]/20 bg-white shadow-sm">
+                      <CardHeader className="border-b border-[#E6A817]/10 pb-3">
+                        <CardTitle className="font-display text-lg text-[#2B1D0E]">Timeline</CardTitle>
                       </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div className="flex items-center gap-2 text-sm">
-                          <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <CardContent className="space-y-4 pt-4 text-sm">
+                        <div className="flex gap-3">
+                          <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-[#1F3D2B]" />
                           <div>
-                            <p className="text-muted-foreground">Ordered</p>
-                            <p className="font-medium">{formatDate(order.createdAt)}</p>
+                            <p className="text-[#2B1D0E]/60">Ordered</p>
+                            <p className="font-medium text-[#2B1D0E]">{formatDate(order.createdAt)}</p>
                           </div>
                         </div>
                         {order.updatedAt !== order.createdAt && (
-                          <div className="flex items-center gap-2 text-sm">
-                            <RefreshCw className="w-4 h-4 text-muted-foreground" />
+                          <div className="flex gap-3">
+                            <RefreshCw className="mt-0.5 h-4 w-4 shrink-0 text-[#1F3D2B]" />
                             <div>
-                              <p className="text-muted-foreground">Last Updated</p>
-                              <p className="font-medium">{formatDate(order.updatedAt)}</p>
+                              <p className="text-[#2B1D0E]/60">Last updated</p>
+                              <p className="font-medium text-[#2B1D0E]">{formatDate(order.updatedAt)}</p>
                             </div>
                           </div>
                         )}
                       </CardContent>
                     </Card>
 
-                    {/* Quick Actions */}
-                    <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
-                      <CardHeader>
-                        <CardTitle className="text-base">Quick Actions</CardTitle>
+                    <Card className="rounded-3xl border border-[#E6A817]/25 bg-[#fffaf2] shadow-sm">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="font-display text-base text-[#2B1D0E]">Quick actions</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="grid grid-cols-2 gap-2">
                           {isAuthenticated && (
-                            <Button variant="outline" className="flex-1" asChild>
+                            <Button variant="outline" className="rounded-xl border-[#E6A817]/40 bg-white text-[#2B1D0E] hover:bg-[#fff9ef]" asChild>
                               <Link to="/orders">
-                                <Eye className="w-4 h-4 mr-2" />
-                                All Orders
+                                <Eye className="mr-2 h-4 w-4" />
+                                Orders
                               </Link>
                             </Button>
                           )}
-                          <Button variant="outline" className="flex-1" onClick={() => window.print()}>
-                            <Download className="w-4 h-4 mr-2" />
-                            Download
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="rounded-xl border-[#E6A817]/40 bg-white text-[#2B1D0E] hover:bg-[#fff9ef]"
+                            onClick={() => window.print()}
+                          >
+                            <Download className="mr-2 h-4 w-4" />
+                            Print
                           </Button>
-                          <Button variant="outline" className="flex-1" asChild>
+                          <Button variant="outline" className="rounded-xl border-[#E6A817]/40 bg-white text-[#2B1D0E] hover:bg-[#fff9ef]" asChild>
                             <Link to="/contact">
-                              <MessageCircle className="w-4 h-4 mr-2" />
+                              <MessageCircle className="mr-2 h-4 w-4" />
                               Support
                             </Link>
                           </Button>
                           {order.status === 'delivered' && (
-                            <Button variant="outline" className="flex-1" onClick={() => {
-                              toast({
-                                title: 'Feature Coming Soon',
-                                description: 'Reorder functionality will be available soon',
-                              });
-                            }}>
-                              <ShoppingCart className="w-4 h-4 mr-2" />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="rounded-xl border-[#E6A817]/40 bg-white text-[#2B1D0E] hover:bg-[#fff9ef]"
+                              onClick={() => {
+                                toast({
+                                  title: 'Jald aa raha hai',
+                                  description: 'Reorder feature update me hai',
+                                });
+                              }}
+                            >
+                              <ShoppingCart className="mr-2 h-4 w-4" />
                               Reorder
                             </Button>
                           )}
@@ -884,22 +873,19 @@ const TrackOrder = () => {
             )}
           </AnimatePresence>
 
-          {/* Empty State */}
           {!order && !isLoading && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-12"
-            >
-              <Card className="max-w-md mx-auto">
-                <CardContent className="p-12">
-                  <Truck className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Track Your Order</h3>
-                  <p className="text-muted-foreground mb-6">
-                    Enter your order ID or tracking number above to see the current status and delivery updates.
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-8">
+              <Card className="mx-auto max-w-md rounded-3xl border border-[#E6A817]/25 bg-white/95 shadow-sm">
+                <CardContent className="p-8 text-center md:p-10">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#E6A817]/30 bg-[#fffaf2]">
+                    <Truck className="h-8 w-8 text-[#1F3D2B]/70" />
+                  </div>
+                  <h3 className="font-display text-xl font-semibold text-[#2B1D0E]">Abhi koi order load nahi hai</h3>
+                  <p className="mt-2 text-sm text-[#2B1D0E]/70">
+                    Upar order ID daal kar &quot;Track&quot; dabayein — status yahin dikhega.
                   </p>
-                  <Button variant="outline" asChild>
-                    <Link to="/orders">View My Orders</Link>
+                  <Button asChild className="mt-6 rounded-full bg-[#E6A817] text-[#2B1D0E] hover:bg-[#d89c14]">
+                    <Link to="/orders">Meri orders</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -912,4 +898,3 @@ const TrackOrder = () => {
 };
 
 export default TrackOrder;
-

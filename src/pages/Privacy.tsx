@@ -7,8 +7,8 @@ const Privacy = () => {
   return (
     <>
       <SEO 
-        title="Privacy Policy - Atharva Health Solutions"
-        description="Read our Privacy Policy to understand how we collect, use, and protect your personal information at Atharva Health Solutions."
+        title="Privacy Policy - Jugraj Son's Hive"
+        description="Read our Privacy Policy to understand how we collect, use, and protect your personal information at Jugraj Son's Hive."
       />
       <main className="pb-24">
         {/* Hero Section */}
@@ -45,7 +45,7 @@ const Privacy = () => {
               <Card className="border-2">
                 <CardContent className="p-6">
                   <p className="text-muted-foreground leading-relaxed">
-                    Atharva Health Solutions operates this store and website, including all related information, 
+                    Jugraj Son's Hive operates this store and website, including all related information, 
                     content, features, tools, products and services, in order to provide you, the customer, 
                     with a curated shopping experience (the "Services"). This Privacy Policy describes how we 
                     collect, use, and disclose your personal information when you visit, use, or make a purchase 
@@ -537,8 +537,8 @@ const Privacy = () => {
                   <div className="space-y-2 text-muted-foreground">
                     <p>
                       <strong className="text-foreground">Email:</strong>{' '}
-                      <a href="mailto:support@atharvahealthsolutions.com" className="text-primary hover:underline">
-                        support@atharvahealthsolutions.com
+                      <a href="mailto:connect@jugrajsonshive.com" className="text-primary hover:underline">
+                        connect@jugrajsonshive.com
                       </a>
                     </p>
                     <p>
@@ -549,12 +549,12 @@ const Privacy = () => {
                     </p>
                     <p>
                       <strong className="text-foreground">Website:</strong>{' '}
-                      <a href="http://atharvahealthsolutions.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                        http://atharvahealthsolutions.com
+                      <a href="https://jugrajsonshive.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        https://jugrajsonshive.com
                       </a>
                     </p>
                     <p>
-                      <strong className="text-foreground">Address:</strong> Atharva Health Solution, Dunda Seoni, Seoni, Madhya Pradesh – 480661, India
+                      <strong className="text-foreground">Address:</strong> Jugraj Son's Hive, India
                     </p>
                   </div>
                 </CardContent>

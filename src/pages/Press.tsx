@@ -12,24 +12,24 @@ const Press = () => {
   const pressReleases = [
     {
       id: 1,
-      title: 'Atharva Health Solutions Launches New Ayurvedic Wellness Line',
+      title: "Jugraj Son's Hive Launches New Raw Honey Collection",
       date: 'January 15, 2025',
       category: 'Product Launch',
-      description: 'Company introduces comprehensive range of authentic Ayurvedic products for modern wellness.',
+      description: 'Company introduces a premium range of pure raw natural honey for modern consumers.',
     },
     {
       id: 2,
-      title: 'Partnership with Leading Ayurvedic Experts Announced',
+      title: 'Partnership with Leading Beekeeping Partners Announced',
       date: 'December 10, 2024',
       category: 'Partnership',
-      description: 'Strategic collaboration with renowned Ayurvedic practitioners to enhance product development.',
+      description: 'Strategic collaboration with trusted beekeepers to improve sourcing and quality consistency.',
     },
     {
       id: 3,
-      title: 'GMP Certification Achieved for Manufacturing Facility',
+      title: 'Quality Standards Upgraded Across Packaging Operations',
       date: 'November 5, 2024',
       category: 'Certification',
-      description: 'Company receives GMP certification ensuring highest quality standards in production.',
+      description: 'Company strengthens hygiene and quality checks to ensure purity in every honey batch.',
     },
   ];
 
@@ -49,7 +49,7 @@ const Press = () => {
     {
       icon: FileText,
       title: 'Company Fact Sheet',
-      description: 'Key information about Atharva Health Solutions',
+      description: "Key information about Jugraj Son's Hive",
       download: '/assets/press/fact-sheet.pdf',
     },
     {
@@ -64,8 +64,8 @@ const Press = () => {
     {
       icon: Mail,
       title: 'Press Inquiries',
-      content: 'press@atharvahealthsolutions.com',
-      link: 'mailto:press@atharvahealthsolutions.com',
+      content: 'press@jugrajsonshive.com',
+      link: 'mailto:press@jugrajsonshive.com',
     },
     {
       icon: Phone,
@@ -76,22 +76,22 @@ const Press = () => {
     {
       icon: MapPin,
       title: 'Address',
-      content: 'Atharva Health Solution, Dunda Seoni, Seoni, Madhya Pradesh – 480661, India',
+      content: "Jugraj Son's Hive, India",
       link: 'https://maps.google.com',
     },
     {
       icon: Globe,
       title: 'Website',
-      content: 'http://atharvahealthsolutions.com',
-      link: 'http://atharvahealthsolutions.com',
+      content: 'https://jugrajsonshive.com',
+      link: 'https://jugrajsonshive.com',
     },
   ];
 
   return (
     <>
       <SEO 
-        title="Press & Media - Atharva Health Solutions"
-        description="Press releases, media kit, and contact information for journalists and media professionals covering Atharva Health Solutions."
+        title="Press & Media - Jugraj Son's Hive"
+        description="Press releases, media kit, and contact information for journalists and media professionals covering Jugraj Son's Hive."
       />
       <main className="pb-24">
         {/* Hero Section */}
@@ -257,7 +257,7 @@ const Press = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Globe className="w-5 h-5 text-primary" />
-                  About Atharva Health Solutions
+                  About Jugraj Son's Hive
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -268,13 +268,13 @@ const Press = () => {
                       Company Overview
                     </h3>
                     <p className="text-muted-foreground leading-relaxed mb-4">
-                      Atharva Health Solutions is a leading provider of authentic Ayurvedic and natural health 
-                      products. We combine ancient wisdom with modern science to deliver high-quality wellness 
-                      solutions for today's health-conscious consumers.
+                      Jugraj Son's Hive is a leading provider of pure raw natural honey.
+                      We combine trusted sourcing with modern quality processes to deliver high-quality honey
+                      for today's health-conscious consumers.
                     </p>
                     <p className="text-muted-foreground leading-relaxed">
-                      Our mission is to make authentic Ayurvedic products accessible to everyone while maintaining 
-                      the highest standards of quality, purity, and efficacy.
+                      Our mission is to make authentic raw honey accessible to everyone while maintaining
+                      the highest standards of quality, purity, and transparency.
                     </p>
                   </div>
                   <div>
@@ -285,15 +285,15 @@ const Press = () => {
                     <ul className="space-y-2 text-muted-foreground">
                       <li className="flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-primary" />
-                        <span>GMP Certified Manufacturing</span>
+                        <span>Purity-first Packaging Standards</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <Award className="w-4 h-4 text-primary" />
-                        <span>100% Natural & Authentic Products</span>
+                        <span>100% Pure Raw Natural Honey</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <Users className="w-4 h-4 text-primary" />
-                        <span>Expert Ayurvedic Consultation</span>
+                        <span>Trusted Beekeeper Network</span>
                       </li>
                       <li className="flex items-center gap-2">
                         <Globe className="w-4 h-4 text-primary" />

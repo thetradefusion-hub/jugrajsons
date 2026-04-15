@@ -45,7 +45,7 @@ const AdminLogin = () => {
   // Show loading state while checking auth
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50">
+      <div className="flex min-h-[100dvh] items-center justify-center overflow-x-hidden bg-gradient-to-br from-emerald-50 to-teal-50 px-4 py-8">
         <div className="flex flex-col items-center gap-3">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
           <div className="text-muted-foreground">Loading...</div>
@@ -84,7 +84,7 @@ const AdminLogin = () => {
         name,
         role: 'admin'
       };
-      localStorage.setItem('atharva-user', JSON.stringify(user));
+      localStorage.setItem('jugrajsonshive-user', JSON.stringify(user));
       
       // Update auth context
       await login(data.email, data.password);
@@ -105,12 +105,12 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 p-4">
+    <div className="flex min-h-[100dvh] items-center justify-center overflow-x-hidden bg-gradient-to-br from-emerald-50 to-teal-50 px-4 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
+        className="w-full min-w-0 max-w-md"
       >
         <Card className="border-2 shadow-xl">
           <CardHeader className="text-center space-y-2">
@@ -129,7 +129,7 @@ const AdminLogin = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="admin@atharva.com"
+                    placeholder="admin.new@jugrajsonshive.com"
                     className="pl-10"
                     {...register('email')}
                   />
@@ -165,9 +165,9 @@ const AdminLogin = () => {
               </Button>
             </form>
 
-            <div className="mt-4 text-center text-sm text-muted-foreground">
+            <div className="mt-4 break-words text-center text-sm text-muted-foreground">
               <p>Default credentials:</p>
-              <p className="font-mono">admin@atharva.com / admin123</p>
+              <p className="font-mono text-xs sm:text-sm">admin.new@atharva.com / Admin@12345</p>
             </div>
           </CardContent>
         </Card>

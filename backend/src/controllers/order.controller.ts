@@ -148,33 +148,7 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
       // Don't fail the order if notification creation fails
     }
 
-    // Shiprocket: COD = sync immediately. Online prepaid = sync after Razorpay verify (payment.controller).
-    let shiprocketMeta: { synced: boolean; message?: string } | undefined;
-    const payMethod = (paymentMethod || 'cod').toLowerCase();
-    if (
-      payMethod !== 'online' &&
-      process.env.SHIPROCKET_EMAIL?.trim() &&
-      process.env.SHIPROCKET_PASSWORD?.trim()
-    ) {
-      const { syncShiprocketOrderFromDb } = await import('../services/shiprocket.service');
-      const sr = await syncShiprocketOrderFromDb(order._id.toString());
-      shiprocketMeta = sr.ok
-        ? { synced: true }
-        : { synced: false, message: sr.message };
-      if (!sr.ok) {
-        console.error('[Shiprocket] Checkout sync failed:', sr.message, sr.details ?? '');
-      }
-    }
-
-    const payload =
-      typeof (populatedOrder as any).toObject === 'function'
-        ? (populatedOrder as any).toObject()
-        : { ...(populatedOrder as any) };
-    if (shiprocketMeta) {
-      (payload as any).shiprocket = shiprocketMeta;
-    }
-
-    res.status(201).json(payload);
+    res.status(201).json(populatedOrder);
   } catch (error: any) {
     console.error('Error creating order:', error);
     res.status(500).json({ 
@@ -332,43 +306,6 @@ export const trackOrder = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    // Get tracking data from Shiprocket if available
-    let tracking = null;
-    if (order.shiprocketAwbCode || order.shiprocketShipmentId) {
-      try {
-        const axios = require('axios');
-        const SHIPROCKET_API_URL = 'https://apiv2.shiprocket.in/v1/external';
-        
-        // Get Shiprocket token
-        const email = process.env.SHIPROCKET_EMAIL;
-        const password = process.env.SHIPROCKET_PASSWORD;
-        
-        if (email && password) {
-          const authResponse = await axios.post(`${SHIPROCKET_API_URL}/auth/login`, {
-            email,
-            password,
-          });
-          
-          const token = authResponse.data.token;
-          if (token) {
-            const trackingId = order.shiprocketAwbCode || order.shiprocketShipmentId;
-            const response = await axios.get(
-              `${SHIPROCKET_API_URL}/courier/track/shipment/${trackingId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-            tracking = response.data?.data?.tracking_data?.shipment_track || null;
-          }
-        }
-      } catch (error: any) {
-        // If Shiprocket tracking fails, continue without tracking data
-        console.error('Shiprocket tracking error:', error.message);
-      }
-    }
-
     res.json({
       order: {
         _id: order._id,
@@ -387,7 +324,7 @@ export const trackOrder = async (req: Request, res: Response) => {
         createdAt: order.createdAt,
         updatedAt: order.updatedAt,
       },
-      tracking: tracking,
+      tracking: null,
     });
   } catch (error: any) {
     res.status(500).json({ message: error.message });

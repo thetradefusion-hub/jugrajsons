@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, Heart, ShoppingCart, Plus, Minus, TrendingUp, Zap } from 'lucide-react';
+import { Star, Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/data/products';
 import { useCart } from '@/context/CartContext';
-import { useWishlist } from '@/context/WishlistContext';
 import { cn } from '@/lib/utils';
 
 interface ProductCardProps {
@@ -15,22 +14,10 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
   const { addItem, getItemQuantity, updateQuantity } = useCart();
-  const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
-  
-  const quantity = getItemQuantity(product.id);
-  const inWishlist = isInWishlist(product.id);
-  const savings = product.originalPrice - product.price;
-  const isLowStock = product.stockCount > 0 && product.stockCount < 10;
 
-  const handleWishlistToggle = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (inWishlist) {
-      removeFromWishlist(product.id);
-    } else {
-      addToWishlist(product);
-    }
-  };
+  const quantity = getItemQuantity(product.id);
+  const savings = product.originalPrice - product.price;
+  const imgSrc = product.images?.[0] || '/placeholder.svg';
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -46,137 +33,86 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
+      transition={{ duration: 0.35, delay: index * 0.04 }}
       className="group h-full"
     >
-      <Link to={`/product/${product.slug}`} className="h-full block">
-        <div className="h-full bg-white rounded-2xl overflow-hidden border-2 border-gray-200 hover:border-emerald-500 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col relative">
-          {/* Conversion Badge - Top Left */}
-          {product.isBestseller && (
-            <div className="absolute top-3 left-3 z-20">
-              <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-[10px] md:text-xs px-3 py-1.5 shadow-xl font-bold flex items-center gap-1">
-                <TrendingUp className="w-3 h-3" />
-                Popular
-              </Badge>
-            </div>
+      <Link to={`/product/${product.slug}`} className="block h-full">
+        <div
+          className={cn(
+            'relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#E6A817]/25 bg-white sm:rounded-3xl',
+            'shadow-[0_10px_22px_rgba(43,29,14,0.06)] transition-all duration-300 sm:shadow-[0_14px_28px_rgba(43,29,14,0.07)]',
+            'hover:-translate-y-0.5 hover:border-[#E6A817]/45 hover:shadow-[0_16px_32px_rgba(43,29,14,0.1)] sm:hover:-translate-y-1 sm:hover:shadow-[0_20px_40px_rgba(43,29,14,0.12)]',
           )}
-
-          {/* Image Container */}
-          <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+        >
+          <div className="relative aspect-[5/6] overflow-hidden bg-[#fffaf2] sm:aspect-square">
             <img
-              src={product.images[0]}
+              src={imgSrc}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              className="h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-[1.03] sm:p-3 md:p-4"
             />
-            
-            {/* Gradient Overlay on Hover */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            
-            {/* Discount Badge */}
-            {product.discount > 0 && (
-              <div className="absolute top-3 right-3 z-10">
-                <Badge className="bg-gradient-to-r from-rose-600 to-red-600 text-white border-0 text-[11px] md:text-xs px-3 py-1.5 shadow-xl font-extrabold animate-pulse">
-                  {product.discount}% OFF
-                </Badge>
-              </div>
-            )}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#2B1D0E]/[0.06] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-            {/* New Badge */}
-            {product.isNew && !product.isBestseller && (
-              <div className="absolute top-3 left-3 z-10">
-                <Badge className="bg-gradient-to-r from-violet-600 to-purple-600 text-white border-0 text-[10px] md:text-xs px-3 py-1.5 shadow-xl font-bold">
-                  ✨ New
-                </Badge>
-              </div>
-            )}
-
-            {/* Stock Indicator */}
-            {isLowStock && (
-              <div className="absolute top-3 left-3 z-10 bg-amber-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1">
-                <Zap className="w-3 h-3" />
-                Only {product.stockCount} left!
-              </div>
-            )}
-
-            {/* Wishlist Button */}
-            <button
-              onClick={handleWishlistToggle}
-              className={cn(
-                'absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-xl z-10 backdrop-blur-md',
-                inWishlist
-                  ? 'bg-rose-500 text-white hover:bg-rose-600 hover:scale-110'
-                  : 'bg-white/95 text-gray-700 hover:bg-white hover:scale-110 border border-gray-200'
-              )}
-            >
-              <Heart className={cn('w-4 h-4 md:w-5 md:h-5 transition-all', inWishlist && 'fill-current')} />
-            </button>
-
-            {/* Quick Add Button - Enhanced */}
-            <div className="absolute bottom-3 right-3 z-10">
+            <div className="absolute bottom-2 right-2 z-10 sm:bottom-3 sm:right-3">
               {quantity === 0 ? (
                 <Button
+                  type="button"
                   onClick={handleAddToCart}
                   size="icon"
-                  className="w-12 h-12 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-2xl hover:shadow-emerald-500/50 hover:scale-110 transition-all duration-300 group/btn"
+                  className="h-9 w-9 rounded-full border-0 bg-[#E6A817] text-[#2B1D0E] shadow-lg transition-transform hover:scale-105 hover:bg-[#d89c14] sm:h-11 sm:w-11"
+                  aria-label="Add to cart"
                 >
-                  <Plus className="w-5 h-5 group-hover/btn:rotate-90 transition-transform duration-300" />
+                  <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
               ) : (
-                <div className="flex items-center gap-1.5 bg-white/98 backdrop-blur-md rounded-full p-2 shadow-2xl border border-gray-200">
+                <div className="flex items-center gap-1 rounded-full border border-[#E6A817]/35 bg-white/95 p-1.5 shadow-lg backdrop-blur-sm">
                   <Button
+                    type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 rounded-full hover:bg-emerald-50 hover:text-emerald-600"
+                    className="h-8 w-8 rounded-full text-[#2B1D0E] hover:bg-[#fff9ef]"
                     onClick={(e) => handleQuantityChange(e, -1)}
+                    aria-label="Decrease quantity"
                   >
-                    <Minus className="w-4 h-4" />
+                    <Minus className="h-4 w-4" />
                   </Button>
-                  <span className="font-extrabold text-base min-w-[1.5ch] text-center text-gray-900">{quantity}</span>
+                  <span className="min-w-[1.25rem] text-center text-sm font-bold text-[#2B1D0E]">{quantity}</span>
                   <Button
+                    type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 rounded-full hover:bg-emerald-50 hover:text-emerald-600"
+                    className="h-8 w-8 rounded-full text-[#2B1D0E] hover:bg-[#fff9ef]"
                     onClick={(e) => handleQuantityChange(e, 1)}
+                    aria-label="Increase quantity"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="h-4 w-4" />
                   </Button>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Content */}
-          <div className="p-5 flex-1 flex flex-col border-t border-gray-100 bg-white">
-            {/* Rating */}
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 text-emerald-700 px-2.5 py-1 rounded-full">
-                <Star className="w-3.5 h-3.5 fill-current" />
-                <span className="text-xs font-extrabold">{product.rating}</span>
+          <div className="flex flex-1 flex-col border-t border-[#E6A817]/15 p-2.5 sm:p-3 md:p-5">
+            <div className="mb-1 flex items-center gap-1.5 sm:mb-2 sm:gap-2">
+              <div className="inline-flex items-center gap-0.5 rounded-full border border-[#E6A817]/30 bg-[#fff9ef] px-1.5 py-0.5 text-[#2B1D0E] sm:gap-1 sm:px-2">
+                <Star className="h-3 w-3 fill-[#E6A817] text-[#E6A817] sm:h-3.5 sm:w-3.5" />
+                <span className="text-[10px] font-bold sm:text-xs">{product.rating}</span>
               </div>
-              <span className="text-xs text-gray-500 font-medium">
-                ({product.reviewCount.toLocaleString()})
-              </span>
+              <span className="text-[10px] text-[#2B1D0E]/55 sm:text-xs">({product.reviewCount.toLocaleString()})</span>
             </div>
-            
-            {/* Product Name */}
-            <h3 className="font-bold text-base md:text-lg text-gray-900 line-clamp-2 mb-3 group-hover:text-emerald-600 transition-colors leading-tight min-h-[3rem]">
+
+            <h3 className="line-clamp-2 min-h-[2.35rem] font-display text-sm font-semibold leading-snug text-[#2B1D0E] transition-colors group-hover:text-[#1F3D2B] sm:min-h-[2.6rem] sm:text-base md:text-lg">
               {product.name}
             </h3>
 
-            {/* Price with Savings Highlight */}
-            <div className="flex flex-col gap-2 mt-auto">
-              <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-2xl md:text-3xl font-extrabold text-gray-900">
-                  Rs. {product.price.toLocaleString()}
-                </span>
+            <div className="mt-auto flex flex-col gap-1.5 pt-2 sm:gap-2 sm:pt-3">
+              <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2">
+                <span className="text-base font-bold text-[#2B1D0E] sm:text-lg md:text-2xl">Rs. {product.price.toLocaleString()}</span>
                 {product.originalPrice > product.price && (
                   <>
-                    <span className="text-sm md:text-base text-gray-500 line-through font-medium">
-                      Rs. {product.originalPrice.toLocaleString()}
-                    </span>
-                    <Badge className="bg-emerald-100 text-emerald-700 border-0 text-xs font-bold px-2 py-1">
+                    <span className="text-sm text-[#2B1D0E]/50 line-through">Rs. {product.originalPrice.toLocaleString()}</span>
+                    <Badge variant="secondary" className="border-0 bg-[#1F3D2B]/10 text-[11px] font-semibold text-[#1F3D2B]">
                       Save Rs. {savings.toLocaleString()}
                     </Badge>
                   </>

@@ -71,7 +71,7 @@ const AdminSettings = () => {
   const generalForm = useForm<GeneralSettingsForm>({
     resolver: zodResolver(generalSettingsSchema),
     defaultValues: {
-      siteName: 'AtharvaHelth',
+      siteName: "Jugraj Son's Hive",
       siteUrl: 'https://atharvahelth.com',
       adminEmail: user?.email || '',
       supportEmail: '',
@@ -91,7 +91,7 @@ const AdminSettings = () => {
       smtpUser: '',
       smtpPassword: '',
       fromEmail: user?.email || '',
-      fromName: 'AtharvaHelth',
+      fromName: "Jugraj Son's Hive",
     },
   });
 
@@ -226,19 +226,19 @@ const AdminSettings = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="space-y-2">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 space-y-2">
             <h1 className="admin-heading-1">Settings</h1>
             <p className="admin-description">Manage your admin panel and store settings</p>
           </div>
-          <Badge variant="outline" className="text-sm">
+          <Badge variant="outline" className="w-fit shrink-0 text-sm">
             <CheckCircle2 className="h-3 w-3 mr-1 text-emerald-500" />
             All Systems Operational
           </Badge>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
+          <TabsList className="flex w-full max-w-full snap-x snap-mandatory gap-1 overflow-x-auto overflow-y-hidden rounded-lg bg-muted p-1 scrollbar-hide sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-x-visible md:grid-cols-4 lg:grid-cols-7">
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
             <TabsTrigger value="payment">Payment</TabsTrigger>
@@ -266,7 +266,7 @@ const AdminSettings = () => {
                       <Input
                         id="siteName"
                         {...generalForm.register('siteName')}
-                        placeholder="AtharvaHelth"
+                        placeholder="Jugraj Son's Hive"
                       />
                       {generalForm.formState.errors.siteName && (
                         <p className="text-sm text-destructive">

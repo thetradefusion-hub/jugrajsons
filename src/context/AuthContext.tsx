@@ -43,6 +43,10 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const USER_STORAGE_KEY = 'jugrajsonshive-user';
+const LEGACY_USER_STORAGE_KEY = 'atharva-user';
+const ADDRESSES_STORAGE_KEY = 'jugrajsonshive-addresses';
+const LEGACY_ADDRESSES_STORAGE_KEY = 'atharva-addresses';
 
 // Mock user data for demo
 function mapApiAddressesToLocal(raw: unknown[] | undefined): Address[] {
@@ -84,8 +88,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const loadUser = async () => {
       const token = localStorage.getItem('token');
-      const savedUser = localStorage.getItem('atharva-user');
-      const savedAddresses = localStorage.getItem('atharva-addresses');
+      const savedUser = localStorage.getItem(USER_STORAGE_KEY) || localStorage.getItem(LEGACY_USER_STORAGE_KEY);
+      const savedAddresses =
+        localStorage.getItem(ADDRESSES_STORAGE_KEY) || localStorage.getItem(LEGACY_ADDRESSES_STORAGE_KEY);
       
       if (token) {
         try {
@@ -104,12 +109,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           };
           setUser(loadedUser);
           setAddresses(mappedAddresses);
-          localStorage.setItem('atharva-user', JSON.stringify(loadedUser));
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loadedUser));
         } catch (error: any) {
           if (error.response?.status === 401) {
             localStorage.removeItem('token');
-            localStorage.removeItem('atharva-user');
-            localStorage.removeItem('atharva-addresses');
+            localStorage.removeItem(USER_STORAGE_KEY);
+            localStorage.removeItem(LEGACY_USER_STORAGE_KEY);
+            localStorage.removeItem(ADDRESSES_STORAGE_KEY);
+            localStorage.removeItem(LEGACY_ADDRESSES_STORAGE_KEY);
           } else if (savedUser) {
             try {
               const parsedUser = JSON.parse(savedUser);
@@ -149,14 +156,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem('atharva-user', JSON.stringify(user));
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
     } else {
-      localStorage.removeItem('atharva-user');
+      localStorage.removeItem(USER_STORAGE_KEY);
+      localStorage.removeItem(LEGACY_USER_STORAGE_KEY);
     }
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('atharva-addresses', JSON.stringify(addresses));
+    localStorage.setItem(ADDRESSES_STORAGE_KEY, JSON.stringify(addresses));
   }, [addresses]);
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
@@ -182,7 +190,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         setUser(fullUser);
         setAddresses(mappedAddresses);
-        localStorage.setItem('atharva-user', JSON.stringify(fullUser));
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(fullUser));
       } catch {
         const minimal: User = {
           id: _id,
@@ -193,7 +201,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         setUser(minimal);
         setAddresses([]);
-        localStorage.setItem('atharva-user', JSON.stringify(minimal));
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(minimal));
       }
       return { success: true };
     } catch (error: any) {
@@ -227,7 +235,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         setUser(fullUser);
         setAddresses(mappedAddresses);
-        localStorage.setItem('atharva-user', JSON.stringify(fullUser));
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(fullUser));
       } catch {
         const minimal: User = {
           id: _id,
@@ -238,7 +246,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         setUser(minimal);
         setAddresses([]);
-        localStorage.setItem('atharva-user', JSON.stringify(minimal));
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(minimal));
       }
       return { success: true };
     } catch (error: any) {
@@ -253,8 +261,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUser(null);
     setAddresses([]);
     localStorage.removeItem('token');
-    localStorage.removeItem('atharva-user');
-    localStorage.removeItem('atharva-addresses');
+    localStorage.removeItem(USER_STORAGE_KEY);
+    localStorage.removeItem(LEGACY_USER_STORAGE_KEY);
+    localStorage.removeItem(ADDRESSES_STORAGE_KEY);
+    localStorage.removeItem(LEGACY_ADDRESSES_STORAGE_KEY);
   };
 
   const updateProfile = (updates: Partial<User>) => {
@@ -313,7 +323,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       role: u.role || 'user',
       addresses: mappedAddresses ?? undefined,
     };
-    localStorage.setItem('atharva-user', JSON.stringify(stored));
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(stored));
   };
 
   const addAddress = (address: Omit<Address, 'id'>) => {

@@ -7,8 +7,8 @@ const Terms = () => {
   return (
     <>
       <SEO 
-        title="Terms and Conditions - Atharva Health Solutions"
-        description="Read our Terms and Conditions to understand the rules and regulations for using Atharva Health Solutions website and services."
+        title="Terms and Conditions - Jugraj Son's Hive"
+        description="Read our Terms and Conditions to understand the rules and regulations for using Jugraj Son's Hive website and services."
       />
       <main className="pb-24">
         {/* Hero Section */}
@@ -45,7 +45,7 @@ const Terms = () => {
               <Card className="border-2">
                 <CardContent className="p-6">
                   <p className="text-muted-foreground leading-relaxed">
-                    Welcome to atharvahealthsolutions.com (the Website), operated by Atharva Health Solutions 
+                    Welcome to jugrajsonshive.com (the Website), operated by Jugraj Son's Hive 
                     (Company, we, our, us). By accessing or using this Website in any manner, you agree to comply 
                     with and be bound by these Terms and Conditions (Agreement). If you do not agree to these terms, 
                     please do not use the Website.
@@ -198,7 +198,7 @@ const Terms = () => {
                     7. Returns and Exchanges
                   </h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    Due to the nature of Ayurvedic products, we do not accept returns or exchanges, except for damaged 
+                    Due to the nature of food products, we do not accept returns or exchanges, except for damaged 
                     goods. Contact customer support with order details for damaged items. For more details, please refer 
                     to our{' '}
                     <a href="/returns" className="text-primary hover:underline">Returns Policy</a>.
@@ -327,8 +327,8 @@ const Terms = () => {
                   <div className="space-y-2 text-muted-foreground">
                     <p>
                       <strong className="text-foreground">Email:</strong>{' '}
-                      <a href="mailto:support@atharvahealthsolutions.com" className="text-primary hover:underline">
-                        support@atharvahealthsolutions.com
+                      <a href="mailto:connect@jugrajsonshive.com" className="text-primary hover:underline">
+                        connect@jugrajsonshive.com
                       </a>
                     </p>
                     <p>
@@ -339,12 +339,12 @@ const Terms = () => {
                     </p>
                     <p>
                       <strong className="text-foreground">Website:</strong>{' '}
-                      <a href="http://atharvahealthsolutions.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                        http://atharvahealthsolutions.com
+                      <a href="https://jugrajsonshive.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        https://jugrajsonshive.com
                       </a>
                     </p>
                     <p>
-                      <strong className="text-foreground">Address:</strong> Atharva Health Solution, Dunda Seoni, Seoni, Madhya Pradesh – 480661, India
+                      <strong className="text-foreground">Address:</strong> Jugraj Son's Hive, India
                     </p>
                   </div>
                 </CardContent>

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AnimatePresence } from "framer-motion";
 import { CartProvider } from "@/context/CartContext";
@@ -39,10 +39,6 @@ import TrackOrder from "@/pages/TrackOrder";
 import Terms from "@/pages/Terms";
 import Press from "@/pages/Press";
 import UserSettings from "@/pages/UserSettings";
-import Expert from "@/pages/Expert";
-import BookAppointment from "@/pages/BookAppointment";
-import Chat from "@/pages/Chat";
-import MyAppointments from "@/pages/MyAppointments";
 import NotFound from "@/pages/NotFound";
 import AdminLogin from "@/pages/admin/AdminLogin";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -59,14 +55,14 @@ import AdminReports from "@/pages/admin/AdminReports";
 import AdminReviews from "@/pages/admin/AdminReviews";
 import AdminNotifications from "@/pages/admin/AdminNotifications";
 import AdminActivityLogs from "@/pages/admin/AdminActivityLogs";
-import AdminExperts from "@/pages/admin/AdminExperts";
-import AdminAppointments from "@/pages/admin/AdminAppointments";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   useEffect(() => {
     const hasSeenOnboarding = localStorage.getItem("hasSeenOnboarding");
@@ -124,8 +120,8 @@ const AppContent = () => {
 
       <div className="min-h-screen flex flex-col bg-background">
         <ScrollToTop />
-        <Navbar />
-        <div className="flex-1 pb-16 md:pb-0">
+        {!isAdminRoute && <Navbar />}
+        <div className={`flex-1 ${isAdminRoute ? "" : "pb-16 md:pb-0"}`}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
@@ -150,10 +146,6 @@ const AppContent = () => {
             <Route path="/terms" element={<Terms />} />
             <Route path="/press" element={<Press />} />
             <Route path="/settings" element={<UserSettings />} />
-            <Route path="/expert" element={<Expert />} />
-            <Route path="/book-appointment/:expertId" element={<BookAppointment />} />
-            <Route path="/chat/:expertId" element={<Chat />} />
-            <Route path="/appointments" element={<MyAppointments />} />
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -170,13 +162,11 @@ const AppContent = () => {
             <Route path="/admin/notifications" element={<AdminNotifications />} />
             <Route path="/admin/activity-logs" element={<AdminActivityLogs />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
-            <Route path="/admin/experts" element={<AdminExperts />} />
-            <Route path="/admin/appointments" element={<AdminAppointments />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
-        <Footer />
-        <BottomNav />
+        {!isAdminRoute && <Footer />}
+        {!isAdminRoute && <BottomNav />}
       </div>
     </>
   );
