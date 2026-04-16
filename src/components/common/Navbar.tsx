@@ -68,9 +68,9 @@ const Navbar = () => {
             <img src={logoSrc} alt="Jugraj Son's Hive Logo" className="h-5 w-5 rounded-full object-cover ring-1 ring-[#E6A817]/40" />
             Premium Raw Forest Honey
           </span>
-          <a href="tel:+919669361290" className="flex items-center gap-2 hover:text-[#E6A817]">
+          <a href="tel:+919826124108" className="flex items-center gap-2 hover:text-[#E6A817]">
             <Phone className="h-4 w-4" />
-            09669361290
+            9826124108
           </a>
         </div>
       </div>

@@ -365,8 +365,8 @@ const About = () => {
                 <CardContent className="p-6">
                   <Phone className="w-8 h-8 text-primary mx-auto mb-3" />
                   <h3 className="font-semibold mb-2">Phone</h3>
-                  <a href="tel:+919669361290" className="text-primary hover:underline">
-                    09669361290
+                  <a href="tel:+919826124108" className="text-primary hover:underline">
+                    9826124108
                   </a>
                 </CardContent>
               </Card>

@@ -90,7 +90,7 @@ const Footer = () => {
           <div>
             <h4 className="font-display text-lg">Stay Connected</h4>
             <div className="mt-3 space-y-2 text-sm text-[#F5E9D7]/85">
-              <p className="flex items-center gap-2"><Phone className="h-4 w-4 text-[#E6A817]" /> 09669361290</p>
+              <p className="flex items-center gap-2"><Phone className="h-4 w-4 text-[#E6A817]" /> 9826124108</p>
               <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-[#E6A817]" /> connect@jugrajsonshive.com</p>
               <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-[#E6A817]" /> India</p>
             </div>

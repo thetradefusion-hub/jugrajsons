@@ -68,8 +68,8 @@ const Contact = () => {
     {
       icon: Phone,
       title: 'Phone',
-      content: '09669361290',
-      link: 'tel:+919669361290',
+      content: '9826124108',
+      link: 'tel:+919826124108',
       description: 'Mon-Sat, 9 AM - 7 PM',
     },
     {

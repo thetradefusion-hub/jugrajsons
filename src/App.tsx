@@ -14,7 +14,6 @@ import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import BottomNav from "@/components/common/BottomNav";
 import ScrollToTop from "@/components/common/ScrollToTop";
-import Onboarding from "@/components/onboarding/Onboarding";
 import NotificationPrompt from "@/components/notifications/NotificationPrompt";
 import Home from "@/pages/Home";
 import Products from "@/pages/Products";
@@ -59,38 +58,20 @@ import AdminActivityLogs from "@/pages/admin/AdminActivityLogs";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   useEffect(() => {
-    const hasSeenOnboarding = localStorage.getItem("hasSeenOnboarding");
-    if (!hasSeenOnboarding) {
-      setShowOnboarding(true);
-    } else {
-      // Show notification prompt after a delay if not already shown
-      const hasSeenNotification = localStorage.getItem("hasSeenNotificationPrompt");
-      if (!hasSeenNotification) {
-        const timer = setTimeout(() => {
-          setShowNotificationPrompt(true);
-        }, 3000);
-        return () => clearTimeout(timer);
-      }
+    // Show notification prompt after a delay if not already shown
+    const hasSeenNotification = localStorage.getItem("hasSeenNotificationPrompt");
+    if (!hasSeenNotification) {
+      const timer = setTimeout(() => {
+        setShowNotificationPrompt(true);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
   }, []);
-
-  const handleOnboardingComplete = () => {
-    localStorage.setItem("hasSeenOnboarding", "true");
-    setShowOnboarding(false);
-    // Show notification prompt after onboarding
-    setTimeout(() => {
-      const hasSeenNotification = localStorage.getItem("hasSeenNotificationPrompt");
-      if (!hasSeenNotification) {
-        setShowNotificationPrompt(true);
-      }
-    }, 2000);
-  };
 
   const handleNotificationAllow = () => {
     localStorage.setItem("hasSeenNotificationPrompt", "true");
@@ -105,10 +86,6 @@ const AppContent = () => {
 
   return (
     <>
-      <AnimatePresence>
-        {showOnboarding && <Onboarding onComplete={handleOnboardingComplete} />}
-      </AnimatePresence>
-
       <AnimatePresence>
         {showNotificationPrompt && (
           <NotificationPrompt

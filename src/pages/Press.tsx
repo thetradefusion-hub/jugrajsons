@@ -70,8 +70,8 @@ const Press = () => {
     {
       icon: Phone,
       title: 'Media Contact',
-      content: '09669361290',
-      link: 'tel:+919669361290',
+      content: '9826124108',
+      link: 'tel:+919826124108',
     },
     {
       icon: MapPin,
