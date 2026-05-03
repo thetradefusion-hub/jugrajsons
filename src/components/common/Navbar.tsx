@@ -56,7 +56,7 @@ const Navbar = () => {
       items: productTypes.map((c) => ({ name: c.name, slug: c.slug })),
     },
     { label: 'Shop All', href: '/products' },
-    { label: 'Gift Packs', href: '/products?search=gift' },
+    { label: 'About Us', href: '/about' },
     { label: 'New Arrivals', href: '/products?tag=new' },
   ];
 
@@ -83,15 +83,24 @@ const Navbar = () => {
       >
         <div className="container-custom">
           <div className="flex h-16 items-center justify-between lg:h-20">
-            <Link to="/" className="flex items-center gap-3">
+            <Link
+              to="/"
+              className="group flex min-w-0 max-w-[calc(100vw-8rem)] items-center gap-2.5 sm:max-w-none sm:gap-3"
+            >
               <img
                 src={logoSrc}
                 alt="Jugraj Son's Hive"
-                className="h-10 w-10 rounded-xl object-cover ring-1 ring-[#E6A817]/35"
+                className="h-10 w-10 shrink-0 rounded-xl object-cover shadow-[0_2px_8px_rgba(43,29,14,0.12)] ring-2 ring-[#E6A817]/45 transition-transform duration-300 group-hover:scale-[1.02]"
               />
-              <div>
-                <p className="font-display text-lg font-bold leading-tight text-[#2B1D0E]">Jugraj Son&apos;s</p>
-                <p className="text-xs text-[#2B1D0E]/65">Hive</p>
+              <div className="min-w-0 border-l border-[#E6A817]/45 pl-2.5 sm:pl-3">
+                <p className="font-brand text-[1.125rem] font-semibold leading-[1.05] tracking-[-0.02em] text-[#2B1D0E] drop-shadow-[0_1px_0_rgba(255,250,240,0.95)] sm:text-xl md:text-[1.5rem] md:leading-[1.02]">
+                  Jugraj Son&apos;s
+                </p>
+                <p className="mt-[3px] font-brand text-[0.7rem] font-bold uppercase leading-none tracking-[0.38em] sm:text-[11px] md:tracking-[0.42em]">
+                  <span className="inline-block bg-gradient-to-r from-[#9a7310] via-[#E6A817] to-[#b88912] bg-clip-text text-transparent">
+                    Hive
+                  </span>
+                </p>
               </div>
             </Link>
 

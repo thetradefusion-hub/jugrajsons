@@ -219,7 +219,7 @@ const Home = () => {
     <>
       <SEO
         title="Jugraj Son's Hive - Premium Forest Honey"
-        description="Asli Jungle Shahad, Ab Online. Pure forest honey, direct from beekeepers."
+        description="Premium raw forest honey — trust and purity in every jar. Shop pure honey online, direct from beekeepers."
       />
       <main className="overflow-x-hidden bg-[#F5E9D7] pb-24 text-[#2B1D0E] md:pb-0">
         {/* Hero */}
@@ -235,9 +235,16 @@ const Home = () => {
                 className="text-center md:text-left"
               >
                 <Badge className="mb-4 border-0 bg-[#1F3D2B] px-3 py-1 text-xs text-[#F5E9D7] md:px-4 md:text-sm">Premium Raw Forest Honey</Badge>
-                <h1 className="font-display text-3xl font-bold leading-tight text-[#2B1D0E] md:text-6xl">
-                  Asli Jungle Shahad,
-                  <span className="block text-[#1F3D2B]">Ab Online</span>
+                <h1
+                  lang="hi"
+                  className="font-devanagari text-2xl font-semibold leading-snug tracking-tight text-[#2B1D0E] sm:text-3xl md:text-[2.35rem] md:leading-[1.25] lg:text-[2.65rem]"
+                >
+                  <span className="block bg-gradient-to-r from-[#2B1D0E] via-[#3d2918] to-[#2B1D0E] bg-clip-text text-transparent">
+                    हम शहद बेचते नहीं, विश्वास बांटते हैं।
+                  </span>
+                  <span className="mt-2 block text-[#1F3D2B] md:mt-3">
+                    चख कर देखिए, आपको शुद्धता खुद बताएगी अपनी कहानी।
+                  </span>
                 </h1>
                 <p className="mt-4 max-w-xl text-sm text-[#2B1D0E]/80 md:text-lg">
                   Pure Forest Honey, Direct from Beekeepers. No chemicals, no added sugar, no over-processing.
@@ -258,7 +265,7 @@ const Home = () => {
                     </Link>
                   </Button>
                   <Button asChild variant="outline" size="lg" className="h-11 rounded-full border-[#1F3D2B]/40 bg-transparent px-4 text-sm text-[#1F3D2B] hover:bg-[#1F3D2B]/5 md:h-12 md:px-6 md:text-base">
-                    <a href="#our-story">Our Story</a>
+                    <Link to="/about">About Us</Link>
                   </Button>
                 </div>
               </motion.div>
@@ -443,33 +450,35 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Story */}
+        {/* Story teaser → full About page */}
         <section id="our-story" className="py-12 md:py-16">
           <div className="container-custom">
-            <Card className="overflow-hidden rounded-3xl border border-[#E6A817]/20 bg-[#2B1D0E] text-[#F5E9D7]">
-              <CardContent className="grid gap-6 p-5 md:grid-cols-2 md:gap-8 md:p-12">
-                <div>
-                  <Badge className="border-0 bg-[#E6A817] text-[#2B1D0E]">Our Story</Badge>
-                  <h2 className="mt-4 font-display text-3xl text-[#F5E9D7] md:text-4xl">Jugraj ji ke chhote beekeeping safar se</h2>
-                  <p className="mt-4 text-[#F5E9D7]/85">
-                    Jugraj ji ke chhote se beekeeping se shuru hua safar, aaj premium forest honey brand ban chuka hai.
-                    Humne hamesha ek hi wada rakha: asli shahad, imaandari ke saath.
-                  </p>
-                  <p className="mt-3 text-[#F5E9D7]/85">
-                    Har batch limited hota hai, direct source se aata hai, aur quality checks ke baad hi aap tak pahuchta hai.
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-[#F5E9D7]/10 p-5 md:p-6">
-                  <p className="text-sm uppercase tracking-wider text-[#E6A817]">Brand Promise</p>
-                  <p className="mt-3 text-lg leading-relaxed">
-                    "Asli shahad ka taste tabhi aata hai jab wo seedha prakriti se aaye."
-                  </p>
-                  <div className="mt-6 space-y-3 text-sm">
-                    <p className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#E6A817]" /> Forest-sourced origins</p>
-                    <p className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#E6A817]" /> No added sugar or chemicals</p>
-                    <p className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#E6A817]" /> Premium D2C quality focus</p>
-                  </div>
-                </div>
+            <Card className="overflow-hidden rounded-3xl border border-[#E6A817]/20 bg-[#2B1D0E] text-[#F5E9D7] shadow-[0_16px_40px_rgba(43,29,14,0.12)]">
+              <CardContent className="p-6 text-center md:p-10 md:text-left">
+                <Badge className="border-0 bg-[#E6A817] px-2.5 py-0.5 text-[10px] font-medium text-[#2B1D0E] md:text-xs">
+                  Our Story
+                </Badge>
+                <h2
+                  lang="hi"
+                  className="mt-4 font-devanagari text-xl font-semibold leading-snug text-[#F5E9D7] sm:text-2xl md:text-3xl"
+                >
+                  लोकेश गजाम ने मधुमक्खी पालन से खड़ी की सफलता की मिसाल
+                </h2>
+                <p
+                  lang="hi"
+                  className="mx-auto mt-3 max-w-2xl font-devanagari text-sm leading-relaxed text-[#F5E9D7]/85 md:mx-0 md:text-base"
+                >
+                  इंजीनियरिंग के बाद &apos;जुगराज संस हाइव&apos; के माध्यम से शुद्ध शहद और जैविक खेती — पूरी कहानी, सफर और वादे एक ही जगह पढ़ें।
+                </p>
+                <Button
+                  asChild
+                  size="lg"
+                  className="mt-6 rounded-full bg-[#E6A817] px-8 font-semibold text-[#2B1D0E] hover:bg-[#d89c14]"
+                >
+                  <Link to="/about">
+                    पूरी कहानी पढ़ें <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
           </div>

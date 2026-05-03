@@ -1,11 +1,12 @@
-import { Home, Package, User, Truck } from 'lucide-react';
+import { Home, Package, User, BookOpen, Truck } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { icon: Home, label: 'Home', path: '/' },
   { icon: Package, label: 'Shop', path: '/products' },
-  { icon: Truck, label: 'Track', path: '/track-order' },
+  { icon: BookOpen, label: 'About us', path: '/about' },
+  { icon: Truck, label: 'Track order', path: '/track-order' },
   { icon: User, label: 'Profile', path: '/profile' },
 ] as const;
 
@@ -26,7 +27,7 @@ const BottomNav = () => {
       className="safe-area-bottom fixed bottom-0 left-0 right-0 z-50 border-t border-[#E6A817]/30 bg-[#F5E9D7]/95 shadow-[0_-10px_32px_rgba(43,29,14,0.12)] backdrop-blur-lg md:hidden"
       aria-label="Main mobile navigation"
     >
-      <div className="mx-auto flex h-[4.25rem] max-w-lg items-stretch justify-around px-1 pt-1">
+      <div className="mx-auto flex min-h-[4.5rem] max-w-2xl items-stretch justify-around gap-0 px-0.5 pb-1 pt-1 sm:px-1">
         {navItems.map((item) => {
           const active = isActive(item.path);
           return (
@@ -44,14 +45,15 @@ const BottomNav = () => {
             >
               <item.icon
                 className={cn(
-                  'h-[1.35rem] w-[1.35rem] shrink-0 transition-transform duration-200',
+                  'h-[1.2rem] w-[1.2rem] shrink-0 transition-transform duration-200 sm:h-[1.35rem] sm:w-[1.35rem]',
                   active && 'scale-105 text-[#E6A817]',
                 )}
                 strokeWidth={active ? 2.25 : 2}
               />
               <span
                 className={cn(
-                  'max-w-full truncate px-0.5 text-[10px] font-medium leading-tight tracking-wide',
+                  'max-w-full px-0.5 text-center text-[9px] font-medium leading-[1.15] tracking-wide sm:text-[10px]',
+                  'line-clamp-2 break-words',
                   active ? 'font-semibold text-[#F5E9D7]' : 'text-[#2B1D0E]/65',
                 )}
               >

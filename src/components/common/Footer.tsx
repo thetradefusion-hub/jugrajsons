@@ -9,7 +9,7 @@ const Footer = () => {
 
   const quickLinks = [
     { label: 'Shop All Honey', href: '/products' },
-    { label: 'Gift Packs', href: '/products?search=gift' },
+    { label: 'About Us', href: '/about' },
     { label: 'Track Order', href: '/track-order' },
     { label: 'Contact', href: '/contact' },
   ];

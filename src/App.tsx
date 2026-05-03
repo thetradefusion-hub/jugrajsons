@@ -14,6 +14,7 @@ import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import BottomNav from "@/components/common/BottomNav";
 import ScrollToTop from "@/components/common/ScrollToTop";
+import { BrandPreloader } from "@/components/common/BrandPreloader";
 import NotificationPrompt from "@/components/notifications/NotificationPrompt";
 import Home from "@/pages/Home";
 import Products from "@/pages/Products";
@@ -57,21 +58,44 @@ import AdminActivityLogs from "@/pages/admin/AdminActivityLogs";
 
 const queryClient = new QueryClient();
 
+const PRELOADER_VISIBLE_MS = 2600;
+
 const AppContent = () => {
-  const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const [showPreloader, setShowPreloader] = useState(() => !location.pathname.startsWith("/admin"));
+  const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
 
   useEffect(() => {
-    // Show notification prompt after a delay if not already shown
-    const hasSeenNotification = localStorage.getItem("hasSeenNotificationPrompt");
-    if (!hasSeenNotification) {
-      const timer = setTimeout(() => {
-        setShowNotificationPrompt(true);
-      }, 3000);
-      return () => clearTimeout(timer);
+    if (isAdminRoute) {
+      setShowPreloader(false);
+      return;
     }
-  }, []);
+    const close = () => setShowPreloader(false);
+    const t = window.setTimeout(close, PRELOADER_VISIBLE_MS);
+    return () => window.clearTimeout(t);
+  }, [isAdminRoute]);
+
+  useEffect(() => {
+    if (showPreloader && !isAdminRoute) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showPreloader, isAdminRoute]);
+
+  useEffect(() => {
+    if (showPreloader) return;
+    const hasSeenNotification = localStorage.getItem("hasSeenNotificationPrompt");
+    if (hasSeenNotification) return;
+    const timer = window.setTimeout(() => {
+      setShowNotificationPrompt(true);
+    }, 3000);
+    return () => window.clearTimeout(timer);
+  }, [showPreloader]);
 
   const handleNotificationAllow = () => {
     localStorage.setItem("hasSeenNotificationPrompt", "true");
@@ -86,6 +110,10 @@ const AppContent = () => {
 
   return (
     <>
+      <AnimatePresence mode="wait">
+        {showPreloader && !isAdminRoute ? <BrandPreloader key="brand-preloader" /> : null}
+      </AnimatePresence>
+
       <AnimatePresence>
         {showNotificationPrompt && (
           <NotificationPrompt
@@ -98,7 +126,7 @@ const AppContent = () => {
       <div className="min-h-screen flex flex-col bg-background">
         <ScrollToTop />
         {!isAdminRoute && <Navbar />}
-        <div className={`flex-1 ${isAdminRoute ? "" : "pb-16 md:pb-0"}`}>
+        <div className={`flex-1 ${isAdminRoute ? "" : "pb-20 md:pb-0"}`}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />

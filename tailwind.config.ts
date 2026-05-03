@@ -16,6 +16,8 @@ export default {
       fontFamily: {
         sans: ["Inter", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
         display: ["Playfair Display", "Georgia", "Times New Roman", "serif"],
+        brand: ['"Cormorant Garamond"', "Playfair Display", "Georgia", "serif"],
+        devanagari: ['"Tiro Devanagari Hindi"', "Noto Serif Devanagari", "Kohinoor Devanagari", "serif"],
       },
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1.5', letterSpacing: '0.025em' }],

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -80,130 +81,122 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
     }
   };
 
+  const inputClass =
+    'rounded-xl border-[#E6A817]/35 bg-white pl-10 text-[#2B1D0E] placeholder:text-[#2B1D0E]/40 focus-visible:border-[#1F3D2B] focus-visible:ring-[#1F3D2B]/25';
+
   return (
     <motion.form
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-4"
     >
-      {/* Name */}
       <div className="space-y-2">
-        <Label htmlFor="name">Full Name</Label>
+        <Label htmlFor="name" className="text-[#2B1D0E]/85">
+          Full name
+        </Label>
         <div className="relative">
-          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <Input
-            id="name"
-            type="text"
-            placeholder="John Doe"
-            className="pl-10"
-            {...register('name')}
-          />
+          <User className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#1F3D2B]/55" />
+          <Input id="name" type="text" placeholder="Your name" className={inputClass} {...register('name')} />
         </div>
-        {errors.name && (
-          <p className="text-sm text-destructive">{errors.name.message}</p>
-        )}
+        {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
       </div>
 
-      {/* Email */}
       <div className="space-y-2">
-        <Label htmlFor="register-email">Email Address</Label>
+        <Label htmlFor="register-email" className="text-[#2B1D0E]/85">
+          Email
+        </Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <Input
-            id="register-email"
-            type="email"
-            placeholder="you@example.com"
-            className="pl-10"
-            {...register('email')}
-          />
+          <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#1F3D2B]/55" />
+          <Input id="register-email" type="email" placeholder="you@example.com" className={inputClass} {...register('email')} />
         </div>
-        {errors.email && (
-          <p className="text-sm text-destructive">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
-      {/* Password */}
       <div className="space-y-2">
-        <Label htmlFor="register-password">Password</Label>
+        <Label htmlFor="register-password" className="text-[#2B1D0E]/85">
+          Password
+        </Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#1F3D2B]/55" />
           <Input
             id="register-password"
             type={showPassword ? 'text' : 'password'}
             placeholder="••••••••"
-            className="pl-10 pr-10"
+            className={`${inputClass} pr-10`}
             {...register('password')}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#2B1D0E]/45 hover:text-[#2B1D0E]"
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
-            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         </div>
-        {errors.password && (
-          <p className="text-sm text-destructive">{errors.password.message}</p>
-        )}
+        {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
       </div>
 
-      {/* Confirm Password */}
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirm Password</Label>
+        <Label htmlFor="confirmPassword" className="text-[#2B1D0E]/85">
+          Confirm password
+        </Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#1F3D2B]/55" />
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
             placeholder="••••••••"
-            className="pl-10 pr-10"
+            className={`${inputClass} pr-10`}
             {...register('confirmPassword')}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#2B1D0E]/45 hover:text-[#2B1D0E]"
+            aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
           >
-            {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
         </div>
-        {errors.confirmPassword && (
-          <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
-        )}
+        {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
       </div>
 
-      {/* Terms */}
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-3 rounded-xl border border-[#E6A817]/20 bg-[#fff9ef]/80 p-3">
         <Checkbox
           id="acceptTerms"
           checked={acceptTerms}
           onCheckedChange={(checked) => setValue('acceptTerms', checked as boolean)}
+          className="mt-0.5 border-[#E6A817]/50 data-[state=checked]:border-[#1F3D2B] data-[state=checked]:bg-[#1F3D2B]"
         />
-        <label htmlFor="acceptTerms" className="text-sm text-muted-foreground leading-tight">
+        <label htmlFor="acceptTerms" className="text-sm leading-snug text-[#2B1D0E]/75">
           I agree to the{' '}
-          <a href="/terms" className="text-primary hover:underline">
-            Terms of Service
-          </a>{' '}
+          <Link to="/terms" className="font-medium text-[#1F3D2B] underline-offset-2 hover:underline">
+            Terms
+          </Link>{' '}
           and{' '}
-          <a href="/privacy-policy" className="text-primary hover:underline">
+          <Link to="/privacy" className="font-medium text-[#1F3D2B] underline-offset-2 hover:underline">
             Privacy Policy
-          </a>
+          </Link>
+          .
         </label>
       </div>
-      {errors.acceptTerms && (
-        <p className="text-sm text-destructive">{errors.acceptTerms.message}</p>
-      )}
+      {errors.acceptTerms && <p className="text-sm text-destructive">{errors.acceptTerms.message}</p>}
 
-      {/* Submit Button */}
-      <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+      <Button
+        type="submit"
+        size="lg"
+        disabled={isLoading}
+        className="w-full rounded-full bg-[#E6A817] font-semibold text-[#2B1D0E] shadow-md hover:bg-[#d89c14]"
+      >
         {isLoading ? (
           <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Creating account...
           </>
         ) : (
-          'Create Account'
+          'Create account'
         )}
       </Button>
     </motion.form>
