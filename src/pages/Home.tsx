@@ -34,6 +34,8 @@ const Home = () => {
 
   const heroSlides = ['/slider1.png', '/slider2.png', '/slider3.png'];
 
+  const ownerImage = '/owner.jpeg';
+
   const trustFeatures = [
     { icon: Leaf, title: '100% Natural', subtitle: 'Bilkul shuddh, bina processing' },
     { icon: ShieldCheck, title: 'No Added Sugar', subtitle: 'Jo taste hai, wo asli hai' },
@@ -277,6 +279,18 @@ const Home = () => {
         {/* Why Choose */}
         <section className="bg-white py-12 md:py-16">
           <div className="container-custom">
+            <motion.div
+              {...revealUp(0, 16)}
+              className="mb-10 overflow-hidden rounded-2xl border border-[#E6A817]/25 bg-[#f5efe3] shadow-[0_12px_32px_rgba(43,29,14,0.08)] md:mb-12 md:rounded-3xl"
+            >
+              <img
+                src={encodeURI(ownerImage)}
+                alt="Jugraj Son's Hive owner at the beekeeping apiary"
+                className="block h-auto w-full object-contain"
+                loading="lazy"
+              />
+            </motion.div>
+
             <div className="mb-10 text-center">
               <h2 className="font-display text-3xl text-[#2B1D0E] md:text-4xl">Why Choose Jugraj Son&apos;s Hive</h2>
               <p className="mt-2 text-sm text-[#2B1D0E]/70">Not mass-market. Premium, authentic, direct-from-source honey.</p>

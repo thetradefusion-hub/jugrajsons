@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react';
-import { Image as ImageIcon, Link2, Loader2, Plus, Upload, X } from 'lucide-react';
+import { Image as ImageIcon, Link2, Loader2, Play, Plus, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { resolveImageUrl } from '@/lib/images';
+import { getVideoThumbnail, isVideoUrl, parseGalleryMedia } from '@/lib/media';
 import { uploadProductImages } from '@/lib/upload';
 
 interface ProductImageUploadProps {
@@ -12,7 +13,7 @@ interface ProductImageUploadProps {
   onChange: (images: string[]) => void;
 }
 
-const isValidImageUrl = (value: string): boolean => {
+const isValidMediaUrl = (value: string): boolean => {
   const trimmed = value.trim();
   if (!trimmed) return false;
   if (trimmed.startsWith('/')) return true;
@@ -64,9 +65,9 @@ const ProductImageUpload = ({ images, onChange }: ProductImageUploadProps) => {
     }
   };
 
-  const addImageFromUrl = () => {
+  const addMediaFromUrl = () => {
     const trimmed = urlInput.trim();
-    if (!isValidImageUrl(trimmed)) {
+    if (!isValidMediaUrl(trimmed)) {
       toast({
         title: 'Invalid URL',
         description: 'Enter a valid http(s) link or path starting with /',
@@ -77,7 +78,7 @@ const ProductImageUpload = ({ images, onChange }: ProductImageUploadProps) => {
     if (images.includes(trimmed)) {
       toast({
         title: 'Already added',
-        description: 'This image URL is already in the list.',
+        description: 'This URL is already in the list.',
         variant: 'destructive',
       });
       return;
@@ -85,8 +86,10 @@ const ProductImageUpload = ({ images, onChange }: ProductImageUploadProps) => {
     onChange([...images, trimmed]);
     setUrlInput('');
     toast({
-      title: 'Image added',
-      description: 'URL image added to product.',
+      title: isVideoUrl(trimmed) ? 'Video added' : 'Image added',
+      description: isVideoUrl(trimmed)
+        ? 'Video link added to product gallery.'
+        : 'URL image added to product.',
     });
   };
 
@@ -130,7 +133,7 @@ const ProductImageUpload = ({ images, onChange }: ProductImageUploadProps) => {
 
       <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-4">
         <Label htmlFor="product-image-url" className="text-sm font-medium">
-          Or add image URL
+          Or add image / video URL
         </Label>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Input
@@ -141,16 +144,16 @@ const ProductImageUpload = ({ images, onChange }: ProductImageUploadProps) => {
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
-                addImageFromUrl();
+                addMediaFromUrl();
               }
             }}
-            placeholder="https://example.com/image.jpg"
+            placeholder="https://example.com/image.jpg or .mp4 / YouTube link"
             className="flex-1"
           />
           <Button
             type="button"
             variant="secondary"
-            onClick={addImageFromUrl}
+            onClick={addMediaFromUrl}
             disabled={!urlInput.trim()}
             className="shrink-0"
           >
@@ -158,7 +161,7 @@ const ProductImageUpload = ({ images, onChange }: ProductImageUploadProps) => {
             Add URL
           </Button>
         </div>
-        {urlInput.trim() && isValidImageUrl(urlInput) && (
+        {urlInput.trim() && isValidMediaUrl(urlInput) && !isVideoUrl(urlInput) && (
           <div className="flex items-center gap-3 rounded-lg border border-dashed border-[#E6A817]/30 bg-background p-2">
             <img
               src={resolveImageUrl(urlInput.trim())}
@@ -171,10 +174,18 @@ const ProductImageUpload = ({ images, onChange }: ProductImageUploadProps) => {
             <p className="text-xs text-muted-foreground">Preview — press Add URL to include</p>
           </div>
         )}
+        {urlInput.trim() && isValidMediaUrl(urlInput) && isVideoUrl(urlInput) && (
+          <div className="flex items-center gap-3 rounded-lg border border-dashed border-[#E6A817]/30 bg-background p-3">
+            <div className="flex h-14 w-14 items-center justify-center rounded-md bg-[#2B1D0E]/90">
+              <Play className="h-6 w-6 fill-white text-white" />
+            </div>
+            <p className="text-xs text-muted-foreground">Video link detected — press Add URL to include in gallery</p>
+          </div>
+        )}
       </div>
 
       <p className="text-xs text-muted-foreground">
-        First image is the main product photo. You can mix uploaded files and external URLs.
+        First item is the main product photo (use an image). You can mix photos, MP4/WebM links, and YouTube/Vimeo URLs.
       </p>
 
       {images.length === 0 ? (
@@ -187,11 +198,15 @@ const ProductImageUpload = ({ images, onChange }: ProductImageUploadProps) => {
         >
           <ImageIcon className="mb-2 h-10 w-10 text-muted-foreground" />
           <p className="text-sm font-medium text-foreground">No images yet</p>
-          <p className="mt-1 text-xs text-muted-foreground">Upload files or paste an image URL above</p>
+          <p className="mt-1 text-xs text-muted-foreground">Upload files or paste an image / video URL above</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {images.map((url, index) => (
+          {images.map((url, index) => {
+            const media = parseGalleryMedia([url])[0];
+            const videoThumb = media.type === 'video' ? getVideoThumbnail(media) : null;
+
+            return (
             <div
               key={`${url}-${index}`}
               className="relative overflow-hidden rounded-xl border border-border bg-muted/20"
@@ -201,23 +216,35 @@ const ProductImageUpload = ({ images, onChange }: ProductImageUploadProps) => {
                   Main
                 </span>
               )}
-              <img
-                src={resolveImageUrl(url)}
-                alt={`Product ${index + 1}`}
-                className="aspect-square w-full object-cover"
-              />
+              {media.type === 'video' ? (
+                <div className="relative flex aspect-square w-full items-center justify-center bg-[#2B1D0E]/90">
+                  {videoThumb ? (
+                    <img src={videoThumb} alt={`Product video ${index + 1}`} className="h-full w-full object-cover opacity-75" />
+                  ) : null}
+                  <span className="absolute inset-0 flex items-center justify-center bg-[#2B1D0E]/35">
+                    <Play className="h-8 w-8 fill-white text-white" />
+                  </span>
+                </div>
+              ) : (
+                <img
+                  src={resolveImageUrl(url)}
+                  alt={`Product ${index + 1}`}
+                  className="aspect-square w-full object-cover"
+                />
+              )}
               <Button
                 type="button"
                 variant="destructive"
                 size="icon"
                 className="absolute right-2 top-2 h-7 w-7"
                 onClick={() => removeImage(index)}
-                aria-label="Remove image"
+                aria-label="Remove media"
               >
                 <X className="h-3.5 w-3.5" />
               </Button>
             </div>
-          ))}
+          );
+          })}
           <button
             type="button"
             disabled={uploading}
@@ -232,7 +259,7 @@ const ProductImageUpload = ({ images, onChange }: ProductImageUploadProps) => {
 
       {images.length > 0 && (
         <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">Images ({images.length})</Label>
+          <Label className="text-xs text-muted-foreground">Gallery ({images.length})</Label>
           <ul className="max-h-24 space-y-1 overflow-y-auto text-xs text-muted-foreground">
             {images.map((url, i) => (
               <li key={i} className="truncate font-mono">

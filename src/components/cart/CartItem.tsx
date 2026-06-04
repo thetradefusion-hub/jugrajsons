@@ -4,8 +4,9 @@ import { Minus, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CartItem as CartItemType } from '@/context/CartContext';
 import { useCart } from '@/context/CartContext';
-import { cn } from '@/lib/utils';
+import { getFirstImageUrl } from '@/lib/media';
 import { getProductPath } from '@/lib/productUrl';
+import { cn } from '@/lib/utils';
 
 interface CartItemProps {
   item: CartItemType;
@@ -14,7 +15,7 @@ interface CartItemProps {
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const { updateQuantity, removeItem } = useCart();
   const { product, quantity } = item;
-  const img = product.images?.[0] || '/placeholder.svg';
+  const img = getFirstImageUrl(product.images);
 
   return (
     <motion.div

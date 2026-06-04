@@ -44,9 +44,6 @@ const Checkout = () => {
   } | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
-  type LocStatus = 'idle' | 'loading' | 'ok' | 'fail';
-  const [locStatus, setLocStatus] = useState<LocStatus>('idle');
-  const [manualLocation, setManualLocation] = useState(false);
 
   const defaultAddr = useMemo(
     () => addresses.find((a) => a.isDefault) || addresses[0],
@@ -83,8 +80,6 @@ const Checkout = () => {
   const {
     register,
     handleSubmit,
-    watch,
-    setValue,
     reset,
     formState: { errors },
   } = useForm<QuickForm>({
@@ -96,13 +91,6 @@ const Checkout = () => {
   useEffect(() => {
     if (authLoading) return;
     reset(getDefaultValues());
-    if (defaultAddr?.city && defaultAddr?.state) {
-      setLocStatus('ok');
-      setManualLocation(false);
-    } else {
-      setLocStatus('idle');
-      setManualLocation(false);
-    }
   }, [
     authLoading,
     defaultAddr?.id,
@@ -112,39 +100,7 @@ const Checkout = () => {
     addresses.length,
     reset,
     getDefaultValues,
-    defaultAddr?.city,
-    defaultAddr?.state,
   ]);
-
-  const pincodeWatch = watch('pincode');
-
-  useEffect(() => {
-    const p = (pincodeWatch || '').replace(/\D/g, '').slice(0, 6);
-    if (p.length !== 6) {
-      if (p.length < 6) setLocStatus((s) => (s === 'loading' ? s : 'idle'));
-      return;
-    }
-
-    const handle = setTimeout(async () => {
-      setLocStatus('loading');
-      try {
-        const { data } = await api.get<{ city: string; state: string }>(`/pincode/${p}`);
-        setValue('city', data.city, { shouldValidate: true });
-        setValue('state', data.state, { shouldValidate: true });
-        setLocStatus('ok');
-        setManualLocation(false);
-      } catch {
-        setLocStatus('fail');
-        toast({
-          title: 'Pincode lookup failed',
-          description: 'City & state niche manually bhar dein.',
-          variant: 'destructive',
-        });
-      }
-    }, 450);
-
-    return () => clearTimeout(handle);
-  }, [pincodeWatch, setValue, toast]);
 
   const applySavedAddress = (addr: Address) => {
     const detail = [addr.addressLine1, addr.addressLine2].filter(Boolean).join(', ').trim();
@@ -156,8 +112,6 @@ const Checkout = () => {
       city: addr.city,
       state: addr.state,
     });
-    setLocStatus(addr.city && addr.state ? 'ok' : 'idle');
-    setManualLocation(false);
     toast({ title: 'Address applied' });
   };
 
@@ -413,9 +367,6 @@ const Checkout = () => {
     }
   };
 
-  const showCityStateFields = manualLocation || locStatus === 'fail' || (locStatus === 'idle' && (pincodeWatch || '').replace(/\D/g, '').length === 6);
-  const cityStateReadOnly = locStatus === 'ok' && !manualLocation;
-
   if (items.length === 0) {
     return (
       <>
@@ -442,7 +393,7 @@ const Checkout = () => {
           </Button>
           <div>
             <h1 className="font-display text-2xl md:text-3xl font-bold">Checkout</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">Jaldi se — mobile &amp; pincode se delivery</p>
+            <p className="text-sm text-muted-foreground mt-0.5">Jaldi se — delivery address bhar ke order place karein</p>
           </div>
         </div>
 
@@ -456,7 +407,7 @@ const Checkout = () => {
                     Quick buy
                   </CardTitle>
                   <CardDescription className="text-sm">
-                    Sirf zaroori details — pincode se city/state auto-fill (India Post data).
+                    Sirf zaroori details — naam, mobile, pincode aur poora address.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -513,35 +464,21 @@ const Checkout = () => {
                       placeholder="6 digits"
                       autoComplete="postal-code"
                     />
-                    {locStatus === 'loading' && <p className="text-xs text-muted-foreground">Pincode check ho raha hai…</p>}
                     {errors.pincode && <p className="text-xs text-destructive">{errors.pincode.message}</p>}
                   </div>
 
-                  {cityStateReadOnly && (
-                    <div className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-muted/50 px-3 py-2 text-sm">
-                      <span className="text-muted-foreground">
-                        <span className="font-medium text-foreground">{watch('city')}</span>, {watch('state')}
-                      </span>
-                      <Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => setManualLocation(true)}>
-                        Change city / state
-                      </Button>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="city">City</Label>
+                      <Input id="city" {...register('city')} placeholder="City" autoComplete="address-level2" />
+                      {errors.city && <p className="text-xs text-destructive">{errors.city.message}</p>}
                     </div>
-                  )}
-
-                  {showCityStateFields && !cityStateReadOnly ? (
-                    <div className="grid sm:grid-cols-2 gap-3">
-                      <div className="space-y-1.5">
-                        <Label htmlFor="city">City</Label>
-                        <Input id="city" {...register('city')} placeholder="City" autoComplete="address-level2" />
-                        {errors.city && <p className="text-xs text-destructive">{errors.city.message}</p>}
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="state">State</Label>
-                        <Input id="state" {...register('state')} placeholder="State" autoComplete="address-level1" />
-                        {errors.state && <p className="text-xs text-destructive">{errors.state.message}</p>}
-                      </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="state">State</Label>
+                      <Input id="state" {...register('state')} placeholder="State" autoComplete="address-level1" />
+                      {errors.state && <p className="text-xs text-destructive">{errors.state.message}</p>}
                     </div>
-                  ) : null}
+                  </div>
 
                   <div className="space-y-1.5">
                     <Label htmlFor="addressDetail">Where to deliver</Label>

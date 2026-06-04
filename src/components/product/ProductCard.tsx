@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Product } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/utils';
-import { resolveImageUrl } from '@/lib/images';
+import { getFirstImageUrl } from '@/lib/media';
 import { getProductPath } from '@/lib/productUrl';
 
 interface ProductCardProps {
@@ -19,7 +19,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
 
   const quantity = getItemQuantity(product.id);
   const savings = product.originalPrice - product.price;
-  const imgSrc = resolveImageUrl(product.images?.[0]);
+  const imgSrc = getFirstImageUrl(product.images);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();

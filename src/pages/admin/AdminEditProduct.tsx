@@ -339,7 +339,7 @@ const AdminEditProduct = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Product Images</CardTitle>
+                  <CardTitle>Product Images &amp; Videos</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ProductImageUpload images={images} onChange={setImages} />
