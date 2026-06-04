@@ -1,12 +1,12 @@
-import { Home, Package, User, BookOpen, Truck } from 'lucide-react';
+import { Home, Package, User, BookOpen, LayoutGrid } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { icon: Home, label: 'Home', path: '/' },
-  { icon: Package, label: 'Shop', path: '/products' },
+  { icon: LayoutGrid, label: 'Services', path: '/services' },
   { icon: BookOpen, label: 'About us', path: '/about' },
-  { icon: Truck, label: 'Track order', path: '/track-order' },
+  { icon: Package, label: 'Shop', path: '/products' },
   { icon: User, label: 'Profile', path: '/profile' },
 ] as const;
 

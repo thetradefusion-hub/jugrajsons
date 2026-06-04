@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 
@@ -112,6 +113,21 @@ app.get('/api/health', (req, res) => {
     status: 'OK',
     message: 'Server is running',
   });
+});
+
+app.use((err: unknown, _req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (err && typeof err === 'object' && 'name' in err && (err as { name: string }).name === 'MulterError') {
+    const multerErr = err as { code?: string; message?: string };
+    const message =
+      multerErr.code === 'LIMIT_FILE_SIZE'
+        ? 'Image must be 10MB or smaller'
+        : multerErr.message || 'Upload failed';
+    return res.status(400).json({ message });
+  }
+  if (err instanceof Error && err.message.includes('Only JPEG')) {
+    return res.status(400).json({ message: err.message });
+  }
+  next(err);
 });
 
 const PORT = Number(process.env.PORT) || 5000;

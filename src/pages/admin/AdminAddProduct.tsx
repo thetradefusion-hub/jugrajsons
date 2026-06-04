@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowLeft, Save, Upload, X, Plus, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +11,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ProductImageUpload from '@/components/admin/ProductImageUpload';
+import { productTypes } from '@/data/products';
 import api from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
@@ -36,7 +39,8 @@ const AdminAddProduct = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [images, setImages] = useState<string[]>(['']);
+  const [images, setImages] = useState<string[]>([]);
+  const [category, setCategory] = useState(productTypes[0]?.slug ?? '');
 
   useEffect(() => {
     // Wait for auth to finish loading
@@ -85,7 +89,7 @@ const AdminAddProduct = () => {
     setIsLoading(true);
     try {
       // Filter out empty image URLs
-      const validImages = images.filter(img => img.trim() !== '');
+      const validImages = images.filter((img) => img.trim() !== '');
       
       if (validImages.length === 0) {
         toast({
@@ -97,15 +101,24 @@ const AdminAddProduct = () => {
         return;
       }
 
-      // Required backend fields that are hidden from the form
-      const defaultCategory = 'raw-honey';
-      const defaultProductType = 'Honey';
+      if (!category) {
+        toast({
+          title: 'Warning',
+          description: 'Please select a service category',
+          variant: 'destructive',
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      const selectedService = productTypes.find((c) => c.slug === category);
+      const defaultProductType = selectedService?.name ?? 'Honey';
       const generatedSku = `JSH-${Date.now()}`;
-      const allConcerns = [defaultCategory];
+      const allConcerns = [category];
       
       const productData = {
         ...data,
-        category: defaultCategory,
+        category,
         productType: defaultProductType,
         sku: generatedSku,
         ingredients: [],
@@ -185,6 +198,22 @@ const AdminAddProduct = () => {
                     {errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
                   </div>
 
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Service Category *</Label>
+                    <Select value={category} onValueChange={setCategory}>
+                      <SelectTrigger id="category">
+                        <SelectValue placeholder="Select service category" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72">
+                        {productTypes.map((service) => (
+                          <SelectItem key={service.id} value={service.slug}>
+                            {service.name} — {service.hindiName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                 </CardContent>
               </Card>
 
@@ -246,63 +275,8 @@ const AdminAddProduct = () => {
                 <CardHeader>
                   <CardTitle>Product Images</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    {images.map((image, index) => (
-                      <div key={index} className="flex gap-2 items-start">
-                        <div className="flex-1 space-y-2">
-                          <Label htmlFor={`image-${index}`}>
-                            Image {index + 1} URL {index === 0 && <span className="text-destructive">*</span>}
-                          </Label>
-                          <div className="flex gap-2">
-                            <Input
-                              id={`image-${index}`}
-                              type="url"
-                              value={image}
-                              onChange={(e) => updateImage(index, e.target.value)}
-                              placeholder="https://example.com/image.jpg"
-                              className="flex-1"
-                            />
-                            {images.length > 1 && (
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="icon"
-                                onClick={() => removeImageField(index)}
-                                className="shrink-0"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
-                          {image && (
-                            <div className="mt-2">
-                              <img
-                                src={image}
-                                alt={`Preview ${index + 1}`}
-                                className="w-20 h-20 object-cover rounded border border-gray-200"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).style.display = 'none';
-                                }}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={addImageField}
-                      className="w-full"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Another Image
-                    </Button>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Add image URLs (one per line). First image will be the main product image.
-                  </p>
+                <CardContent>
+                  <ProductImageUpload images={images} onChange={setImages} />
                 </CardContent>
               </Card>
 

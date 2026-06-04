@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronRight, Home, Sparkles, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import ProductCard from '@/components/product/ProductCard';
 import EmptyState from '@/components/common/EmptyState';
 import api from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { getCategoryLabel, productTypes } from '@/data/products';
 
 interface Product {
   _id: string;
@@ -50,6 +51,9 @@ const Products = () => {
   const tagFilter = searchParams.get('tag');
   const categoryParam = searchParams.get('category');
   const concernParam = searchParams.get('concern');
+
+  const shouldRedirectToService =
+    Boolean(categoryParam) && !searchQuery && !concernParam && !tagFilter;
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -162,8 +166,21 @@ const Products = () => {
     setCurrentPage(1);
   }, [searchQuery, tagFilter, sortBy]);
 
-  const pageTitle =
-    tagFilter === 'bestseller' ? 'Bestsellers' : tagFilter === 'new' ? 'New Arrivals' : 'Shop Honey';
+  const categoryService = categoryParam ? productTypes.find((c) => c.slug === categoryParam) : null;
+
+  const pageTitle = categoryService
+    ? categoryService.name
+    : categoryParam
+      ? getCategoryLabel(categoryParam)
+      : tagFilter === 'bestseller'
+        ? 'Bestsellers'
+        : tagFilter === 'new'
+          ? 'New Arrivals'
+          : 'Shop Honey';
+
+  if (shouldRedirectToService && categoryParam) {
+    return <Navigate to={`/services/${categoryParam}`} replace />;
+  }
 
   const filterLink = (tag: string | null, label: string, icon?: React.ReactNode) => {
     const to = tag ? `/products?tag=${tag}` : '/products';
@@ -210,8 +227,18 @@ const Products = () => {
                   {pageTitle}
                 </h1>
                 <p className="mt-1 max-w-xl text-xs leading-snug text-[#2B1D0E]/75 sm:text-sm md:text-[0.9375rem]">
-                  Forest-sourced raw honey. Limited batches, no added sugar, no over-processing.
+                  {categoryService
+                    ? categoryService.description
+                    : 'Forest-sourced raw honey. Limited batches, no added sugar, no over-processing.'}
                 </p>
+                {categoryParam && (
+                  <Link
+                    to={categoryService ? `/services/${categoryParam}` : '/services'}
+                    className="mt-2 inline-block text-xs font-medium text-[#1F3D2B] underline-offset-2 hover:underline sm:text-sm"
+                  >
+                    {categoryService ? 'View on Services page →' : 'Browse all services →'}
+                  </Link>
+                )}
               </motion.div>
 
               <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center md:max-w-md md:justify-end">

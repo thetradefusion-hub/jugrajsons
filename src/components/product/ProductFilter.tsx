@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronDown, X, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, X, SlidersHorizontal, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
@@ -118,13 +119,20 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
           )}
         </div>
 
-        {/* Honey Range */}
+        {/* Services */}
         <div className="border-b border-border pb-4">
+          <Link
+            to="/services"
+            className="mb-3 flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+          >
+            Browse all services
+            <ArrowRight className="h-4 w-4" />
+          </Link>
           <button
             onClick={() => toggleSection('category')}
             className="flex items-center justify-between w-full py-2"
           >
-            <span className="font-medium">Honey Range</span>
+            <span className="font-medium">Services</span>
             <ChevronDown
               className={cn(
                 'w-4 h-4 transition-transform',
@@ -140,18 +148,24 @@ const ProductFilter: React.FC<ProductFilterProps> = ({
               className="space-y-2 mt-3"
             >
               {productTypes.map((type) => (
-                <label
-                  key={type.id}
-                  className="flex items-center gap-3 cursor-pointer group"
-                >
+                <div key={type.id} className="flex items-start gap-3">
                   <Checkbox
+                    id={`cat-${type.slug}`}
                     checked={selectedCategories.includes(type.slug)}
                     onCheckedChange={() => handleCategoryToggle(type.slug)}
+                    className="mt-0.5"
                   />
-                  <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                    {type.name}
-                  </span>
-                </label>
+                  <label htmlFor={`cat-${type.slug}`} className="flex-1 cursor-pointer group">
+                    <Link
+                      to={`/services/${type.slug}`}
+                      className="text-sm text-muted-foreground group-hover:text-foreground transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <span className="block font-medium">{type.name}</span>
+                      <span className="font-devanagari block text-xs opacity-80">{type.hindiName}</span>
+                    </Link>
+                  </label>
+                </div>
               ))}
             </motion.div>
           )}

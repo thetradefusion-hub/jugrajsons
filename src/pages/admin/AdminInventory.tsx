@@ -14,6 +14,7 @@ import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useToast } from '@/hooks/use-toast';
+import { getCategoryLabel } from '@/data/products';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 
@@ -288,7 +289,7 @@ const AdminInventory = () => {
                       <TableRow key={product._id}>
                         <TableCell className="font-medium">{product.name}</TableCell>
                         <TableCell className="font-mono text-xs">{product.sku}</TableCell>
-                        <TableCell>{product.category}</TableCell>
+                        <TableCell>{getCategoryLabel(product.category)}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <span className={product.stockCount < 10 ? 'text-amber-600 font-semibold' : ''}>

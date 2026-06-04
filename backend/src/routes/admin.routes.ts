@@ -1,6 +1,8 @@
 import express from 'express';
 import { protect } from '../middleware/auth.middleware';
 import { admin } from '../middleware/admin.middleware';
+import { productImageUpload } from '../middleware/upload.middleware';
+import { uploadProductImage, uploadProductImages } from '../controllers/upload.controller';
 import Order from '../models/Order';
 import User from '../models/User';
 import Product from '../models/Product';
@@ -10,6 +12,17 @@ const router = express.Router();
 
 // All routes require admin authentication
 router.use(protect, admin);
+
+router.post(
+  '/upload/product-image',
+  productImageUpload.single('image'),
+  uploadProductImage
+);
+router.post(
+  '/upload/product-images',
+  productImageUpload.array('images', 10),
+  uploadProductImages
+);
 
 // Dashboard Stats
 router.get('/stats', async (req, res) => {

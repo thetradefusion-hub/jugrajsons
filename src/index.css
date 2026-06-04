@@ -327,6 +327,12 @@ html {
 }
 
 @layer utilities {
+  /* Crisp product photos — avoid blur from transforms / upscaling */
+  .product-image-sharp {
+    image-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+  }
+
   /* Enhanced Text gradients */
   .text-gradient-gold {
     @apply bg-gradient-to-r from-ayurveda-gold via-ayurveda-gold-light to-ayurveda-gold bg-clip-text text-transparent;

@@ -28,11 +28,17 @@ export interface Product {
 export interface Category {
   id: string;
   name: string;
+  hindiName: string;
   slug: string;
   description: string;
   image: string;
   productCount: number;
 }
+
+export const getCategoryLabel = (slug: string): string => {
+  const match = productTypes.find((c) => c.slug === slug);
+  return match ? match.name : slug;
+};
 
 export interface Concern {
   id: string;
@@ -77,12 +83,114 @@ export const concerns: Concern[] = [
 ];
 
 export const productTypes: Category[] = [
-  { id: "1", name: "Multi-Flora Honey", slug: "capsules", description: "Balanced flavor from varied blossoms", image: "/placeholder.svg", productCount: 45 },
-  { id: "2", name: "Mono-Flora Honey", slug: "oils", description: "Single-flower origin premium honey", image: "/placeholder.svg", productCount: 23 },
-  { id: "3", name: "Raw Farm Honey", slug: "syrups", description: "Natural unprocessed everyday honey", image: "/placeholder.svg", productCount: 18 },
-  { id: "4", name: "Wellness Range", slug: "powders", description: "Functional picks for routine use", image: "/placeholder.svg", productCount: 32 },
-  { id: "5", name: "Gift Packs", slug: "balms", description: "Curated honey gifting options", image: "/placeholder.svg", productCount: 15 },
-  { id: "6", name: "Combo Value Packs", slug: "combos", description: "Bundled jars for family usage", image: "/placeholder.svg", productCount: 12 },
+  {
+    id: "1",
+    name: "Swadeshi Apis Cerana Indica Honey",
+    hindiName: "स्वदेशी एपिस सेराना इंडिका शहद",
+    slug: "swadeshi-apis-cerana-indica-honey",
+    description: "Indigenous cerana bee honey from our own hives",
+    image: "/Swadeshi Apis Cerana Indica Honey.png",
+    productCount: 0,
+  },
+  {
+    id: "2",
+    name: "Apis Dorsata Wild Honey",
+    hindiName: "जंगली रॉक बी शहद",
+    slug: "apis-dorsata-wild-honey",
+    description: "Wild rock bee forest honey",
+    image: "/jangi rock.png",
+    productCount: 0,
+  },
+  {
+    id: "3",
+    name: "Premium Honey Dry Fruits",
+    hindiName: "प्रीमियम हनी ड्राई फ्रूट्स",
+    slug: "premium-honey-dry-fruits",
+    description: "Honey infused with premium dry fruits",
+    image: "/primum honey dryfriut.png",
+    productCount: 0,
+  },
+  {
+    id: "4",
+    name: "Premium Honey Dry Cashew",
+    hindiName: "प्रीमियम हनी ड्राई काजू",
+    slug: "premium-honey-dry-cashew",
+    description: "Cashew-infused specialty honey",
+    image: "/dry kaju.png",
+    productCount: 0,
+  },
+  {
+    id: "5",
+    name: "Honey Dry Cheese",
+    hindiName: "एक्सक्लूसिव हनी ड्राई चीज़ इन्फ्यूजन",
+    slug: "honey-dry-cheese",
+    description: "Exclusive honey and cheese infusion",
+    image: "/honey dry chiz infusion.png",
+    productCount: 0,
+  },
+  {
+    id: "6",
+    name: "Royal Jelly",
+    hindiName: "दुर्लभ रॉयल जेली",
+    slug: "royal-jelly",
+    description: "Rare royal jelly from the hive",
+    image: "/durlabh royal  jelly.png",
+    productCount: 0,
+  },
+  {
+    id: "7",
+    name: "Bee Wax / Beeswax",
+    hindiName: "नेचुरल बी वैक्स / मधुमक्खी का मोम",
+    slug: "bee-wax",
+    description: "Natural beeswax for crafts and wellness",
+    image: "/natural bee vax.png",
+    productCount: 0,
+  },
+  {
+    id: "8",
+    name: "Bee Venom",
+    hindiName: "बी स्टिंग / बी वेनम",
+    slug: "bee-venom",
+    description: "Bee venom products",
+    image: "/bee stig bee venum.png",
+    productCount: 0,
+  },
+  {
+    id: "9",
+    name: "Bee Sting Therapy / Apitherapy",
+    hindiName: "बी स्टिंग थेरेपी / एपिथेरेपी",
+    slug: "bee-sting-therapy",
+    description: "Apitherapy and bee sting therapy services",
+    image: "/bee stng therepy.png",
+    productCount: 0,
+  },
+  {
+    id: "10",
+    name: "Beehive Setup",
+    hindiName: "हमारा प्रोडक्शन सेटअप / बीहाइव सेटअप",
+    slug: "beehive-setup",
+    description: "Production hive setup and installation",
+    image: "/production setup.png",
+    productCount: 0,
+  },
+  {
+    id: "11",
+    name: "Bee Box Manufacturing",
+    hindiName: "कमर्शियल बी बॉक्स निर्माण",
+    slug: "bee-box-manufacturing",
+    description: "Commercial bee box manufacturing",
+    image: "/commercial bee box production.png",
+    productCount: 0,
+  },
+  {
+    id: "12",
+    name: "Beekeeping Training Program",
+    hindiName: "मधुमक्खी पालन प्रशिक्षण कार्यक्रम",
+    slug: "beekeeping-training",
+    description: "Beekeeping training and workshops",
+    image: "/bee training program.png",
+    productCount: 0,
+  },
 ];
 
 export const products: Product[] = [

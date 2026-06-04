@@ -361,7 +361,7 @@ const ProductDetails = () => {
             </nav>
 
             <div className="grid items-start gap-6 lg:grid-cols-2 lg:gap-10 xl:gap-14">
-              <div className="rounded-3xl border border-[#E6A817]/25 bg-white/90 p-3 shadow-[0_16px_40px_rgba(43,29,14,0.08)] md:p-5">
+              <div className="w-full min-w-0 overflow-hidden rounded-3xl border border-[#E6A817]/25 bg-white/90 p-2 shadow-[0_16px_40px_rgba(43,29,14,0.08)] sm:p-3 md:p-4">
                 <ProductGallery images={product.images} productName={product.name} />
               </div>
 

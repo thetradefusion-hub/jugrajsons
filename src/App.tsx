@@ -31,6 +31,9 @@ import Notifications from "@/pages/Notifications";
 import Support from "@/pages/Support";
 import Privacy from "@/pages/Privacy";
 import About from "@/pages/About";
+import TrainingProgram from "@/pages/TrainingProgram";
+import Services from "@/pages/Services";
+import ServiceCategory from "@/pages/ServiceCategory";
 import Contact from "@/pages/Contact";
 import FAQs from "@/pages/FAQs";
 import Shipping from "@/pages/Shipping";
@@ -130,6 +133,8 @@ const AppContent = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/services/:slug" element={<ServiceCategory />} />
             <Route path="/product/:slug" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
@@ -143,6 +148,7 @@ const AppContent = () => {
             <Route path="/support" element={<Support />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/about" element={<About />} />
+            <Route path="/training-program" element={<TrainingProgram />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/faqs" element={<FAQs />} />
             <Route path="/shipping" element={<Shipping />} />

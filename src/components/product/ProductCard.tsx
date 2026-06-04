@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Product } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/utils';
+import { resolveImageUrl } from '@/lib/images';
 
 interface ProductCardProps {
   product: Product;
@@ -17,7 +18,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
 
   const quantity = getItemQuantity(product.id);
   const savings = product.originalPrice - product.price;
-  const imgSrc = product.images?.[0] || '/placeholder.svg';
+  const imgSrc = resolveImageUrl(product.images?.[0]);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -50,7 +51,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
             <img
               src={imgSrc}
               alt={product.name}
-              className="h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-[1.03] sm:p-3 md:p-4"
+              loading="lazy"
+              decoding="async"
+              className="product-image-sharp mx-auto h-full w-full max-h-full max-w-full object-contain p-2 sm:p-3"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#2B1D0E]/[0.06] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 

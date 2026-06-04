@@ -1,24 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingCart, Heart, User, Menu, X, ChevronDown, Phone } from 'lucide-react';
+import { Search, ShoppingCart, Heart, User, Menu, X, Phone, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
-import { productTypes } from '@/data/products';
 import { cn } from '@/lib/utils';
 
 const Navbar = () => {
   const logoSrc = '/WhatsApp%20Image%202026-03-21%20at%203.15.06%20PM.jpeg';
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const navigate = useNavigate();
   const { itemCount } = useCart();
@@ -31,16 +28,6 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setActiveDropdown(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
@@ -50,14 +37,15 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    {
-      label: 'Honey Range',
-      key: 'category',
-      items: productTypes.map((c) => ({ name: c.name, slug: c.slug })),
-    },
+    { label: 'Services', href: '/services' },
     { label: 'Shop All', href: '/products' },
     { label: 'About Us', href: '/about' },
-    { label: 'New Arrivals', href: '/products?tag=new' },
+    { label: 'Training Program', href: '/training-program' },
+  ];
+
+  const mobileMenuLinks = [
+    ...navLinks,
+    { label: 'Track Order', href: '/track-order', icon: Truck },
   ];
 
   return (
@@ -104,48 +92,15 @@ const Navbar = () => {
               </div>
             </Link>
 
-            <nav className="hidden items-center gap-1 lg:flex" ref={dropdownRef}>
+            <nav className="hidden items-center gap-1 lg:flex">
               {navLinks.map((link) => (
-                <div key={link.key || link.label} className="relative">
-                  {link.items ? (
-                    <button
-                      onClick={() => setActiveDropdown(activeDropdown === link.key ? null : link.key!)}
-                      className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-[#2B1D0E]/80 hover:bg-[#E6A817]/15 hover:text-[#2B1D0E]"
-                    >
-                      {link.label}
-                      <ChevronDown className={cn('h-4 w-4 transition-transform', activeDropdown === link.key && 'rotate-180')} />
-                    </button>
-                  ) : (
-                    <Link
-                      to={link.href!}
-                      className="rounded-full px-4 py-2 text-sm font-medium text-[#2B1D0E]/80 hover:bg-[#E6A817]/15 hover:text-[#2B1D0E]"
-                    >
-                      {link.label}
-                    </Link>
-                  )}
-
-                  <AnimatePresence>
-                    {link.items && activeDropdown === link.key && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 8 }}
-                        className="absolute left-0 top-full z-50 mt-2 w-72 rounded-2xl border border-[#E6A817]/20 bg-white p-2 shadow-xl"
-                      >
-                        {link.items.map((item) => (
-                          <Link
-                            key={item.slug}
-                            to={`/products?category=${item.slug}`}
-                            onClick={() => setActiveDropdown(null)}
-                            className="block rounded-xl px-4 py-2.5 text-sm font-medium text-[#2B1D0E]/85 hover:bg-[#F5E9D7]"
-                          >
-                            {item.name}
-                          </Link>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="rounded-full px-4 py-2 text-sm font-medium text-[#2B1D0E]/80 hover:bg-[#E6A817]/15 hover:text-[#2B1D0E]"
+                >
+                  {link.label}
+                </Link>
               ))}
             </nav>
 
@@ -249,36 +204,21 @@ const Navbar = () => {
                   <X className="h-5 w-5 text-[#2B1D0E]" />
                 </Button>
               </div>
-              <div className="space-y-5">
-                {navLinks.map((link) => (
-                  <div key={link.key || link.label}>
-                    {link.items ? (
-                      <>
-                        <p className="mb-2 text-sm font-semibold text-[#2B1D0E]/70">{link.label}</p>
-                        <div className="grid grid-cols-2 gap-2">
-                          {link.items.map((item) => (
-                            <Link
-                              key={item.slug}
-                              to={`/products?category=${item.slug}`}
-                              onClick={() => setIsMobileMenuOpen(false)}
-                              className="rounded-xl border border-[#E6A817]/20 bg-white px-3 py-2 text-center text-sm text-[#2B1D0E]"
-                            >
-                              {item.name}
-                            </Link>
-                          ))}
-                        </div>
-                      </>
-                    ) : (
-                      <Link
-                        to={link.href!}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="block rounded-xl bg-white px-4 py-3 text-sm font-medium text-[#2B1D0E]"
-                      >
-                        {link.label}
-                      </Link>
-                    )}
-                  </div>
-                ))}
+              <div className="space-y-3">
+                {mobileMenuLinks.map((link) => {
+                  const Icon = 'icon' in link ? link.icon : null;
+                  return (
+                    <Link
+                      key={link.href}
+                      to={link.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 text-sm font-medium text-[#2B1D0E]"
+                    >
+                      {Icon ? <Icon className="h-4 w-4 shrink-0 text-[#1F3D2B]" /> : null}
+                      {link.label}
+                    </Link>
+                  );
+                })}
               </div>
             </motion.div>
           </>

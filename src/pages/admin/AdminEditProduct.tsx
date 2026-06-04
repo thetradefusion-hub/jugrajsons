@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowLeft, Save, X, Plus } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,10 +12,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdminLayout from '@/components/admin/AdminLayout';
+import ProductImageUpload from '@/components/admin/ProductImageUpload';
 import api from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
-import { concerns } from '@/data/products';
+import { productTypes } from '@/data/products';
 
 const productSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
@@ -48,7 +49,7 @@ const AdminEditProduct = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [images, setImages] = useState<string[]>(['']);
+  const [images, setImages] = useState<string[]>([]);
 
   useEffect(() => {
     // Wait for auth to finish loading
@@ -100,7 +101,7 @@ const AdminEditProduct = () => {
             tags: product.tags?.join(', ') || '',
           });
           // Set images from product
-          setImages(product.images && product.images.length > 0 ? product.images : ['']);
+          setImages(product.images && product.images.length > 0 ? product.images : []);
         }
       } catch (error) {
         toast({
@@ -117,20 +118,6 @@ const AdminEditProduct = () => {
       fetchProduct();
     }
   }, [id, reset, toast]);
-
-  const addImageField = () => {
-    setImages([...images, '']);
-  };
-
-  const removeImageField = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
-  };
-
-  const updateImage = (index: number, value: string) => {
-    const newImages = [...images];
-    newImages[index] = value;
-    setImages(newImages);
-  };
 
   const onSubmit = async (data: ProductFormData) => {
     setIsLoading(true);
@@ -240,18 +227,18 @@ const AdminEditProduct = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="category">Health Concern (Category) *</Label>
+                      <Label htmlFor="category">Service Category *</Label>
                       <Select
                         value={watch('category') || ''}
                         onValueChange={(value) => setValue('category', value, { shouldValidate: true })}
                       >
                         <SelectTrigger id="category">
-                          <SelectValue placeholder="Select Health Concern" />
+                          <SelectValue placeholder="Select service category" />
                         </SelectTrigger>
-                        <SelectContent>
-                          {concerns.map((concern) => (
-                            <SelectItem key={concern.id} value={concern.slug}>
-                              {concern.icon} {concern.name}
+                        <SelectContent className="max-h-72">
+                          {productTypes.map((service) => (
+                            <SelectItem key={service.id} value={service.slug}>
+                              {service.name} — {service.hindiName}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -354,63 +341,8 @@ const AdminEditProduct = () => {
                 <CardHeader>
                   <CardTitle>Product Images</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    {images.map((image, index) => (
-                      <div key={index} className="flex gap-2 items-start">
-                        <div className="flex-1 space-y-2">
-                          <Label htmlFor={`image-${index}`}>
-                            Image {index + 1} URL {index === 0 && <span className="text-destructive">*</span>}
-                          </Label>
-                          <div className="flex gap-2">
-                            <Input
-                              id={`image-${index}`}
-                              type="url"
-                              value={image}
-                              onChange={(e) => updateImage(index, e.target.value)}
-                              placeholder="https://example.com/image.jpg"
-                              className="flex-1"
-                            />
-                            {images.length > 1 && (
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="icon"
-                                onClick={() => removeImageField(index)}
-                                className="shrink-0"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
-                          {image && (
-                            <div className="mt-2">
-                              <img
-                                src={image}
-                                alt={`Preview ${index + 1}`}
-                                className="w-20 h-20 object-cover rounded border border-gray-200"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).style.display = 'none';
-                                }}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={addImageField}
-                      className="w-full"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Another Image
-                    </Button>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Add image URLs (one per line). First image will be the main product image.
-                  </p>
+                <CardContent>
+                  <ProductImageUpload images={images} onChange={setImages} />
                 </CardContent>
               </Card>
 

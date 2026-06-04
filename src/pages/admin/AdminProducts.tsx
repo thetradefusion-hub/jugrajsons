@@ -18,6 +18,7 @@ import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useToast } from '@/hooks/use-toast';
+import { getCategoryLabel, productTypes } from '@/data/products';
 
 interface Product {
   _id: string;
@@ -98,14 +99,20 @@ const AdminProducts = () => {
     return matchesSearch && matchesCategory && matchesStock;
   });
 
-  const categories = Array.from(new Set(products.map(p => p.category)));
+  const legacyCategories = Array.from(
+    new Set(
+      products
+        .map((p) => p.category)
+        .filter((slug) => !productTypes.some((c) => c.slug === slug))
+    )
+  );
 
   const handleExport = () => {
     const csvContent = [
       ['Name', 'Category', 'Price', 'Stock', 'Status', 'SKU'].join(','),
       ...filteredProducts.map(p => [
         p.name,
-        p.category,
+        getCategoryLabel(p.category),
         p.price,
         p.stockCount,
         p.inStock ? 'In Stock' : 'Out of Stock',
@@ -169,9 +176,16 @@ const AdminProducts = () => {
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map(cat => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    <SelectItem value="all">All Services</SelectItem>
+                    {productTypes.map((service) => (
+                      <SelectItem key={service.slug} value={service.slug}>
+                        {service.name}
+                      </SelectItem>
+                    ))}
+                    {legacyCategories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {getCategoryLabel(cat)} (legacy)
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -230,7 +244,7 @@ const AdminProducts = () => {
                   filteredProducts.map((product) => (
                     <TableRow key={product._id}>
                       <TableCell className="font-medium">{product.name}</TableCell>
-                      <TableCell>{product.category}</TableCell>
+                      <TableCell>{getCategoryLabel(product.category)}</TableCell>
                       <TableCell>Rs. {product.price}</TableCell>
                       <TableCell>{product.stockCount}</TableCell>
                       <TableCell>

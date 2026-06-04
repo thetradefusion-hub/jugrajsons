@@ -8,8 +8,10 @@ const Footer = () => {
   const logoSrc = '/WhatsApp%20Image%202026-03-21%20at%203.15.06%20PM.jpeg';
 
   const quickLinks = [
+    { label: 'Our Services', href: '/services' },
     { label: 'Shop All Honey', href: '/products' },
     { label: 'About Us', href: '/about' },
+    { label: 'Training Program', href: '/training-program' },
     { label: 'Track Order', href: '/track-order' },
     { label: 'Contact', href: '/contact' },
   ];

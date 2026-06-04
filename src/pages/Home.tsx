@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -14,7 +14,6 @@ import {
   Activity,
   Zap,
   CheckCircle2,
-  ShoppingBag,
   Star,
   Quote,
 } from 'lucide-react';
@@ -22,37 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import SEO from '@/components/seo/SEO';
-import api from '@/lib/api';
-import { useCart } from '@/context/CartContext';
-import { useToast } from '@/hooks/use-toast';
-
-interface Product {
-  _id: string;
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  shortDescription: string;
-  price: number;
-  originalPrice: number;
-  discount: number;
-  rating: number;
-  reviewCount: number;
-  images: string[];
-  category: string;
-  concern: string[];
-  productType: string;
-  tags: string[];
-  inStock: boolean;
-  stockCount: number;
-  ingredients: string[];
-  benefits: string[];
-  usage: string;
-  whoShouldUse: string[];
-  isBestseller: boolean;
-  isNew: boolean;
-  sku: string;
-}
+import { productTypes } from '@/data/products';
 
 interface Testimonial {
   name: string;
@@ -61,11 +30,7 @@ interface Testimonial {
 }
 
 const Home = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [productsLoading, setProductsLoading] = useState(true);
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
-  const { addItem } = useCart();
-  const { toast } = useToast();
 
   const heroSlides = ['/slider1.png', '/slider2.png', '/slider3.png'];
 
@@ -108,105 +73,11 @@ const Home = () => {
   ];
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setProductsLoading(true);
-        const response = await api.get('/products', { params: { limit: 1000 } });
-        const fetchedProducts = response.data.products || response.data || [];
-
-        const transformedProducts = fetchedProducts.map((p: any) => ({
-          _id: p._id,
-          id: p._id || p.slug,
-          name: p.name,
-          slug: p.slug,
-          description: p.description,
-          shortDescription: p.shortDescription,
-          price: p.price,
-          originalPrice: p.originalPrice,
-          discount: p.discount || 0,
-          rating: p.rating || 0,
-          reviewCount: p.reviewCount || 0,
-          images: p.images || [],
-          category: p.category,
-          concern: p.concern || [],
-          productType: p.productType,
-          tags: p.tags || [],
-          inStock: p.inStock !== false,
-          stockCount: p.stockCount || 0,
-          ingredients: p.ingredients || [],
-          benefits: p.benefits || [],
-          usage: p.usage || '',
-          whoShouldUse: p.whoShouldUse || [],
-          isBestseller: p.isBestseller || false,
-          isNew: p.isNew || false,
-          sku: p.sku,
-        }));
-
-        setProducts(transformedProducts);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setProducts([]);
-      } finally {
-        setProductsLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
     const timer = setInterval(() => {
       setActiveHeroSlide((prev) => (prev + 1) % heroSlides.length);
     }, 4500);
     return () => clearInterval(timer);
   }, [heroSlides.length]);
-
-  const handleAddToCart = (product: Product) => {
-    addItem(product as any);
-    toast({
-      title: 'Added to cart',
-      description: `${product.name} cart me add ho gaya.`,
-    });
-  };
-
-  const variantProducts = useMemo(() => {
-    const packOrder = ['250', '500', '1kg'];
-    const extraHints = ['750', '2kg', 'combo', 'gift', 'forest', 'raw'];
-    const selected: Product[] = [];
-    const usedIds = new Set<string>();
-
-    const findByHint = (hint: string) =>
-      products.find((p) => {
-        const hay = `${p.name} ${p.shortDescription} ${p.description}`.toLowerCase();
-        return !usedIds.has(p._id) && hay.includes(hint);
-      });
-
-    packOrder.forEach((pack) => {
-      const matched = findByHint(pack);
-      if (matched) {
-        selected.push(matched);
-        usedIds.add(matched._id);
-      }
-    });
-
-    extraHints.forEach((hint) => {
-      if (selected.length >= 4) return;
-      const matched = findByHint(hint);
-      if (matched) {
-        selected.push(matched);
-        usedIds.add(matched._id);
-      }
-    });
-
-    products.forEach((p) => {
-      if (!usedIds.has(p._id) && selected.length < 4) {
-        selected.push(p);
-        usedIds.add(p._id);
-      }
-    });
-
-    return selected;
-  }, [products]);
 
   const revealUp = (delay = 0, y = 18) => ({
     initial: { opacity: 0, y },
@@ -353,75 +224,53 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Products */}
-        <section id="products" className="py-12 md:py-16">
+        {/* Services */}
+        <section id="services" className="py-12 md:py-16">
           <div className="container-custom">
-            <div className="mb-10 text-center">
-              <Badge className="border-0 bg-[#2B1D0E] text-[#F5E9D7]">Best Seller Variants</Badge>
-              <h2 className="mt-3 font-display text-3xl text-[#2B1D0E] md:text-4xl">Pick Your Perfect Jar</h2>
-              <p className="mx-auto mt-3 max-w-2xl text-[#2B1D0E]/75">
-                Premium raw forest honey in convenient sizes for daily wellness and gifting.
+            <div className="mb-8 text-center md:mb-10">
+              <Badge className="border-0 bg-[#2B1D0E] text-[#F5E9D7]">Our Services</Badge>
+              <h2 className="mt-3 font-display text-3xl text-[#2B1D0E] md:text-4xl">Explore by Category</h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm text-[#2B1D0E]/75 md:text-base">
+                शहद, रॉयल जेली, बी वैक्स, एपिथेरेपी और मधुमक्खी पालन — category चुनकर products देखें।
               </p>
             </div>
 
-            {productsLoading ? (
-              <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4 md:gap-4">
-                {[1, 2, 3, 4].map((item) => (
-                  <div
-                    key={item}
-                    className="h-72 animate-pulse rounded-2xl border border-[#E6A817]/20 bg-white/70 sm:h-80 md:rounded-3xl"
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4 md:gap-4">
-                {variantProducts.map((product, idx) => {
-                  const sizeLabels = ['250g', '500g', '1kg'];
-                  const displayTitle =
-                    sizeLabels[idx] ||
-                    (product.name.length > 22 ? `${product.name.slice(0, 20)}…` : product.name);
-                  return (
-                    <motion.div key={product._id} {...revealUp(idx * 0.1, 18)} className="min-w-0">
-                      <Card className="h-full overflow-hidden rounded-2xl border border-[#E6A817]/20 bg-white shadow-[0_10px_22px_rgba(43,29,14,0.07)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_28px_rgba(43,29,14,0.1)] md:rounded-3xl md:hover:-translate-y-1 md:hover:shadow-[0_20px_36px_rgba(43,29,14,0.12)]">
-                        <div className="flex min-h-[10.5rem] items-center justify-center bg-[#fff9ef] p-2 sm:min-h-[12.5rem] sm:p-3 md:min-h-[15rem] md:p-4">
-                          <img
-                            src={product.images?.[0] || '/placeholder.svg'}
-                            alt={product.name}
-                            className="h-auto max-h-44 w-full max-w-full object-contain sm:max-h-52 md:max-h-64"
-                          />
-                        </div>
-                        <CardContent className="p-2.5 sm:p-4 md:p-6">
-                          <div className="mb-1.5 flex flex-col gap-1 sm:mb-2 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-                            <h3 className="truncate font-display text-base leading-tight text-[#2B1D0E] sm:text-xl md:text-2xl">
-                              {displayTitle}
-                            </h3>
-                            <Badge className="w-fit shrink-0 border-0 bg-[#1F3D2B] px-1.5 py-0 text-[10px] text-[#F5E9D7] sm:px-2 sm:text-xs">
-                              {product.inStock ? 'In Stock' : 'Limited'}
-                            </Badge>
-                          </div>
-                          <p className="line-clamp-2 text-[11px] leading-snug text-[#2B1D0E]/70 sm:text-sm">
-                            {product.shortDescription || 'Asli shahad ka rich taste, seedha jungle source se.'}
-                          </p>
-                          <p className="mt-2 text-base font-semibold text-[#2B1D0E] sm:mt-3 sm:text-xl md:mt-4 md:text-2xl">
-                            Rs. {product.price}
-                          </p>
-                          <p className="hidden text-xs text-[#2B1D0E]/60 sm:block">Natural sweetness, no added sugar.</p>
-                          <Button
-                            size="sm"
-                            onClick={() => handleAddToCart(product)}
-                            className="mt-2 h-8 w-full rounded-full bg-[#E6A817] px-2 text-[11px] text-[#2B1D0E] hover:bg-[#d89c14] sm:mt-4 sm:h-9 sm:text-sm md:mt-5 md:h-10 md:text-sm"
-                          >
-                            <ShoppingBag className="mr-1 h-3 w-3 shrink-0 sm:mr-2 sm:h-4 sm:w-4" />
-                            <span className="sm:hidden">Add</span>
-                            <span className="hidden sm:inline">Add to Cart</span>
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            )}
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+              {productTypes.map((service, idx) => (
+                <motion.div key={service.id} {...revealUp(idx * 0.05, 14)} className="min-w-0">
+                  <Link
+                    to={`/services/${service.slug}`}
+                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-[#E6A817]/20 bg-white shadow-[0_8px_22px_rgba(43,29,14,0.07)] transition-all hover:-translate-y-0.5 hover:border-[#E6A817]/45 hover:shadow-[0_14px_30px_rgba(43,29,14,0.1)] sm:rounded-2xl md:rounded-3xl"
+                  >
+                    <div className="flex w-full items-center justify-center bg-[#f5efe3] p-1 sm:p-1.5">
+                      <img
+                        src={encodeURI(service.image)}
+                        alt={service.name}
+                        className="block h-auto w-full max-w-full object-contain"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="flex flex-1 flex-col gap-2 p-2.5 sm:gap-3 sm:p-4">
+                      <h3 className="line-clamp-3 text-center font-display text-[11px] font-semibold leading-snug text-[#2B1D0E] group-hover:text-[#1F3D2B] sm:text-left sm:text-sm md:text-base">
+                        {service.name}
+                      </h3>
+                      <span className="mt-auto inline-flex items-center justify-center gap-1 rounded-full bg-[#E6A817] px-2.5 py-1.5 text-[10px] font-semibold text-[#2B1D0E] transition-colors group-hover:bg-[#1F3D2B] group-hover:text-[#F5E9D7] sm:gap-1.5 sm:px-4 sm:py-2 sm:text-sm">
+                        View Product
+                        <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </span>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-8 text-center md:mt-10">
+              <Button asChild size="lg" className="rounded-full bg-[#1F3D2B] px-6 text-[#F5E9D7] hover:bg-[#2a523c]">
+                <Link to="/services">
+                  View All Services <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
 
