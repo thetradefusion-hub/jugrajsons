@@ -15,6 +15,8 @@ const router = express.Router();
 // Public routes
 router.get('/', getProducts);
 router.post('/by-slugs', getProductsBySlugs);
+// Slugs may contain "/" (e.g. Apis-dorsata-/rock-bee-...) — wildcard before :slug
+router.get('/detail/*', getProduct);
 router.get('/:slug', getProduct);
 
 // Admin routes

@@ -7,6 +7,7 @@ import { Product } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/utils';
 import { resolveImageUrl } from '@/lib/images';
+import { getProductPath } from '@/lib/productUrl';
 
 interface ProductCardProps {
   product: Product;
@@ -39,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, index = 0 }) => {
       transition={{ duration: 0.35, delay: index * 0.04 }}
       className="group h-full"
     >
-      <Link to={`/product/${product.slug}`} className="block h-full">
+      <Link to={getProductPath(product.slug)} className="block h-full">
         <div
           className={cn(
             'relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#E6A817]/25 bg-white sm:rounded-3xl',

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Star,
@@ -32,6 +32,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import SEO from '@/components/seo/SEO';
 import ProductGallery from '@/components/product/ProductGallery';
+import { ProductDescription } from '@/components/product/ProductDescription';
 import ProductCard from '@/components/product/ProductCard';
 import api from '@/lib/api';
 import { useCart } from '@/context/CartContext';
@@ -40,6 +41,7 @@ import { useRecentlyViewed } from '@/context/RecentlyViewedContext';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
+import { parseProductSlugFromLocation } from '@/lib/productUrl';
 
 interface Product {
   _id: string;
@@ -81,7 +83,9 @@ interface Review {
 }
 
 const ProductDetails = () => {
-  const { slug } = useParams();
+  const { '*': slugSplat } = useParams();
+  const location = useLocation();
+  const slug = parseProductSlugFromLocation(location.pathname) || slugSplat || '';
   const { addItem, getItemQuantity, updateQuantity } = useCart();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
   const { addItem: addToRecentlyViewed } = useRecentlyViewed();
@@ -103,7 +107,7 @@ const ProductDetails = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/products/${slug}`);
+        const response = await api.get(`/products/${encodeURIComponent(slug)}`);
         const p = response.data;
         
         // Transform backend product to frontend format
@@ -446,7 +450,7 @@ const ProductDetails = () => {
                         <Info className="h-4 w-4 text-[#1F3D2B]" />
                         Full description
                       </h3>
-                      <p className="whitespace-pre-line text-sm leading-relaxed text-[#2B1D0E]/75">{product.description}</p>
+                      <ProductDescription description={product.description} />
                     </div>
                   )}
 

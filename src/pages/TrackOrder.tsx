@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { getProductPath } from '@/lib/productUrl';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -628,7 +629,7 @@ const TrackOrder = () => {
                                 </p>
                                 {item.product?.slug && (
                                   <Link
-                                    to={`/product/${item.product.slug}`}
+                                    to={getProductPath(item.product.slug)}
                                     className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-[#1F3D2B] hover:underline"
                                   >
                                     View product <ArrowRight className="h-3 w-3" />

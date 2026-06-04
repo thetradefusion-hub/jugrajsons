@@ -59,7 +59,24 @@ export const getProducts = async (req: Request, res: Response) => {
 
 export const getProduct = async (req: Request, res: Response) => {
   try {
-    const product = await Product.findOne({ slug: req.params.slug });
+    const rawSlug = req.params.slug || '';
+    let slug = rawSlug;
+    try {
+      slug = decodeURIComponent(rawSlug);
+    } catch {
+      slug = rawSlug;
+    }
+
+    let product = await Product.findOne({ slug });
+
+    // Legacy URLs where "/" in slug was split by the router
+    if (!product && req.params[0]) {
+      const joined = decodeURIComponent(
+        Array.isArray(req.params[0]) ? req.params[0].join('/') : String(req.params[0])
+      );
+      product = await Product.findOne({ slug: joined });
+    }
+
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }

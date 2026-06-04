@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { CartItem as CartItemType } from '@/context/CartContext';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/utils';
+import { getProductPath } from '@/lib/productUrl';
 
 interface CartItemProps {
   item: CartItemType;
@@ -26,14 +27,14 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         'md:gap-5 md:rounded-3xl md:p-5',
       )}
     >
-      <Link to={`/product/${product.slug}`} className="shrink-0">
+      <Link to={getProductPath(product.slug)} className="shrink-0">
         <div className="h-24 w-24 overflow-hidden rounded-2xl border border-[#E6A817]/20 bg-[#fffaf2] md:h-28 md:w-28">
           <img src={img} alt={product.name} className="h-full w-full object-contain p-2" />
         </div>
       </Link>
 
       <div className="min-w-0 flex-1">
-        <Link to={`/product/${product.slug}`}>
+        <Link to={getProductPath(product.slug)}>
           <h3 className="line-clamp-2 font-display text-base font-semibold text-[#2B1D0E] transition-colors hover:text-[#1F3D2B] md:text-lg">
             {product.name}
           </h3>
