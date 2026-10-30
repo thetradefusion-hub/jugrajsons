@@ -14,8 +14,8 @@ const getApiUrl = () => {
     return `https://${envUrl}`;
   }
   
-  // Default to localhost for development
-  return 'http://localhost:5000/api';
+  // Prefer 127.0.0.1 — on Windows, `localhost` often hits IPv6 (::1) first and stalls
+  return 'http://127.0.0.1:5000/api';
 };
 
 const API_URL = getApiUrl();

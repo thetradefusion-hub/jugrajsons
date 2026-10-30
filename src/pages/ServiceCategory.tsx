@@ -102,7 +102,8 @@ const ServiceCategory = () => {
         }));
 
         setProducts(transformedProducts);
-      } catch {
+      } catch (error) {
+        console.error('Failed to fetch category products:', error);
         setProducts([]);
       } finally {
         setLoading(false);

@@ -112,7 +112,8 @@ const Products = () => {
         }));
 
         setProducts(transformedProducts);
-      } catch {
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
         setProducts([]);
       } finally {
         setLoading(false);
